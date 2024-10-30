@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "common.proto";
+package matchmaking;
+option go_package = "./pkg_proto";
+
+service MatchmakingService {
+  rpc Enroll (MatchmakingRequest) returns (google.protobuf.Empty);
+  rpc Cancel (MatchmakingRequest) returns (google.protobuf.Empty);
+  rpc SubscribeMatch (MatchmakingRequest) returns (stream common.Event);
+}
+
+message MatchmakingRequest {
+  int32 user_id = 1;
+}

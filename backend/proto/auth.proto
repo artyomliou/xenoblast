@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "./pkg_proto";
+
+service AuthService {
+  rpc Register (RegisterRequest) returns (RegisterResponse);
+  rpc Validate (ValidateRequest) returns (PlayerInfoDto);
+  rpc GetNickname (GetNicknameRequest) returns (GetNicknameResponse);
+}
+
+message RegisterRequest {
+  string nickname = 1;
+}
+
+message RegisterResponse {
+  string api_key = 1;
+  PlayerInfoDto player = 2;
+}
+
+message ValidateRequest {
+  string api_key = 1;
+}
+
+message GetNicknameRequest {
+  repeated int32 players = 1;
+}
+
+message GetNicknameResponse {
+  repeated string nicknames = 1;
+}
+
+message PlayerInfoDto {
+  int32 user_id = 1;
+  string nickname = 2;
+}

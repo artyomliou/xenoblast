@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "common.proto";
+package game;
+option go_package = "./pkg_proto";
+
+service GameService {
+  rpc NewGame (NewGameRequest) returns (google.protobuf.Empty);
+  rpc GetGameInfo (GetGameInfoRequest) returns (GetGameInfoResponse);
+  rpc PlayerPublish (common.Event) returns (google.protobuf.Empty);
+  rpc Subscribe (SubscribeRequest) returns (stream common.Event);
+}
+
+message NewGameRequest {
+  int32 game_id = 1;
+  repeated int32 players = 2;
+}
+
+message GetGameInfoRequest {
+  int32 game_id = 1;
+}
+
+message GetGameInfoResponse {
+  int32 game_id = 1;
+  common.GameState state = 2;
+  repeated common.PlayerPropertyDto players = 3;
+  int32 map_width = 4;
+  int32 map_height = 5;
+  repeated common.TileDto tiles = 6;
+}
+
+message SubscribeRequest {
+  int32 game_id = 1;
+  repeated common.EventType types = 2;
+}
+

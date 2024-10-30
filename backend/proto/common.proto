@@ -1,0 +1,189 @@
+syntax = "proto3";
+
+package common;
+option go_package = "./pkg_proto";
+
+enum GameState {
+  Init = 0;
+  Preparing = 1;
+  Prepared = 2;
+  WaitingReady = 3;
+  Countdown = 4;
+  Playing = 5;
+  Gameover = 6;
+  Crash = 7;
+}
+
+enum EventType {
+  ControllerRun = 0;
+  StatePreparing = 1;
+  StatePrepared = 2;
+  StateWaitingReady = 3;
+  StateCountdown = 4;
+  StatePlaying = 5;
+  StateGameover = 6;
+  StateCrash = 7;
+  WinConditionSatisfied = 8;
+
+  SubscribeNewMatch = 11;
+  NewMatch = 12;
+  PlayerReady = 21;
+  PlayerMove = 22;
+  PlayerGetPowerup = 23;
+  PlayerPlantBomb = 24;
+  PlayerDead = 25;
+
+  BombPlanted = 31;
+  BombWillExplode = 32;
+  BombExploded = 33;
+  BoxRemoved = 34;
+  PowerupDropped = 35;
+  PowerupConsumed = 36;
+}
+
+message Event {
+  EventType type = 1;
+  int64 timestamp = 2;
+  int32 game_id = 3;
+  oneof data {
+    CountdownData countdown = 11;
+    GameOverData game_over = 12;
+    CrashData crash = 13;
+    NewMatchData new_match = 14;
+
+    PlayerReadyData player_ready = 21;
+    PlayerMoveData player_move = 22;
+    PlayerGetPowerupData player_get_powerup = 23;
+    PlayerPlantBombData player_plant_bomb = 24;
+    PlayerDeadData player_dead = 25;
+
+    BombPlantedData bomb_planted = 33;
+    BombWillExplodeData bomb_will_explode = 32;
+    BombExplodedData bomb_exploded = 34;
+    BoxRemovedData box_removed = 35;
+    PowerupDroppedData powerup_dropped = 36;
+    PowerupConsumedData powerup_consumed = 37;
+  }
+}
+
+message CountdownData {
+  int64 start_ts = 1;
+  int64 end_ts = 2;
+}
+
+message GameOverData {
+  string reason = 1;
+  int32 winner_user_id = 2;
+}
+
+message CrashData {
+  string reason = 1;
+}
+
+message NewMatchData {
+  repeated int32 players = 1;
+}
+
+message PlayerReadyData {
+  int32 user_id = 1;
+}
+
+message PlayerMoveData {
+  int32 user_id = 1;
+  int32 x = 2;
+  int32 y = 3;
+}
+
+message PlayerGetPowerupData {
+  int32 user_id = 1;
+  int32 x = 2;
+  int32 y = 3;
+}
+
+message PlayerPlantBombData {
+  int32 user_id = 1;
+  int32 x = 2;
+  int32 y = 3;
+}
+
+message PlayerDeadData {
+  int32 user_id = 1;
+}
+
+message BombPlantedData {
+  int32 x = 1;
+  int32 y = 2;
+  int64 exploded_at = 3;
+}
+
+message BombWillExplodeData {
+  int32 x = 1;
+  int32 y = 2;
+  int32 firepower = 3;
+}
+
+message BombExplodedData {
+  int32 x = 1;
+  int32 y = 2;
+  int32 firepower = 3;
+}
+
+message BoxRemovedData {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message PowerupDroppedData {
+  int32 x = 1;
+  int32 y = 2;
+  PowerupType type = 3;
+}
+
+message PowerupConsumedData {
+  int32 user_id = 1;
+  int32 x = 2;
+  int32 y = 3;
+  PowerupType type = 4;
+}
+
+message PlayerPropertyDto {
+  int32 user_id = 1;
+  int32 x = 2;
+  int32 y = 3;
+  int32 firepower = 4;
+  int32 bombcount = 5;
+}
+
+message TileDto {
+  ObstacleDto obstacle = 1;
+  DecorationDto decoration = 2;
+  PowerupDto powerup = 3;
+}
+
+message ObstacleDto {
+  ObstacleType type = 1;
+}
+
+message DecorationDto {
+  DecorationType type = 1;
+}
+
+message PowerupDto {
+  PowerupType type = 1;
+}
+
+enum ObstacleType {
+  Box = 0;
+	House = 1 ;
+	Tree = 2;
+	Bomb = 3;
+}
+
+enum DecorationType {
+  Bush = 0;
+}
+
+enum PowerupType {
+  MoreBomb = 0;
+	MoreFire = 1;
+}

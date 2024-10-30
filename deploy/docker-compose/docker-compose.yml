@@ -1,0 +1,43 @@
+services:
+  api_gateway:
+    image: nginx:latest
+    volumes:
+      - ../../api-gateway/nginx.conf:/etc/nginx/nginx.conf
+      - ../../api-gateway/conf.d/:/etc/nginx/conf.d/
+      - ../../api-gateway/ssl/:/etc/nginx/ssl/
+    ports:
+      - 80:80
+  http_service:
+    build:
+      context: ../../backend
+    command: /app/http_service
+    expose:
+      - 8080
+
+  websocket_service:
+    build:
+      context: ../../backend
+    command: /app/websocket_service
+    expose:
+      - 8080
+
+  auth_service:
+    build:
+      context: ../../backend
+    command: /app/auth_service
+    expose:
+      - 50051
+
+  matchmaking_service:
+    build:
+      context: ../../backend
+    command: /app/matchmaking_service
+    expose:
+      - 50051
+
+  game_service:
+    build:
+      context: ../../backend
+    command: /app/game_service
+    expose:
+      - 50051
