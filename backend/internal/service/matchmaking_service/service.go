@@ -9,6 +9,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -18,21 +19,28 @@ const maximumPlayer = 4
 const MatchmakingInterval = time.Second
 
 type MatchmakingService struct {
-	storage  storage.SortedSetStorage
-	eventBus *eventbus.EventBus
-	logger   *log.Logger
+	storage       storage.SortedSetStorage
+	eventBus      *eventbus.EventBus
+	logger        *log.Logger
+	nextTickQueue []int32
+	mutex         sync.Mutex
 }
 
 func NewMatchmakingService(storage storage.SortedSetStorage, eventBus *eventbus.EventBus) *MatchmakingService {
 	return &MatchmakingService{
-		storage:  storage,
-		eventBus: eventBus,
-		logger:   log.New(os.Stdout, "[matchmaking service] ", log.LstdFlags),
+		storage:       storage,
+		eventBus:      eventBus,
+		logger:        log.New(os.Stdout, "[matchmaking service] ", log.LstdFlags),
+		nextTickQueue: []int32{},
+		mutex:         sync.Mutex{},
 	}
 }
 
 func (service *MatchmakingService) Enroll(ctx context.Context, userId int32) error {
-	return service.storage.SortedSetAdd(ctx, sortedSetKey, strconv.Itoa(int(userId)), int(time.Now().Unix()))
+	service.mutex.Lock()
+	defer service.mutex.Unlock()
+	service.nextTickQueue = append(service.nextTickQueue, userId)
+	return nil
 }
 
 func (service *MatchmakingService) Cancel(ctx context.Context, userId int32) error {
@@ -49,6 +57,7 @@ func (service *MatchmakingService) StartMatchmaking(ctx context.Context) {
 			return
 		case <-ticker.C:
 			service.matchmaking(ctx)
+			service.clearNextTickQueue(ctx)
 		}
 	}
 }
@@ -98,4 +107,17 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 		},
 	})
 	// TODO may need to associate a instance IP to this game
+}
+
+func (service *MatchmakingService) clearNextTickQueue(ctx context.Context) {
+	service.mutex.Lock()
+	defer service.mutex.Unlock()
+
+	for _, userId := range service.nextTickQueue {
+		err := service.storage.SortedSetAdd(ctx, sortedSetKey, strconv.Itoa(int(userId)), int(time.Now().Unix()))
+		if err != nil {
+			service.logger.Print("clearNextTickQueue(): ", err)
+		}
+	}
+	service.nextTickQueue = []int32{}
 }

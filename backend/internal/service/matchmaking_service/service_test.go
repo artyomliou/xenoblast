@@ -65,7 +65,7 @@ func TestMatchmakingService(t *testing.T) {
 					expectMatch <- event
 				})
 
-				ctx, cancel := context.WithTimeout(context.Background(), matchmaking_service.MatchmakingInterval+time.Second)
+				ctx, cancel := context.WithTimeout(context.Background(), matchmaking_service.MatchmakingInterval*2+time.Second)
 				defer cancel()
 				for _, userId := range c.userIds {
 					assert.NoError(t, service.Enroll(ctx, userId))
