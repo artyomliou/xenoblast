@@ -543,15 +543,15 @@ func (g *gameController) findBombedBoxCoords(data *pkg_proto.BombWillExplodeData
 }
 
 func (g *gameController) findBombedPlayers(data *pkg_proto.BombWillExplodeData) (bombedPlayerIds []int32) {
-	xFireStart := data.X - data.BombFirepower
-	xFireEnd := data.X + data.BombFirepower
-	yFireStart := data.Y - data.BombFirepower
-	yFireEnd := data.Y + data.BombFirepower
+	x1 := data.X - data.BombFirepower
+	x2 := data.X + data.BombFirepower
+	y1 := data.Y - data.BombFirepower
+	y2 := data.Y + data.BombFirepower
 	for userId, player := range g.players {
 		if g.alivePlayers[userId] {
-			xPlayer := player.X
-			yPlater := player.Y
-			if xFireStart <= xPlayer && xPlayer <= xFireEnd && yFireStart <= yPlater && yPlater <= yFireEnd {
+			bombedVertically := player.X == data.X && y1 <= player.Y && player.Y <= y2
+			bombedHorizontally := player.Y == data.Y && x1 <= player.X && player.X <= x2
+			if bombedVertically || bombedHorizontally {
 				bombedPlayerIds = append(bombedPlayerIds, userId)
 			}
 		}
