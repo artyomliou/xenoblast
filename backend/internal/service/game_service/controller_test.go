@@ -301,7 +301,6 @@ func TestGameController(t *testing.T) {
 			Title                string
 			BombX                int32
 			BombY                int32
-			BombFirepower        int32
 			PowerupDropRate      float32
 			AssertAfterEventType pkg_proto.EventType
 			AssertFunc           func(state *state.StateManager, gameMap *maploader.GameMap, ev *pkg_proto.Event)
@@ -311,14 +310,15 @@ func TestGameController(t *testing.T) {
 				Title:                "normally exploded",
 				BombX:                0,
 				BombY:                0,
-				BombFirepower:        2,
 				AssertAfterEventType: pkg_proto.EventType_BombExploded,
 				AssertFunc: func(state *state.StateManager, gameMap *maploader.GameMap, ev *pkg_proto.Event) {
 					data := ev.GetBombExploded()
 					assert.NotNil(t, data)
-					assert.Equal(t, 2, int(data.Firepower))
 					assert.Equal(t, 0, int(data.X))
 					assert.Equal(t, 0, int(data.Y))
+					assert.Equal(t, gamelogic.DefaultFirepower, data.BombFirepower)
+					assert.Equal(t, 1, int(data.UserId))
+					assert.Equal(t, gamelogic.DefaultBombCount, data.UserBombcount)
 					assert.Equal(t, false, gameMap.CheckObstacleType(0, 0, pkg_proto.ObstacleType_Bomb))
 				},
 			},
@@ -326,7 +326,6 @@ func TestGameController(t *testing.T) {
 				Title:                "player dead",
 				BombX:                0,
 				BombY:                0,
-				BombFirepower:        2,
 				AssertAfterEventType: pkg_proto.EventType_PlayerDead,
 				AssertFunc: func(state *state.StateManager, gameMap *maploader.GameMap, ev *pkg_proto.Event) {
 					data := ev.GetPlayerDead()
@@ -338,7 +337,6 @@ func TestGameController(t *testing.T) {
 				Title:                "box removed",
 				BombX:                0,
 				BombY:                0,
-				BombFirepower:        2,
 				AssertAfterEventType: pkg_proto.EventType_BoxRemoved,
 				AssertFunc: func(state *state.StateManager, gameMap *maploader.GameMap, ev *pkg_proto.Event) {
 					data := ev.GetBoxRemoved()
@@ -352,7 +350,6 @@ func TestGameController(t *testing.T) {
 				Title:                "powerup dropped",
 				BombX:                0,
 				BombY:                0,
-				BombFirepower:        2,
 				PowerupDropRate:      1,
 				AssertAfterEventType: pkg_proto.EventType_PowerupDropped,
 				AssertFunc: func(state *state.StateManager, gameMap *maploader.GameMap, ev *pkg_proto.Event) {
@@ -372,7 +369,6 @@ func TestGameController(t *testing.T) {
 				// prepare
 				state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 				fillPlayerHelper(&players, 4)
-				players[1].Firepower = c.BombFirepower
 
 				ctl, _ := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
 				ctl.TurnOnDebugMode()

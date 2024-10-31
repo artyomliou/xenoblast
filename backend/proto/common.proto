@@ -126,18 +126,23 @@ message BombPlantedData {
   int32 x = 1;
   int32 y = 2;
   int64 exploded_at = 3;
+  int32 user_id = 4;
+  int32 user_bombcount = 5;
 }
 
 message BombWillExplodeData {
   int32 x = 1;
   int32 y = 2;
-  int32 firepower = 3;
+  int32 bomb_firepower = 3;
+  int32 user_id = 4;
 }
 
 message BombExplodedData {
   int32 x = 1;
   int32 y = 2;
-  int32 firepower = 3;
+  int32 bomb_firepower = 3;
+  int32 user_id = 4;
+  int32 user_bombcount = 5;
 }
 
 message BoxRemovedData {

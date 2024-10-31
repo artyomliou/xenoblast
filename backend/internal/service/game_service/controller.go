@@ -415,16 +415,18 @@ func (g *gameController) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 	g.gameMap.SetObstacleWithType(data.X, data.Y, pkg_proto.ObstacleType_Bomb)
 	now := time.Now()
 	explodedAt := now.Add(BombBeforeExplodeDuration)
-	firepower := player.Firepower
+	bombFirepower := player.Firepower
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_BombPlanted,
 		Timestamp: now.Unix(),
 		GameId:    g.id,
 		Data: &pkg_proto.Event_BombPlanted{
 			BombPlanted: &pkg_proto.BombPlantedData{
-				X:          data.X,
-				Y:          data.Y,
-				ExplodedAt: explodedAt.Unix(),
+				X:             data.X,
+				Y:             data.Y,
+				ExplodedAt:    explodedAt.Unix(),
+				UserId:        data.UserId,
+				UserBombcount: player.BombCount,
 			},
 		},
 	})
@@ -440,9 +442,10 @@ func (g *gameController) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 			GameId:    g.id,
 			Data: &pkg_proto.Event_BombWillExplode{
 				BombWillExplode: &pkg_proto.BombWillExplodeData{
-					X:         data.X,
-					Y:         data.Y,
-					Firepower: firepower,
+					X:             data.X,
+					Y:             data.Y,
+					BombFirepower: bombFirepower,
+					UserId:        data.UserId,
 				},
 			},
 		})
@@ -458,10 +461,18 @@ func (g *gameController) HandleBombWillExplode(ev *pkg_proto.Event) {
 	if data == nil {
 		return
 	}
+	player := g.players[data.UserId]
+	if player == nil {
+		return
+	}
+
+	player.BombCount++
+
 	if !g.gameMap.CheckObstacleType(data.X, data.Y, pkg_proto.ObstacleType_Bomb) {
 		return
 	}
 	g.gameMap.ClearObstacle(data.X, data.Y)
+
 	g.logger.Printf("bomb removed x=%d y=%d", data.X, data.Y)
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_BombExploded,
@@ -469,9 +480,11 @@ func (g *gameController) HandleBombWillExplode(ev *pkg_proto.Event) {
 		GameId:    g.id,
 		Data: &pkg_proto.Event_BombExploded{
 			BombExploded: &pkg_proto.BombExplodedData{
-				X:         data.X,
-				Y:         data.Y,
-				Firepower: data.Firepower,
+				X:             data.X,
+				Y:             data.Y,
+				BombFirepower: data.BombFirepower,
+				UserId:        data.UserId,
+				UserBombcount: data.BombFirepower,
 			},
 		},
 	})
@@ -511,7 +524,7 @@ func (g *gameController) findBombedBoxCoords(data *pkg_proto.BombWillExplodeData
 		{0, 1},  //down
 	}
 	for _, offset := range offsets {
-		for i := 0; i < int(data.Firepower); i++ {
+		for i := 1; i <= int(data.BombFirepower); i++ {
 			tileX := data.X + int32(offset[0]*i)
 			tileY := data.Y + int32(offset[1]*i)
 			if tileX < 0 || tileY < 0 || tileX > (maploader.MapWidth-1) || tileY > (maploader.MapHeight-1) {
@@ -530,10 +543,10 @@ func (g *gameController) findBombedBoxCoords(data *pkg_proto.BombWillExplodeData
 }
 
 func (g *gameController) findBombedPlayers(data *pkg_proto.BombWillExplodeData) (bombedPlayerIds []int32) {
-	xFireStart := data.X - data.Firepower
-	xFireEnd := data.X + data.Firepower
-	yFireStart := data.Y - data.Firepower
-	yFireEnd := data.Y + data.Firepower
+	xFireStart := data.X - data.BombFirepower
+	xFireEnd := data.X + data.BombFirepower
+	yFireStart := data.Y - data.BombFirepower
+	yFireEnd := data.Y + data.BombFirepower
 	for userId, player := range g.players {
 		if g.alivePlayers[userId] {
 			xPlayer := player.X
