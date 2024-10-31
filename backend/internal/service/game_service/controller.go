@@ -644,10 +644,12 @@ func (g *gameController) HandleGetPowerup(ev *pkg_proto.Event) {
 		GameId:    g.id,
 		Data: &pkg_proto.Event_PowerupConsumed{
 			PowerupConsumed: &pkg_proto.PowerupConsumedData{
-				X:      data.X,
-				Y:      data.Y,
-				UserId: player.userId,
-				Type:   powerup.Type,
+				X:             data.X,
+				Y:             data.Y,
+				UserId:        player.userId,
+				Type:          powerup.Type,
+				UserBombcount: player.BombCount,
+				UserFirepower: player.Firepower,
 			},
 		},
 	})

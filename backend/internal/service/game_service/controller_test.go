@@ -487,6 +487,12 @@ func TestGameController(t *testing.T) {
 				assert.Equal(t, 0, int(data.X))
 				assert.Equal(t, 0, int(data.Y))
 				assert.Equal(t, c.PowerupType, data.Type)
+				switch c.PowerupType {
+				case pkg_proto.PowerupType_MoreBomb:
+					assert.Equal(t, gamelogic.DefaultBombCount+1, data.UserBombcount)
+				case pkg_proto.PowerupType_MoreFire:
+					assert.Equal(t, gamelogic.DefaultFirepower+1, data.UserFirepower)
+				}
 				assert.Equal(t, false, gameMap.CheckPowerupType(0, 0, data.Type))
 				assertFunc(players[1])
 			})
