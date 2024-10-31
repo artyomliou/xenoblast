@@ -108,6 +108,8 @@ func (player *frontendPlayer) Run(t *testing.T) {
 				player.newStateQueue <- stateGamePlaying
 
 			case stateGamePlaying:
+				player.sendPlayerMoveOverWebsocket(t)
+				player.receivePlayerMovedFromWebsocket(t)
 				player.completeCh <- true
 				player.logger.Println("successfully exit")
 				return
@@ -248,6 +250,35 @@ func (player *frontendPlayer) receivePlayingFromWebsocket(t *testing.T) {
 	err = proto.Unmarshal(msg, event)
 	assert.NoError(t, err)
 	assert.Equal(t, pkg_proto.EventType_StatePlaying, event.Type)
+}
+
+func (player *frontendPlayer) sendPlayerMoveOverWebsocket(t *testing.T) {
+	msg := &pkg_proto.Event{
+		Type:      pkg_proto.EventType_PlayerMove,
+		Timestamp: time.Now().Unix(),
+		GameId:    player.gameId,
+		Data: &pkg_proto.Event_PlayerMove{
+			PlayerMove: &pkg_proto.PlayerMoveData{
+				UserId: player.userId,
+				X:      1,
+				Y:      1,
+			},
+		},
+	}
+	msgBytes, err := proto.Marshal(msg)
+	assert.NoError(t, err)
+	err = player.conn.WriteMessage(websocket.BinaryMessage, msgBytes)
+	assert.NoError(t, err)
+}
+
+func (player *frontendPlayer) receivePlayerMovedFromWebsocket(t *testing.T) {
+	_, msg, err := player.conn.ReadMessage()
+	assert.NoError(t, err)
+
+	event := &pkg_proto.Event{}
+	err = proto.Unmarshal(msg, event)
+	assert.NoError(t, err)
+	assert.Equal(t, pkg_proto.EventType_PlayerMoved, event.Type)
 }
 
 func (player *frontendPlayer) sendHttpRequest(method string, path string, body map[string]any) ([]byte, error) {

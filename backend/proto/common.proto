@@ -16,29 +16,30 @@ enum GameState {
 
 enum EventType {
   ControllerRun = 0;
-  StatePreparing = 1;
-  StatePrepared = 2;
-  StateWaitingReady = 3;
-  StateCountdown = 4;
-  StatePlaying = 5;
-  StateGameover = 6;
-  StateCrash = 7;
-  WinConditionSatisfied = 8;
+  SubscribeNewMatch = 1;
+  NewMatch = 2;
+  StatePreparing = 3;
+  StatePrepared = 4;
+  StateWaitingReady = 5;
+  StateCountdown = 6;
+  StatePlaying = 7;
+  StateGameover = 8;
+  StateCrash = 9;
+  WinConditionSatisfied = 10;
 
-  SubscribeNewMatch = 11;
-  NewMatch = 12;
   PlayerReady = 21;
   PlayerMove = 22;
   PlayerGetPowerup = 23;
   PlayerPlantBomb = 24;
-  PlayerDead = 25;
-
-  BombPlanted = 31;
-  BombWillExplode = 32;
-  BombExploded = 33;
-  BoxRemoved = 34;
-  PowerupDropped = 35;
-  PowerupConsumed = 36;
+  
+  PlayerMoved = 31;
+  PlayerDead = 32;
+  BombPlanted = 33;
+  BombWillExplode = 34;
+  BombExploded = 35;
+  BoxRemoved = 36;
+  PowerupDropped = 37;
+  PowerupConsumed = 38;
 }
 
 message Event {
@@ -46,23 +47,24 @@ message Event {
   int64 timestamp = 2;
   int32 game_id = 3;
   oneof data {
-    CountdownData countdown = 11;
-    GameOverData game_over = 12;
-    CrashData crash = 13;
-    NewMatchData new_match = 14;
+    NewMatchData new_match = 11;
+    CountdownData countdown = 12;
+    GameOverData game_over = 13;
+    CrashData crash = 14;
 
     PlayerReadyData player_ready = 21;
     PlayerMoveData player_move = 22;
     PlayerGetPowerupData player_get_powerup = 23;
     PlayerPlantBombData player_plant_bomb = 24;
-    PlayerDeadData player_dead = 25;
 
+    PlayerMovedData player_moved = 31;
+    PlayerDeadData player_dead = 32;
     BombPlantedData bomb_planted = 33;
-    BombWillExplodeData bomb_will_explode = 32;
-    BombExplodedData bomb_exploded = 34;
-    BoxRemovedData box_removed = 35;
-    PowerupDroppedData powerup_dropped = 36;
-    PowerupConsumedData powerup_consumed = 37;
+    BombWillExplodeData bomb_will_explode = 34;
+    BombExplodedData bomb_exploded = 35;
+    BoxRemovedData box_removed = 36;
+    PowerupDroppedData powerup_dropped = 37;
+    PowerupConsumedData powerup_consumed = 38;
   }
 }
 
@@ -101,6 +103,12 @@ message PlayerGetPowerupData {
 }
 
 message PlayerPlantBombData {
+  int32 user_id = 1;
+  int32 x = 2;
+  int32 y = 3;
+}
+
+message PlayerMovedData {
   int32 user_id = 1;
   int32 x = 2;
   int32 y = 3;
@@ -174,7 +182,7 @@ message PowerupDto {
 
 enum ObstacleType {
   Box = 0;
-	House = 1 ;
+	House = 1;
 	Tree = 2;
 	Bomb = 3;
 }

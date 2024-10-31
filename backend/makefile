@@ -25,12 +25,10 @@ proto: check-tools
     --go-grpc_out=../internal \
 		--proto_path=. \
     ./common.proto ./auth.proto ./matchmaking.proto ./game.proto 
-	@cd proto/ && npx pbjs common.proto --ts npx pbjs -o ../../frontend/src/pkg_proto/compiled.js -t static-module -w es6 common.proto game.proto matchmaking.proto auth.proto
-	@cd proto/ && npx pbts -o ../../frontend/src/pkg_proto/compiled.d.ts ../../frontend/src/pkg_proto/compiled.js
 
 .PHONY: clean
 clean:
-	rm -rf ./internal/proto/*.pb.go
+	rm -rf ./internal/pkg_proto/*.pb.go
 
 .PHONY: setup
 setup: check-tools proto

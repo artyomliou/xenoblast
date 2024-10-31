@@ -373,6 +373,18 @@ func (g *gameController) HandlePlayerMove(ev *pkg_proto.Event) {
 	player.SetTile(g.gameMap.GetTile(data.X, data.Y))
 	player.X = data.X
 	player.Y = data.Y
+	go g.eventBus.Publish(&pkg_proto.Event{
+		Type:      pkg_proto.EventType_PlayerMoved,
+		Timestamp: time.Now().Unix(),
+		GameId:    g.id,
+		Data: &pkg_proto.Event_PlayerMoved{
+			PlayerMoved: &pkg_proto.PlayerMovedData{
+				UserId: data.UserId,
+				X:      data.X,
+				Y:      data.Y,
+			},
+		},
+	})
 	if g.debugMode {
 		g.logger.Printf("player %d move to X=%d Y=%d", player.userId, data.X, data.Y)
 	}

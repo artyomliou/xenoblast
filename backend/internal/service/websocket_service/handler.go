@@ -195,6 +195,8 @@ func (h *WebsocketHandler) recvGameEvent(ctx context.Context) {
 			pkg_proto.EventType_StateGameover,
 			pkg_proto.EventType_StateCrash,
 
+			pkg_proto.EventType_PlayerMoved,
+			pkg_proto.EventType_PlayerDead,
 			pkg_proto.EventType_BombPlanted,
 			pkg_proto.EventType_BombExploded,
 			pkg_proto.EventType_BoxRemoved,
