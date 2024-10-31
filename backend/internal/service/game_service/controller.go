@@ -405,8 +405,8 @@ func (g *gameController) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 		return
 	}
 
-	if player.BombCount == 0 {
-		g.logger.Printf("player %d BombCount is 0", data.UserId)
+	if player.BombCount <= 0 {
+		g.logger.Printf("player %d BombCount less than or equal to 0", data.UserId)
 		return
 	}
 	player.BombCount--
@@ -449,7 +449,6 @@ func (g *gameController) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 				},
 			},
 		})
-		player.BombCount++
 	}()
 }
 
@@ -466,14 +465,13 @@ func (g *gameController) HandleBombWillExplode(ev *pkg_proto.Event) {
 		return
 	}
 
-	player.BombCount++
-
 	if !g.gameMap.CheckObstacleType(data.X, data.Y, pkg_proto.ObstacleType_Bomb) {
 		return
 	}
 	g.gameMap.ClearObstacle(data.X, data.Y)
-
 	g.logger.Printf("bomb removed x=%d y=%d", data.X, data.Y)
+
+	player.BombCount++
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_BombExploded,
 		Timestamp: time.Now().Unix(),
@@ -484,7 +482,7 @@ func (g *gameController) HandleBombWillExplode(ev *pkg_proto.Event) {
 				Y:             data.Y,
 				BombFirepower: data.BombFirepower,
 				UserId:        data.UserId,
-				UserBombcount: data.BombFirepower,
+				UserBombcount: player.BombCount,
 			},
 		},
 	})
