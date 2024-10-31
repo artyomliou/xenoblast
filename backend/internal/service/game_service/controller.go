@@ -382,6 +382,8 @@ func (g *gameController) HandlePlayerMove(ev *pkg_proto.Event) {
 				UserId: data.UserId,
 				X:      data.X,
 				Y:      data.Y,
+				PixelX: data.PixelX,
+				PixelY: data.PixelY,
 			},
 		},
 	})

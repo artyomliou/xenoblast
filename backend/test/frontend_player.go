@@ -262,6 +262,8 @@ func (player *frontendPlayer) sendPlayerMoveOverWebsocket(t *testing.T) {
 				UserId: player.userId,
 				X:      1,
 				Y:      1,
+				PixelX: 1,
+				PixelY: 1,
 			},
 		},
 	}
@@ -279,6 +281,12 @@ func (player *frontendPlayer) receivePlayerMovedFromWebsocket(t *testing.T) {
 	err = proto.Unmarshal(msg, event)
 	assert.NoError(t, err)
 	assert.Equal(t, pkg_proto.EventType_PlayerMoved, event.Type)
+
+	data := event.GetPlayerMoved()
+	assert.Equal(t, 1, int(data.X))
+	assert.Equal(t, 1, int(data.Y))
+	assert.Equal(t, 1, int(data.PixelX))
+	assert.Equal(t, 1, int(data.PixelY))
 }
 
 func (player *frontendPlayer) sendHttpRequest(method string, path string, body map[string]any) ([]byte, error) {

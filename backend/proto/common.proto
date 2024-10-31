@@ -94,6 +94,8 @@ message PlayerMoveData {
   int32 user_id = 1;
   int32 x = 2;
   int32 y = 3;
+  int32 pixelX = 4;
+  int32 pixelY = 5;
 }
 
 message PlayerGetPowerupData {
@@ -112,6 +114,8 @@ message PlayerMovedData {
   int32 user_id = 1;
   int32 x = 2;
   int32 y = 3;
+  int32 pixelX = 4;
+  int32 pixelY = 5;
 }
 
 message PlayerDeadData {

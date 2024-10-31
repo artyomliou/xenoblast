@@ -306,6 +306,8 @@ func (h *WebsocketHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 				UserId: data.UserId,
 				X:      data.X,
 				Y:      data.Y,
+				PixelX: data.PixelX,
+				PixelY: data.PixelY,
 			},
 		},
 	})
