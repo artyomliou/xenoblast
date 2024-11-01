@@ -17,7 +17,7 @@ export namespace common {
 
     /** EventType enum. */
     enum EventType {
-        ControllerRun = 0,
+        SessionRun = 0,
         SubscribeNewMatch = 1,
         NewMatch = 2,
         StatePreparing = 3,

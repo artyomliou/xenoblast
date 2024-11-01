@@ -35,7 +35,7 @@ func (server *gameServer) NewGame(ctx context.Context, req *pkg_proto.NewGameReq
 
 	server.logger.Printf("NewGame(): %d", req.GameId)
 
-	if _, ok := server.service.controllers[req.GameId]; ok {
+	if _, ok := server.service.sessions[req.GameId]; ok {
 		server.logger.Println("skiped duplicated NewGame() request")
 		return nil, nil
 	}

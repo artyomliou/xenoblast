@@ -46,7 +46,7 @@ export const common = $root.common = (() => {
      * EventType enum.
      * @name common.EventType
      * @enum {number}
-     * @property {number} ControllerRun=0 ControllerRun value
+     * @property {number} SessionRun=0 SessionRun value
      * @property {number} SubscribeNewMatch=1 SubscribeNewMatch value
      * @property {number} NewMatch=2 NewMatch value
      * @property {number} StatePreparing=3 StatePreparing value
@@ -72,7 +72,7 @@ export const common = $root.common = (() => {
      */
     common.EventType = (function() {
         const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "ControllerRun"] = 0;
+        values[valuesById[0] = "SessionRun"] = 0;
         values[valuesById[1] = "SubscribeNewMatch"] = 1;
         values[valuesById[2] = "NewMatch"] = 2;
         values[valuesById[3] = "StatePreparing"] = 3;
@@ -729,7 +729,7 @@ export const common = $root.common = (() => {
                     break;
                 }
                 break;
-            case "ControllerRun":
+            case "SessionRun":
             case 0:
                 message.type = 0;
                 break;
@@ -930,7 +930,7 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.type = options.enums === String ? "ControllerRun" : 0;
+                object.type = options.enums === String ? "SessionRun" : 0;
                 if ($util.Long) {
                     let long = new $util.Long(0, 0, false);
                     object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
@@ -9730,7 +9730,7 @@ export const game = $root.game = (() => {
                             message.types[i] = object.types[i];
                             break;
                         }
-                    case "ControllerRun":
+                    case "SessionRun":
                     case 0:
                         message.types[i] = 0;
                         break;

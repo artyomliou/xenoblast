@@ -24,7 +24,7 @@ const GameMaxTime = 2 * time.Minute
 const BombBeforeExplodeDuration = 3 * time.Second
 const PowerupDropRate = 0.3
 
-type gameController struct {
+type gameSession struct {
 	id           int32
 	logger       *log.Logger
 	state        *state.StateManager
@@ -41,14 +41,14 @@ type gameController struct {
 	debugMode       bool
 }
 
-func NewGameController(id int32, state *state.StateManager, eventBus *eventbus.EventBus, gameMap *maploader.GameMap, players map[int32]*Player) (*gameController, error) {
+func NewGameSession(id int32, state *state.StateManager, eventBus *eventbus.EventBus, gameMap *maploader.GameMap, players map[int32]*Player) (*gameSession, error) {
 	if len(players) < MinimumPlayer {
 		return nil, &NotEnoughPlayerError{id}
 	}
 	if len(players) > MaximumPlayer {
 		return nil, &TooMuchPlayerError{id, MaximumPlayer, len(players)}
 	}
-	game := &gameController{
+	game := &gameSession{
 		id:           id,
 		logger:       log.New(os.Stderr, fmt.Sprintf("[game %d]", id), log.LstdFlags),
 		state:        state,
@@ -68,7 +68,7 @@ func NewGameController(id int32, state *state.StateManager, eventBus *eventbus.E
 	return game, nil
 }
 
-func (g *gameController) setupSerializeEventChannel() {
+func (g *gameSession) setupSerializeEventChannel() {
 	redirectEventToChannel := func(ev *pkg_proto.Event) {
 		select {
 		case g.eventCh <- ev:
@@ -90,7 +90,7 @@ func (g *gameController) setupSerializeEventChannel() {
 	g.eventBus.Subscribe(pkg_proto.EventType_StateGameover, redirectEventToChannel)
 }
 
-func (g *gameController) Run(ctx context.Context) {
+func (g *gameSession) Run(ctx context.Context) {
 	if g.debugMode {
 		g.logger.Printf("Run() start")
 		defer g.logger.Printf("Run() end")
@@ -100,7 +100,7 @@ func (g *gameController) Run(ctx context.Context) {
 	defer cancel()
 
 	go g.eventBus.Publish(&pkg_proto.Event{
-		Type:      pkg_proto.EventType_ControllerRun,
+		Type:      pkg_proto.EventType_SessionRun,
 		Timestamp: time.Now().Unix(),
 		GameId:    g.id,
 	})
@@ -168,7 +168,7 @@ func (g *gameController) Run(ctx context.Context) {
 	}
 }
 
-func (g *gameController) TriggerPreparing() {
+func (g *gameSession) TriggerPreparing() {
 	if err := g.state.Transition(pkg_proto.GameState_Preparing); err != nil {
 		g.logger.Print(err)
 		return
@@ -180,7 +180,7 @@ func (g *gameController) TriggerPreparing() {
 	})
 }
 
-func (g *gameController) HandlePreparing() {
+func (g *gameSession) HandlePreparing() {
 	g.prepare()
 
 	if err := g.state.Transition(pkg_proto.GameState_Prepared); err != nil {
@@ -194,11 +194,11 @@ func (g *gameController) HandlePreparing() {
 	})
 }
 
-func (g *gameController) PrepareForTesting() {
+func (g *gameSession) PrepareForTesting() {
 	g.prepare()
 }
 
-func (g *gameController) prepare() {
+func (g *gameSession) prepare() {
 	g.prepareOnce.Do(func() {
 		if g.debugMode {
 			g.logger.Printf("prepare() start")
@@ -210,7 +210,7 @@ func (g *gameController) prepare() {
 	})
 }
 
-func (g *gameController) setupPlayerCoords() {
+func (g *gameSession) setupPlayerCoords() {
 	keys := make([]int, 0, len(g.players))
 	for k := range g.players {
 		keys = append(keys, int(k))
@@ -230,19 +230,19 @@ func (g *gameController) setupPlayerCoords() {
 	}
 }
 
-func (g *gameController) setupPlayerAliveMap() {
+func (g *gameSession) setupPlayerAliveMap() {
 	for userId, _ := range g.players {
 		g.alivePlayers[userId] = true
 	}
 }
 
-func (g *gameController) setupPlayerReadyMap() {
+func (g *gameSession) setupPlayerReadyMap() {
 	for userId, _ := range g.players {
 		g.readyPlayers[userId] = false
 	}
 }
 
-func (g *gameController) HandlePrepared() {
+func (g *gameSession) HandlePrepared() {
 	if err := g.state.Transition(pkg_proto.GameState_WaitingReady); err != nil {
 		g.logger.Print(err)
 		return
@@ -272,7 +272,7 @@ func (g *gameController) HandlePrepared() {
 	}()
 }
 
-func (g *gameController) HandlePlayerReady(ev *pkg_proto.Event) {
+func (g *gameSession) HandlePlayerReady(ev *pkg_proto.Event) {
 	if g.state.CurrentState() != pkg_proto.GameState_WaitingReady {
 		return
 	}
@@ -312,11 +312,11 @@ func (g *gameController) HandlePlayerReady(ev *pkg_proto.Event) {
 	})
 }
 
-func (g *gameController) markPlayerReady(key int32) {
+func (g *gameSession) markPlayerReady(key int32) {
 	g.readyPlayers[key] = true
 }
 
-func (g *gameController) allPlayersReady() bool {
+func (g *gameSession) allPlayersReady() bool {
 	allReady := true
 	for _, ready := range g.readyPlayers {
 		if !ready {
@@ -327,7 +327,7 @@ func (g *gameController) allPlayersReady() bool {
 	return allReady
 }
 
-func (g *gameController) HandleCountdown(ev *pkg_proto.Event) {
+func (g *gameSession) HandleCountdown(ev *pkg_proto.Event) {
 	data := ev.GetCountdown()
 	if data == nil {
 		return
@@ -347,7 +347,7 @@ func (g *gameController) HandleCountdown(ev *pkg_proto.Event) {
 	})
 }
 
-func (g *gameController) HandlePlaying(ev *pkg_proto.Event) {
+func (g *gameSession) HandlePlaying(ev *pkg_proto.Event) {
 	<-time.After(GameMaxTime)
 	if err := g.state.Transition(pkg_proto.GameState_Gameover); err != nil {
 		g.logger.Print(err)
@@ -356,7 +356,7 @@ func (g *gameController) HandlePlaying(ev *pkg_proto.Event) {
 	g.publishGameoverEvent("times_up", 0)
 }
 
-func (g *gameController) HandlePlayerMove(ev *pkg_proto.Event) {
+func (g *gameSession) HandlePlayerMove(ev *pkg_proto.Event) {
 	if g.state.CurrentState() != pkg_proto.GameState_Playing {
 		return
 	}
@@ -392,7 +392,7 @@ func (g *gameController) HandlePlayerMove(ev *pkg_proto.Event) {
 	}
 }
 
-func (g *gameController) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
+func (g *gameSession) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 	if g.state.CurrentState() != pkg_proto.GameState_Playing {
 		return
 	}
@@ -452,7 +452,7 @@ func (g *gameController) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 	}()
 }
 
-func (g *gameController) HandleBombWillExplode(ev *pkg_proto.Event) {
+func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 	if g.state.CurrentState() != pkg_proto.GameState_Playing {
 		return
 	}
@@ -514,7 +514,7 @@ func (g *gameController) HandleBombWillExplode(ev *pkg_proto.Event) {
 	}
 }
 
-func (g *gameController) findBombedBoxCoords(data *pkg_proto.BombWillExplodeData) (bombedBoxCoords [][]int32) {
+func (g *gameSession) findBombedBoxCoords(data *pkg_proto.BombWillExplodeData) (bombedBoxCoords [][]int32) {
 	offsets := [][]int{
 		{-1, 0}, //left
 		{1, 0},  //right
@@ -540,7 +540,7 @@ func (g *gameController) findBombedBoxCoords(data *pkg_proto.BombWillExplodeData
 	return
 }
 
-func (g *gameController) findBombedPlayers(data *pkg_proto.BombWillExplodeData) (bombedPlayerIds []int32) {
+func (g *gameSession) findBombedPlayers(data *pkg_proto.BombWillExplodeData) (bombedPlayerIds []int32) {
 	x1 := data.X - data.BombFirepower
 	x2 := data.X + data.BombFirepower
 	y1 := data.Y - data.BombFirepower
@@ -557,7 +557,7 @@ func (g *gameController) findBombedPlayers(data *pkg_proto.BombWillExplodeData) 
 	return
 }
 
-func (g *gameController) replaceTileBoxWithPowerup(x, y int32) {
+func (g *gameSession) replaceTileBoxWithPowerup(x, y int32) {
 	g.gameMap.ClearObstacle(x, y)
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_BoxRemoved,
@@ -593,7 +593,7 @@ func (g *gameController) replaceTileBoxWithPowerup(x, y int32) {
 	}
 }
 
-func (g *gameController) rollPowerup() *pkg_proto.PowerupType {
+func (g *gameSession) rollPowerup() *pkg_proto.PowerupType {
 	availablePowerups := []pkg_proto.PowerupType{
 		pkg_proto.PowerupType_MoreBomb,
 		pkg_proto.PowerupType_MoreFire,
@@ -607,7 +607,7 @@ func (g *gameController) rollPowerup() *pkg_proto.PowerupType {
 	return nil
 }
 
-func (g *gameController) HandleGetPowerup(ev *pkg_proto.Event) {
+func (g *gameSession) HandleGetPowerup(ev *pkg_proto.Event) {
 	if g.state.CurrentState() != pkg_proto.GameState_Playing {
 		return
 	}
@@ -658,7 +658,7 @@ func (g *gameController) HandleGetPowerup(ev *pkg_proto.Event) {
 	}
 }
 
-func (g *gameController) HandlePlayerDead(ev *pkg_proto.Event) {
+func (g *gameSession) HandlePlayerDead(ev *pkg_proto.Event) {
 	if g.state.CurrentState() != pkg_proto.GameState_Playing {
 		return
 	}
@@ -684,7 +684,7 @@ func (g *gameController) HandlePlayerDead(ev *pkg_proto.Event) {
 	}
 }
 
-func (g *gameController) HandleWinConditionSatisfied(ev *pkg_proto.Event) {
+func (g *gameSession) HandleWinConditionSatisfied(ev *pkg_proto.Event) {
 	if err := g.state.Transition(pkg_proto.GameState_Gameover); err != nil {
 		g.logger.Print(err)
 		return
@@ -693,7 +693,7 @@ func (g *gameController) HandleWinConditionSatisfied(ev *pkg_proto.Event) {
 	g.publishGameoverEvent("win_condition_satisfied", g.winCondition.GetWinner())
 }
 
-func (g *gameController) publishGameoverEvent(reason string, winnerUserId int32) {
+func (g *gameSession) publishGameoverEvent(reason string, winnerUserId int32) {
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_StateGameover,
 		Timestamp: time.Now().Unix(),
@@ -707,7 +707,7 @@ func (g *gameController) publishGameoverEvent(reason string, winnerUserId int32)
 	})
 }
 
-func (g *gameController) publishCrashEvent(reason string) {
+func (g *gameSession) publishCrashEvent(reason string) {
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_StateCrash,
 		Timestamp: time.Now().Unix(),
@@ -720,10 +720,10 @@ func (g *gameController) publishCrashEvent(reason string) {
 	})
 }
 
-func (g *gameController) SetPowerupDropRate(rate float32) {
+func (g *gameSession) SetPowerupDropRate(rate float32) {
 	g.powerupDropRate = rate
 }
 
-func (g *gameController) TurnOnDebugMode() {
+func (g *gameSession) TurnOnDebugMode() {
 	g.debugMode = true
 }

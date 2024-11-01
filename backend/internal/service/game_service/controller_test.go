@@ -30,7 +30,7 @@ func fillPlayerHelper(players *map[int32]*gamelogic.Player, count int) {
 	}
 }
 
-func TestGameController(t *testing.T) {
+func TestGameSession(t *testing.T) {
 	mapLoader := maploader.NewYamlMapLoader()
 	fileContent, err := os.ReadFile(currentOnlyMap)
 	assert.NoError(t, err)
@@ -44,10 +44,10 @@ func TestGameController(t *testing.T) {
 
 		// execute
 		fillPlayerHelper(&players, 1)
-		ctl, err := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
+		sess, err := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
 
 		assert.Error(t, err)
-		assert.Nil(t, ctl)
+		assert.Nil(t, sess)
 	})
 
 	t.Run("failed to construct - too many player", func(t *testing.T) {
@@ -57,10 +57,10 @@ func TestGameController(t *testing.T) {
 
 		// execute
 		fillPlayerHelper(&players, 5)
-		ctl, err := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
+		sess, err := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
 
 		assert.Error(t, err)
-		assert.Nil(t, ctl)
+		assert.Nil(t, sess)
 	})
 
 	t.Run("State=Init. Send StatePreparing event trigger transition to WaitingReady.", func(t *testing.T) {
@@ -68,8 +68,8 @@ func TestGameController(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		ctl, _ := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
-		go ctl.Run(context.Background())
+		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+		go sess.Run(context.Background())
 
 		// execute
 		expectedEvent := make(chan *pkg_proto.Event)
@@ -77,7 +77,7 @@ func TestGameController(t *testing.T) {
 			expectedEvent <- event
 		})
 
-		ctl.TriggerPreparing()
+		sess.TriggerPreparing()
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
@@ -97,11 +97,11 @@ func TestGameController(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		ctl, _ := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
-		ctl.TurnOnDebugMode()
-		ctl.PrepareForTesting()
+		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+		sess.TurnOnDebugMode()
+		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_WaitingReady)
-		go ctl.Run(context.Background())
+		go sess.Run(context.Background())
 
 		// execute
 		expectedEvent := make(chan *pkg_proto.Event)
@@ -141,11 +141,11 @@ func TestGameController(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		ctl, _ := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
-		ctl.TurnOnDebugMode()
-		ctl.PrepareForTesting()
+		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+		sess.TurnOnDebugMode()
+		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_Countdown)
-		go ctl.Run(context.Background())
+		go sess.Run(context.Background())
 
 		// execute
 		expectedEvent := make(chan *pkg_proto.Event)
@@ -199,11 +199,11 @@ func TestGameController(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		ctl, _ := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
-		ctl.TurnOnDebugMode()
-		ctl.PrepareForTesting()
+		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+		sess.TurnOnDebugMode()
+		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_Playing)
-		go ctl.Run(context.Background())
+		go sess.Run(context.Background())
 
 		// execute
 		expectedEvent := make(chan *pkg_proto.Event)
@@ -241,11 +241,11 @@ func TestGameController(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		ctl, _ := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
-		ctl.TurnOnDebugMode()
-		ctl.PrepareForTesting()
+		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+		sess.TurnOnDebugMode()
+		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_Playing)
-		go ctl.Run(context.Background())
+		go sess.Run(context.Background())
 
 		// execute
 		expectedEvent := make(chan *pkg_proto.Event)
@@ -370,13 +370,13 @@ func TestGameController(t *testing.T) {
 				state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 				fillPlayerHelper(&players, 4)
 
-				ctl, _ := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
-				ctl.TurnOnDebugMode()
-				ctl.SetPowerupDropRate(c.PowerupDropRate)
+				sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+				sess.TurnOnDebugMode()
+				sess.SetPowerupDropRate(c.PowerupDropRate)
 
-				ctl.PrepareForTesting()
+				sess.PrepareForTesting()
 				state.SetStateForTesting(pkg_proto.GameState_Playing)
-				go ctl.Run(context.Background())
+				go sess.Run(context.Background())
 
 				// execute
 				expectedEvent := make(chan *pkg_proto.Event)
@@ -445,11 +445,11 @@ func TestGameController(t *testing.T) {
 
 				state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 				fillPlayerHelper(&players, 4)
-				ctl, _ := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
-				ctl.TurnOnDebugMode()
-				ctl.PrepareForTesting()
+				sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+				sess.TurnOnDebugMode()
+				sess.PrepareForTesting()
 				state.SetStateForTesting(pkg_proto.GameState_Playing)
-				go ctl.Run(context.Background())
+				go sess.Run(context.Background())
 
 				// execute
 				expectedEvent := make(chan *pkg_proto.Event)
@@ -520,11 +520,11 @@ func TestGameController(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		ctl, _ := gamelogic.NewGameController(1, state, eventBus, gameMap, players)
-		ctl.TurnOnDebugMode()
-		ctl.PrepareForTesting()
+		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+		sess.TurnOnDebugMode()
+		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_Playing)
-		go ctl.Run(context.Background())
+		go sess.Run(context.Background())
 
 		// execute
 		expectedEvent := make(chan *pkg_proto.Event)
