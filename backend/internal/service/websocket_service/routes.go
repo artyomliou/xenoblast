@@ -53,6 +53,6 @@ func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.
 	}
 
 	client := NewClient(conn)
-	clientHandler := NewHandler(client, player)
+	clientHandler := NewClientHandler(client, player)
 	go clientHandler.Run(ctx)
 }

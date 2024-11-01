@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type WebsocketHandler struct {
+type ClientHandler struct {
 	client *Client
 	player *pkg_proto.PlayerInfoDto
 	gameId int32
@@ -21,17 +21,17 @@ type WebsocketHandler struct {
 	msgCh  chan *messageContainer
 }
 
-func NewHandler(client *Client, player *pkg_proto.PlayerInfoDto) *WebsocketHandler {
-	return &WebsocketHandler{
+func NewClientHandler(client *Client, player *pkg_proto.PlayerInfoDto) *ClientHandler {
+	return &ClientHandler{
 		client: client,
 		player: player,
 		gameId: 0,
-		logger: log.New(os.Stdout, fmt.Sprintf("[websocket handler] player %d: ", player.UserId), log.LstdFlags),
+		logger: log.New(os.Stdout, fmt.Sprintf("[client handler] player %d: ", player.UserId), log.LstdFlags),
 		msgCh:  make(chan *messageContainer, 100),
 	}
 }
 
-func (h *WebsocketHandler) Run(ctx context.Context) {
+func (h *ClientHandler) Run(ctx context.Context) {
 	h.logger.Print("Run()")
 	defer h.logger.Print("Run() exit")
 	defer h.client.Close()
@@ -60,7 +60,7 @@ func (h *WebsocketHandler) Run(ctx context.Context) {
 
 			ev := msg.event
 			if msg.fromClient {
-				h.logger.Printf("websocket event: %s", ev.Type.String())
+				h.logger.Printf("client event: %s", ev.Type.String())
 				switch ev.Type {
 				case pkg_proto.EventType_SubscribeNewMatch:
 					go h.recvMatchmakingEvent(ctx)
@@ -104,7 +104,7 @@ func (h *WebsocketHandler) Run(ctx context.Context) {
 	}
 }
 
-func (h *WebsocketHandler) recvWebsocketEvent(ctx context.Context) {
+func (h *ClientHandler) recvWebsocketEvent(ctx context.Context) {
 	defer h.logger.Print("recvWebsocketEvent() exit")
 	for {
 		message, err := h.client.ReadMessage()
@@ -128,7 +128,7 @@ func (h *WebsocketHandler) recvWebsocketEvent(ctx context.Context) {
 	}
 }
 
-func (h *WebsocketHandler) recvMatchmakingEvent(ctx context.Context) {
+func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 	defer h.logger.Print("recvMatchmakingEvent() exit")
 
 	matchmakingClient, close, err := matchmaking_service.NewGrpcClient()
@@ -168,7 +168,7 @@ func (h *WebsocketHandler) recvMatchmakingEvent(ctx context.Context) {
 	}
 }
 
-func (h *WebsocketHandler) HandleNewMatch(ev *pkg_proto.Event) {
+func (h *ClientHandler) HandleNewMatch(ev *pkg_proto.Event) {
 	data := ev.GetNewMatch()
 	if data == nil {
 		return
@@ -176,7 +176,7 @@ func (h *WebsocketHandler) HandleNewMatch(ev *pkg_proto.Event) {
 	h.gameId = ev.GameId
 }
 
-func (h *WebsocketHandler) recvGameEvent(ctx context.Context) {
+func (h *ClientHandler) recvGameEvent(ctx context.Context) {
 	defer h.logger.Print("recvGameEvent() exit")
 
 	gameClient, close, err := game_service.NewGrpcClient()
@@ -231,7 +231,7 @@ func (h *WebsocketHandler) recvGameEvent(ctx context.Context) {
 	}
 }
 
-func (h *WebsocketHandler) sendEvent(ev *pkg_proto.Event) error {
+func (h *ClientHandler) sendEvent(ev *pkg_proto.Event) error {
 	bytes, err := proto.Marshal(ev)
 	if err != nil {
 		return err
@@ -243,7 +243,7 @@ func (h *WebsocketHandler) sendEvent(ev *pkg_proto.Event) error {
 	return nil
 }
 
-func (h *WebsocketHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
+func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 	data := msg.GetPlayerReady()
 	if data == nil {
 		h.logger.Print("data is nil")
@@ -281,7 +281,7 @@ func (h *WebsocketHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 	}
 }
 
-func (h *WebsocketHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
+func (h *ClientHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 	data := msg.GetPlayerMove()
 	if data == nil {
 		return
@@ -317,7 +317,7 @@ func (h *WebsocketHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 	}
 }
 
-func (h *WebsocketHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
+func (h *ClientHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
 	data := msg.GetPlayerPlantBomb()
 	if data == nil {
 		return
@@ -351,7 +351,7 @@ func (h *WebsocketHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
 	}
 }
 
-func (h *WebsocketHandler) HandlePlayerGetPowerupEvent(msg *pkg_proto.Event) {
+func (h *ClientHandler) HandlePlayerGetPowerupEvent(msg *pkg_proto.Event) {
 	data := msg.GetPlayerGetPowerup()
 	if data == nil {
 		return
