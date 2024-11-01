@@ -156,7 +156,7 @@ export class Game extends BaseScene {
       // setting this avoids too many collision which is annoying.
       player.sprite.setSize(35, 35).setOffset(2.5, 2.5);
 
-      if (player.userId == this.session.uid) {
+      if (player.user_id == this.session.uid) {
         this.player = player;
       }
     }
@@ -274,9 +274,9 @@ export class Game extends BaseScene {
     const event = common.Event.create({
       type: common.EventType.PlayerGetPowerup,
       timestamp: new Date().getTime() / 1000,
-      gameId: this.session.gameId,
-      playerGetPowerup: {
-        userId: this.session.uid,
+      game_id: this.session.gameId,
+      player_get_powerup: {
+        user_id: this.session.uid,
         x: tileX,
         y: tileY,
       },
@@ -399,13 +399,13 @@ export class Game extends BaseScene {
    * @param {common.Event} ev
    */
   handlePlayerMovedEvent(ev) {
-    if (ev.playerMoved.userId == this.session.uid) {
+    if (ev.player_moved.user_id == this.session.uid) {
       return;
     }
     for (const player of this.gameInfo.players) {
-      if (player.isAlive && player.userId == ev.playerMoved.userId) {
-        player.targetX = ev.playerMoved.x;
-        player.targetY = ev.playerMoved.y;
+      if (player.isAlive && player.user_id == ev.player_moved.user_id) {
+        player.targetX = ev.player_moved.x;
+        player.targetY = ev.player_moved.y;
       }
     }
   }
@@ -415,11 +415,11 @@ export class Game extends BaseScene {
    */
   handlePlayerDeadEvent(ev) {
     for (const player of this.gameInfo.players) {
-      if (player.userId == ev.playerDead.userId) {
+      if (player.user_id == ev.player_dead.user_id) {
         player.isAlive = false;
         player.sprite.destroy();
         player.sprite = null;
-        console.debug(`PlayerDead, user=${player.userId}`);
+        console.debug(`PlayerDead, user=${player.user_id}`);
       }
     }
   }
@@ -428,7 +428,7 @@ export class Game extends BaseScene {
    * @param {common.Event} ev
    */
   handleBombPlantedEvent(ev) {
-    const data = ev.bombPlanted;
+    const data = ev.bomb_planted;
     /**
      * @type {Tile}
      */
@@ -438,9 +438,9 @@ export class Game extends BaseScene {
     this.bombTiles.add(tile);
     console.debug(`BombPlanted, x=${data.x} y=${data.y}`);
 
-    if (data.userId == this.session.uid) {
-      this.player.bombcount = data.userBombcount;
-      console.debug(`bombcount was set to ${data.userBombcount}`);
+    if (data.user_id == this.session.uid) {
+      this.player.bombcount = data.user_bombcount;
+      console.debug(`bombcount was set to ${data.user_bombcount}`);
     }
   }
 
@@ -459,7 +459,7 @@ export class Game extends BaseScene {
    * @param {common.Event} ev
    */
   handleBombExplodedEvent(ev) {
-    const data = ev.bombExploded;
+    const data = ev.bomb_exploded;
     /**
      * @type {Tile}
      */
@@ -478,7 +478,7 @@ export class Game extends BaseScene {
       bomb.y,
       -TILE_SIZE,
       0,
-      data.bombFirepower,
+      data.bomb_firepower,
       "fire_x"
     );
     this.setupFire(
@@ -487,7 +487,7 @@ export class Game extends BaseScene {
       bomb.y,
       TILE_SIZE,
       0,
-      data.bombFirepower,
+      data.bomb_firepower,
       "fire_x"
     );
     this.setupFire(
@@ -496,7 +496,7 @@ export class Game extends BaseScene {
       bomb.y,
       0,
       -TILE_SIZE,
-      data.bombFirepower,
+      data.bomb_firepower,
       "fire_y"
     );
     this.setupFire(
@@ -505,7 +505,7 @@ export class Game extends BaseScene {
       bomb.y,
       0,
       TILE_SIZE,
-      data.bombFirepower,
+      data.bomb_firepower,
       "fire_y"
     );
     setTimeout(() => {
@@ -520,10 +520,10 @@ export class Game extends BaseScene {
     console.debug(`BombExploded, x=${data.x} y=${data.y}`);
 
     // Restore current player bombcount
-    if (data.userId == this.session.uid) {
-      this.player.bombcount = data.userBombcount;
+    if (data.user_id == this.session.uid) {
+      this.player.bombcount = data.user_bombcount;
       console.debug(
-        `bomb exploded, bombcount was set to ${data.userBombcount}`
+        `bomb exploded, bombcount was set to ${data.user_bombcount}`
       );
     }
   }
@@ -566,7 +566,7 @@ export class Game extends BaseScene {
    * @param {common.Event} ev
    */
   handleBoxRemovedEvent(ev) {
-    const data = ev.boxRemoved;
+    const data = ev.box_removed;
     /**
      * @type {Tile}
      */
@@ -585,7 +585,7 @@ export class Game extends BaseScene {
    * @param {common.Event} ev
    */
   handlePowerupDroppedEvent(ev) {
-    const data = ev.powerupDropped;
+    const data = ev.powerup_dropped;
     /**
      * @type {Tile}
      */
@@ -603,17 +603,17 @@ export class Game extends BaseScene {
    * @param {common.Event} ev
    */
   handlePowerupConsumedEvent(ev) {
-    const data = ev.powerupConsumed;
+    const data = ev.powerup_consumed;
     /**
      * @type {Tile}
      */
     const tile = this.gameInfo.tiles[data.x][data.y];
 
-    if (data.userId == this.session.uid) {
-      this.player.bombcount = data.userBombcount;
-      this.player.firepower = data.userFirepower;
+    if (data.user_id == this.session.uid) {
+      this.player.bombcount = data.user_bombcount;
+      this.player.firepower = data.user_firepower;
       console.debug(
-        `PowerupConsumed, bombcount=${data.userBombcount} firepower=${data.userFirepower}`
+        `PowerupConsumed, bombcount=${data.user_bombcount} firepower=${data.user_firepower}`
       );
     }
 
@@ -680,9 +680,9 @@ export class Game extends BaseScene {
               const event = common.Event.create({
                 type: common.EventType.PlayerPlantBomb,
                 timestamp: new Date().getTime() / 1000,
-                gameId: this.session.gameId,
-                playerPlantBomb: {
-                  userId: this.session.uid,
+                game_id: this.session.gameId,
+                player_plant_bomb: {
+                  user_id: this.session.uid,
                   x: tileX,
                   y: tileY,
                 },
@@ -697,7 +697,7 @@ export class Game extends BaseScene {
 
       // process other players
       this.gameInfo.players.forEach((player) => {
-        if (player.userId == this.session.uid) {
+        if (player.user_id == this.session.uid) {
           return;
         }
         player.update();
@@ -719,9 +719,9 @@ export class Game extends BaseScene {
       const event = common.Event.create({
         type: common.EventType.PlayerMove,
         timestamp: new Date().getTime() / 1000,
-        gameId: this.session.gameId,
-        playerMove: {
-          userId: this.session.uid,
+        game_id: this.session.gameId,
+        player_move: {
+          user_id: this.session.uid,
           x: tileX,
           y: tileY,
           pixelX: curX,

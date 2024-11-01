@@ -51,56 +51,56 @@ export namespace common {
         /** Event timestamp */
         timestamp?: (number|Long|null);
 
-        /** Event gameId */
-        gameId?: (number|null);
+        /** Event game_id */
+        game_id?: (number|null);
 
-        /** Event newMatch */
-        newMatch?: (common.INewMatchData|null);
+        /** Event new_match */
+        new_match?: (common.INewMatchData|null);
 
         /** Event countdown */
         countdown?: (common.ICountdownData|null);
 
-        /** Event gameOver */
-        gameOver?: (common.IGameOverData|null);
+        /** Event game_over */
+        game_over?: (common.IGameOverData|null);
 
         /** Event crash */
         crash?: (common.ICrashData|null);
 
-        /** Event playerReady */
-        playerReady?: (common.IPlayerReadyData|null);
+        /** Event player_ready */
+        player_ready?: (common.IPlayerReadyData|null);
 
-        /** Event playerMove */
-        playerMove?: (common.IPlayerMoveData|null);
+        /** Event player_move */
+        player_move?: (common.IPlayerMoveData|null);
 
-        /** Event playerGetPowerup */
-        playerGetPowerup?: (common.IPlayerGetPowerupData|null);
+        /** Event player_get_powerup */
+        player_get_powerup?: (common.IPlayerGetPowerupData|null);
 
-        /** Event playerPlantBomb */
-        playerPlantBomb?: (common.IPlayerPlantBombData|null);
+        /** Event player_plant_bomb */
+        player_plant_bomb?: (common.IPlayerPlantBombData|null);
 
-        /** Event playerMoved */
-        playerMoved?: (common.IPlayerMovedData|null);
+        /** Event player_moved */
+        player_moved?: (common.IPlayerMovedData|null);
 
-        /** Event playerDead */
-        playerDead?: (common.IPlayerDeadData|null);
+        /** Event player_dead */
+        player_dead?: (common.IPlayerDeadData|null);
 
-        /** Event bombPlanted */
-        bombPlanted?: (common.IBombPlantedData|null);
+        /** Event bomb_planted */
+        bomb_planted?: (common.IBombPlantedData|null);
 
-        /** Event bombWillExplode */
-        bombWillExplode?: (common.IBombWillExplodeData|null);
+        /** Event bomb_will_explode */
+        bomb_will_explode?: (common.IBombWillExplodeData|null);
 
-        /** Event bombExploded */
-        bombExploded?: (common.IBombExplodedData|null);
+        /** Event bomb_exploded */
+        bomb_exploded?: (common.IBombExplodedData|null);
 
-        /** Event boxRemoved */
-        boxRemoved?: (common.IBoxRemovedData|null);
+        /** Event box_removed */
+        box_removed?: (common.IBoxRemovedData|null);
 
-        /** Event powerupDropped */
-        powerupDropped?: (common.IPowerupDroppedData|null);
+        /** Event powerup_dropped */
+        powerup_dropped?: (common.IPowerupDroppedData|null);
 
-        /** Event powerupConsumed */
-        powerupConsumed?: (common.IPowerupConsumedData|null);
+        /** Event powerup_consumed */
+        powerup_consumed?: (common.IPowerupConsumedData|null);
     }
 
     /** Represents an Event. */
@@ -118,59 +118,59 @@ export namespace common {
         /** Event timestamp. */
         public timestamp: (number|Long);
 
-        /** Event gameId. */
-        public gameId: number;
+        /** Event game_id. */
+        public game_id: number;
 
-        /** Event newMatch. */
-        public newMatch?: (common.INewMatchData|null);
+        /** Event new_match. */
+        public new_match?: (common.INewMatchData|null);
 
         /** Event countdown. */
         public countdown?: (common.ICountdownData|null);
 
-        /** Event gameOver. */
-        public gameOver?: (common.IGameOverData|null);
+        /** Event game_over. */
+        public game_over?: (common.IGameOverData|null);
 
         /** Event crash. */
         public crash?: (common.ICrashData|null);
 
-        /** Event playerReady. */
-        public playerReady?: (common.IPlayerReadyData|null);
+        /** Event player_ready. */
+        public player_ready?: (common.IPlayerReadyData|null);
 
-        /** Event playerMove. */
-        public playerMove?: (common.IPlayerMoveData|null);
+        /** Event player_move. */
+        public player_move?: (common.IPlayerMoveData|null);
 
-        /** Event playerGetPowerup. */
-        public playerGetPowerup?: (common.IPlayerGetPowerupData|null);
+        /** Event player_get_powerup. */
+        public player_get_powerup?: (common.IPlayerGetPowerupData|null);
 
-        /** Event playerPlantBomb. */
-        public playerPlantBomb?: (common.IPlayerPlantBombData|null);
+        /** Event player_plant_bomb. */
+        public player_plant_bomb?: (common.IPlayerPlantBombData|null);
 
-        /** Event playerMoved. */
-        public playerMoved?: (common.IPlayerMovedData|null);
+        /** Event player_moved. */
+        public player_moved?: (common.IPlayerMovedData|null);
 
-        /** Event playerDead. */
-        public playerDead?: (common.IPlayerDeadData|null);
+        /** Event player_dead. */
+        public player_dead?: (common.IPlayerDeadData|null);
 
-        /** Event bombPlanted. */
-        public bombPlanted?: (common.IBombPlantedData|null);
+        /** Event bomb_planted. */
+        public bomb_planted?: (common.IBombPlantedData|null);
 
-        /** Event bombWillExplode. */
-        public bombWillExplode?: (common.IBombWillExplodeData|null);
+        /** Event bomb_will_explode. */
+        public bomb_will_explode?: (common.IBombWillExplodeData|null);
 
-        /** Event bombExploded. */
-        public bombExploded?: (common.IBombExplodedData|null);
+        /** Event bomb_exploded. */
+        public bomb_exploded?: (common.IBombExplodedData|null);
 
-        /** Event boxRemoved. */
-        public boxRemoved?: (common.IBoxRemovedData|null);
+        /** Event box_removed. */
+        public box_removed?: (common.IBoxRemovedData|null);
 
-        /** Event powerupDropped. */
-        public powerupDropped?: (common.IPowerupDroppedData|null);
+        /** Event powerup_dropped. */
+        public powerup_dropped?: (common.IPowerupDroppedData|null);
 
-        /** Event powerupConsumed. */
-        public powerupConsumed?: (common.IPowerupConsumedData|null);
+        /** Event powerup_consumed. */
+        public powerup_consumed?: (common.IPowerupConsumedData|null);
 
         /** Event data. */
-        public data?: ("newMatch"|"countdown"|"gameOver"|"crash"|"playerReady"|"playerMove"|"playerGetPowerup"|"playerPlantBomb"|"playerMoved"|"playerDead"|"bombPlanted"|"bombWillExplode"|"bombExploded"|"boxRemoved"|"powerupDropped"|"powerupConsumed");
+        public data?: ("new_match"|"countdown"|"game_over"|"crash"|"player_ready"|"player_move"|"player_get_powerup"|"player_plant_bomb"|"player_moved"|"player_dead"|"bomb_planted"|"bomb_will_explode"|"bomb_exploded"|"box_removed"|"powerup_dropped"|"powerup_consumed");
 
         /**
          * Creates a new Event instance using the specified properties.
@@ -253,11 +253,11 @@ export namespace common {
     /** Properties of a CountdownData. */
     interface ICountdownData {
 
-        /** CountdownData startTs */
-        startTs?: (number|Long|null);
+        /** CountdownData start_ts */
+        start_ts?: (number|Long|null);
 
-        /** CountdownData endTs */
-        endTs?: (number|Long|null);
+        /** CountdownData end_ts */
+        end_ts?: (number|Long|null);
     }
 
     /** Represents a CountdownData. */
@@ -269,11 +269,11 @@ export namespace common {
          */
         constructor(properties?: common.ICountdownData);
 
-        /** CountdownData startTs. */
-        public startTs: (number|Long);
+        /** CountdownData start_ts. */
+        public start_ts: (number|Long);
 
-        /** CountdownData endTs. */
-        public endTs: (number|Long);
+        /** CountdownData end_ts. */
+        public end_ts: (number|Long);
 
         /**
          * Creates a new CountdownData instance using the specified properties.
@@ -359,8 +359,8 @@ export namespace common {
         /** GameOverData reason */
         reason?: (string|null);
 
-        /** GameOverData winnerUserId */
-        winnerUserId?: (number|null);
+        /** GameOverData winner_user_id */
+        winner_user_id?: (number|null);
     }
 
     /** Represents a GameOverData. */
@@ -375,8 +375,8 @@ export namespace common {
         /** GameOverData reason. */
         public reason: string;
 
-        /** GameOverData winnerUserId. */
-        public winnerUserId: number;
+        /** GameOverData winner_user_id. */
+        public winner_user_id: number;
 
         /**
          * Creates a new GameOverData instance using the specified properties.
@@ -653,8 +653,8 @@ export namespace common {
     /** Properties of a PlayerReadyData. */
     interface IPlayerReadyData {
 
-        /** PlayerReadyData userId */
-        userId?: (number|null);
+        /** PlayerReadyData user_id */
+        user_id?: (number|null);
     }
 
     /** Represents a PlayerReadyData. */
@@ -666,8 +666,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerReadyData);
 
-        /** PlayerReadyData userId. */
-        public userId: number;
+        /** PlayerReadyData user_id. */
+        public user_id: number;
 
         /**
          * Creates a new PlayerReadyData instance using the specified properties.
@@ -750,8 +750,8 @@ export namespace common {
     /** Properties of a PlayerMoveData. */
     interface IPlayerMoveData {
 
-        /** PlayerMoveData userId */
-        userId?: (number|null);
+        /** PlayerMoveData user_id */
+        user_id?: (number|null);
 
         /** PlayerMoveData x */
         x?: (number|null);
@@ -775,8 +775,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerMoveData);
 
-        /** PlayerMoveData userId. */
-        public userId: number;
+        /** PlayerMoveData user_id. */
+        public user_id: number;
 
         /** PlayerMoveData x. */
         public x: number;
@@ -871,8 +871,8 @@ export namespace common {
     /** Properties of a PlayerGetPowerupData. */
     interface IPlayerGetPowerupData {
 
-        /** PlayerGetPowerupData userId */
-        userId?: (number|null);
+        /** PlayerGetPowerupData user_id */
+        user_id?: (number|null);
 
         /** PlayerGetPowerupData x */
         x?: (number|null);
@@ -890,8 +890,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerGetPowerupData);
 
-        /** PlayerGetPowerupData userId. */
-        public userId: number;
+        /** PlayerGetPowerupData user_id. */
+        public user_id: number;
 
         /** PlayerGetPowerupData x. */
         public x: number;
@@ -980,8 +980,8 @@ export namespace common {
     /** Properties of a PlayerPlantBombData. */
     interface IPlayerPlantBombData {
 
-        /** PlayerPlantBombData userId */
-        userId?: (number|null);
+        /** PlayerPlantBombData user_id */
+        user_id?: (number|null);
 
         /** PlayerPlantBombData x */
         x?: (number|null);
@@ -999,8 +999,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerPlantBombData);
 
-        /** PlayerPlantBombData userId. */
-        public userId: number;
+        /** PlayerPlantBombData user_id. */
+        public user_id: number;
 
         /** PlayerPlantBombData x. */
         public x: number;
@@ -1089,8 +1089,8 @@ export namespace common {
     /** Properties of a PlayerMovedData. */
     interface IPlayerMovedData {
 
-        /** PlayerMovedData userId */
-        userId?: (number|null);
+        /** PlayerMovedData user_id */
+        user_id?: (number|null);
 
         /** PlayerMovedData x */
         x?: (number|null);
@@ -1114,8 +1114,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerMovedData);
 
-        /** PlayerMovedData userId. */
-        public userId: number;
+        /** PlayerMovedData user_id. */
+        public user_id: number;
 
         /** PlayerMovedData x. */
         public x: number;
@@ -1210,8 +1210,8 @@ export namespace common {
     /** Properties of a PlayerDeadData. */
     interface IPlayerDeadData {
 
-        /** PlayerDeadData userId */
-        userId?: (number|null);
+        /** PlayerDeadData user_id */
+        user_id?: (number|null);
     }
 
     /** Represents a PlayerDeadData. */
@@ -1223,8 +1223,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerDeadData);
 
-        /** PlayerDeadData userId. */
-        public userId: number;
+        /** PlayerDeadData user_id. */
+        public user_id: number;
 
         /**
          * Creates a new PlayerDeadData instance using the specified properties.
@@ -1313,14 +1313,14 @@ export namespace common {
         /** BombPlantedData y */
         y?: (number|null);
 
-        /** BombPlantedData explodedAt */
-        explodedAt?: (number|Long|null);
+        /** BombPlantedData exploded_at */
+        exploded_at?: (number|Long|null);
 
-        /** BombPlantedData userId */
-        userId?: (number|null);
+        /** BombPlantedData user_id */
+        user_id?: (number|null);
 
-        /** BombPlantedData userBombcount */
-        userBombcount?: (number|null);
+        /** BombPlantedData user_bombcount */
+        user_bombcount?: (number|null);
     }
 
     /** Represents a BombPlantedData. */
@@ -1338,14 +1338,14 @@ export namespace common {
         /** BombPlantedData y. */
         public y: number;
 
-        /** BombPlantedData explodedAt. */
-        public explodedAt: (number|Long);
+        /** BombPlantedData exploded_at. */
+        public exploded_at: (number|Long);
 
-        /** BombPlantedData userId. */
-        public userId: number;
+        /** BombPlantedData user_id. */
+        public user_id: number;
 
-        /** BombPlantedData userBombcount. */
-        public userBombcount: number;
+        /** BombPlantedData user_bombcount. */
+        public user_bombcount: number;
 
         /**
          * Creates a new BombPlantedData instance using the specified properties.
@@ -1434,11 +1434,11 @@ export namespace common {
         /** BombWillExplodeData y */
         y?: (number|null);
 
-        /** BombWillExplodeData bombFirepower */
-        bombFirepower?: (number|null);
+        /** BombWillExplodeData bomb_firepower */
+        bomb_firepower?: (number|null);
 
-        /** BombWillExplodeData userId */
-        userId?: (number|null);
+        /** BombWillExplodeData user_id */
+        user_id?: (number|null);
     }
 
     /** Represents a BombWillExplodeData. */
@@ -1456,11 +1456,11 @@ export namespace common {
         /** BombWillExplodeData y. */
         public y: number;
 
-        /** BombWillExplodeData bombFirepower. */
-        public bombFirepower: number;
+        /** BombWillExplodeData bomb_firepower. */
+        public bomb_firepower: number;
 
-        /** BombWillExplodeData userId. */
-        public userId: number;
+        /** BombWillExplodeData user_id. */
+        public user_id: number;
 
         /**
          * Creates a new BombWillExplodeData instance using the specified properties.
@@ -1549,14 +1549,14 @@ export namespace common {
         /** BombExplodedData y */
         y?: (number|null);
 
-        /** BombExplodedData bombFirepower */
-        bombFirepower?: (number|null);
+        /** BombExplodedData bomb_firepower */
+        bomb_firepower?: (number|null);
 
-        /** BombExplodedData userId */
-        userId?: (number|null);
+        /** BombExplodedData user_id */
+        user_id?: (number|null);
 
-        /** BombExplodedData userBombcount */
-        userBombcount?: (number|null);
+        /** BombExplodedData user_bombcount */
+        user_bombcount?: (number|null);
     }
 
     /** Represents a BombExplodedData. */
@@ -1574,14 +1574,14 @@ export namespace common {
         /** BombExplodedData y. */
         public y: number;
 
-        /** BombExplodedData bombFirepower. */
-        public bombFirepower: number;
+        /** BombExplodedData bomb_firepower. */
+        public bomb_firepower: number;
 
-        /** BombExplodedData userId. */
-        public userId: number;
+        /** BombExplodedData user_id. */
+        public user_id: number;
 
-        /** BombExplodedData userBombcount. */
-        public userBombcount: number;
+        /** BombExplodedData user_bombcount. */
+        public user_bombcount: number;
 
         /**
          * Creates a new BombExplodedData instance using the specified properties.
@@ -1876,8 +1876,8 @@ export namespace common {
     /** Properties of a PowerupConsumedData. */
     interface IPowerupConsumedData {
 
-        /** PowerupConsumedData userId */
-        userId?: (number|null);
+        /** PowerupConsumedData user_id */
+        user_id?: (number|null);
 
         /** PowerupConsumedData x */
         x?: (number|null);
@@ -1888,11 +1888,11 @@ export namespace common {
         /** PowerupConsumedData type */
         type?: (common.PowerupType|null);
 
-        /** PowerupConsumedData userBombcount */
-        userBombcount?: (number|null);
+        /** PowerupConsumedData user_bombcount */
+        user_bombcount?: (number|null);
 
-        /** PowerupConsumedData userFirepower */
-        userFirepower?: (number|null);
+        /** PowerupConsumedData user_firepower */
+        user_firepower?: (number|null);
     }
 
     /** Represents a PowerupConsumedData. */
@@ -1904,8 +1904,8 @@ export namespace common {
          */
         constructor(properties?: common.IPowerupConsumedData);
 
-        /** PowerupConsumedData userId. */
-        public userId: number;
+        /** PowerupConsumedData user_id. */
+        public user_id: number;
 
         /** PowerupConsumedData x. */
         public x: number;
@@ -1916,11 +1916,11 @@ export namespace common {
         /** PowerupConsumedData type. */
         public type: common.PowerupType;
 
-        /** PowerupConsumedData userBombcount. */
-        public userBombcount: number;
+        /** PowerupConsumedData user_bombcount. */
+        public user_bombcount: number;
 
-        /** PowerupConsumedData userFirepower. */
-        public userFirepower: number;
+        /** PowerupConsumedData user_firepower. */
+        public user_firepower: number;
 
         /**
          * Creates a new PowerupConsumedData instance using the specified properties.
@@ -2003,8 +2003,8 @@ export namespace common {
     /** Properties of a PlayerPropertyDto. */
     interface IPlayerPropertyDto {
 
-        /** PlayerPropertyDto userId */
-        userId?: (number|null);
+        /** PlayerPropertyDto user_id */
+        user_id?: (number|null);
 
         /** PlayerPropertyDto x */
         x?: (number|null);
@@ -2028,8 +2028,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerPropertyDto);
 
-        /** PlayerPropertyDto userId. */
-        public userId: number;
+        /** PlayerPropertyDto user_id. */
+        public user_id: number;
 
         /** PlayerPropertyDto x. */
         public x: number;
@@ -2731,8 +2731,8 @@ export namespace auth {
     /** Properties of a RegisterResponse. */
     interface IRegisterResponse {
 
-        /** RegisterResponse apiKey */
-        apiKey?: (string|null);
+        /** RegisterResponse api_key */
+        api_key?: (string|null);
 
         /** RegisterResponse player */
         player?: (auth.IPlayerInfoDto|null);
@@ -2747,8 +2747,8 @@ export namespace auth {
          */
         constructor(properties?: auth.IRegisterResponse);
 
-        /** RegisterResponse apiKey. */
-        public apiKey: string;
+        /** RegisterResponse api_key. */
+        public api_key: string;
 
         /** RegisterResponse player. */
         public player?: (auth.IPlayerInfoDto|null);
@@ -2834,8 +2834,8 @@ export namespace auth {
     /** Properties of a ValidateRequest. */
     interface IValidateRequest {
 
-        /** ValidateRequest apiKey */
-        apiKey?: (string|null);
+        /** ValidateRequest api_key */
+        api_key?: (string|null);
     }
 
     /** Represents a ValidateRequest. */
@@ -2847,8 +2847,8 @@ export namespace auth {
          */
         constructor(properties?: auth.IValidateRequest);
 
-        /** ValidateRequest apiKey. */
-        public apiKey: string;
+        /** ValidateRequest api_key. */
+        public api_key: string;
 
         /**
          * Creates a new ValidateRequest instance using the specified properties.
@@ -3125,8 +3125,8 @@ export namespace auth {
     /** Properties of a PlayerInfoDto. */
     interface IPlayerInfoDto {
 
-        /** PlayerInfoDto userId */
-        userId?: (number|null);
+        /** PlayerInfoDto user_id */
+        user_id?: (number|null);
 
         /** PlayerInfoDto nickname */
         nickname?: (string|null);
@@ -3141,8 +3141,8 @@ export namespace auth {
          */
         constructor(properties?: auth.IPlayerInfoDto);
 
-        /** PlayerInfoDto userId. */
-        public userId: number;
+        /** PlayerInfoDto user_id. */
+        public user_id: number;
 
         /** PlayerInfoDto nickname. */
         public nickname: string;
@@ -3319,8 +3319,8 @@ export namespace matchmaking {
     /** Properties of a MatchmakingRequest. */
     interface IMatchmakingRequest {
 
-        /** MatchmakingRequest userId */
-        userId?: (number|null);
+        /** MatchmakingRequest user_id */
+        user_id?: (number|null);
     }
 
     /** Represents a MatchmakingRequest. */
@@ -3332,8 +3332,8 @@ export namespace matchmaking {
          */
         constructor(properties?: matchmaking.IMatchmakingRequest);
 
-        /** MatchmakingRequest userId. */
-        public userId: number;
+        /** MatchmakingRequest user_id. */
+        public user_id: number;
 
         /**
          * Creates a new MatchmakingRequest instance using the specified properties.
@@ -3627,8 +3627,8 @@ export namespace game {
     /** Properties of a NewGameRequest. */
     interface INewGameRequest {
 
-        /** NewGameRequest gameId */
-        gameId?: (number|null);
+        /** NewGameRequest game_id */
+        game_id?: (number|null);
 
         /** NewGameRequest players */
         players?: (number[]|null);
@@ -3643,8 +3643,8 @@ export namespace game {
          */
         constructor(properties?: game.INewGameRequest);
 
-        /** NewGameRequest gameId. */
-        public gameId: number;
+        /** NewGameRequest game_id. */
+        public game_id: number;
 
         /** NewGameRequest players. */
         public players: number[];
@@ -3730,8 +3730,8 @@ export namespace game {
     /** Properties of a GetGameInfoRequest. */
     interface IGetGameInfoRequest {
 
-        /** GetGameInfoRequest gameId */
-        gameId?: (number|null);
+        /** GetGameInfoRequest game_id */
+        game_id?: (number|null);
     }
 
     /** Represents a GetGameInfoRequest. */
@@ -3743,8 +3743,8 @@ export namespace game {
          */
         constructor(properties?: game.IGetGameInfoRequest);
 
-        /** GetGameInfoRequest gameId. */
-        public gameId: number;
+        /** GetGameInfoRequest game_id. */
+        public game_id: number;
 
         /**
          * Creates a new GetGameInfoRequest instance using the specified properties.
@@ -3827,8 +3827,8 @@ export namespace game {
     /** Properties of a GetGameInfoResponse. */
     interface IGetGameInfoResponse {
 
-        /** GetGameInfoResponse gameId */
-        gameId?: (number|null);
+        /** GetGameInfoResponse game_id */
+        game_id?: (number|null);
 
         /** GetGameInfoResponse state */
         state?: (common.GameState|null);
@@ -3836,11 +3836,11 @@ export namespace game {
         /** GetGameInfoResponse players */
         players?: (common.IPlayerPropertyDto[]|null);
 
-        /** GetGameInfoResponse mapWidth */
-        mapWidth?: (number|null);
+        /** GetGameInfoResponse map_width */
+        map_width?: (number|null);
 
-        /** GetGameInfoResponse mapHeight */
-        mapHeight?: (number|null);
+        /** GetGameInfoResponse map_height */
+        map_height?: (number|null);
 
         /** GetGameInfoResponse tiles */
         tiles?: (common.ITileDto[]|null);
@@ -3855,8 +3855,8 @@ export namespace game {
          */
         constructor(properties?: game.IGetGameInfoResponse);
 
-        /** GetGameInfoResponse gameId. */
-        public gameId: number;
+        /** GetGameInfoResponse game_id. */
+        public game_id: number;
 
         /** GetGameInfoResponse state. */
         public state: common.GameState;
@@ -3864,11 +3864,11 @@ export namespace game {
         /** GetGameInfoResponse players. */
         public players: common.IPlayerPropertyDto[];
 
-        /** GetGameInfoResponse mapWidth. */
-        public mapWidth: number;
+        /** GetGameInfoResponse map_width. */
+        public map_width: number;
 
-        /** GetGameInfoResponse mapHeight. */
-        public mapHeight: number;
+        /** GetGameInfoResponse map_height. */
+        public map_height: number;
 
         /** GetGameInfoResponse tiles. */
         public tiles: common.ITileDto[];
@@ -3954,8 +3954,8 @@ export namespace game {
     /** Properties of a SubscribeRequest. */
     interface ISubscribeRequest {
 
-        /** SubscribeRequest gameId */
-        gameId?: (number|null);
+        /** SubscribeRequest game_id */
+        game_id?: (number|null);
 
         /** SubscribeRequest types */
         types?: (common.EventType[]|null);
@@ -3970,8 +3970,8 @@ export namespace game {
          */
         constructor(properties?: game.ISubscribeRequest);
 
-        /** SubscribeRequest gameId. */
-        public gameId: number;
+        /** SubscribeRequest game_id. */
+        public game_id: number;
 
         /** SubscribeRequest types. */
         public types: common.EventType[];
@@ -4048,6 +4048,507 @@ export namespace game {
 
         /**
          * Gets the default type url for SubscribeRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+}
+
+/** Namespace http_api. */
+export namespace http_api {
+
+    /** Properties of a HttpApiRegisterRequest. */
+    interface IHttpApiRegisterRequest {
+
+        /** HttpApiRegisterRequest nickname */
+        nickname?: (string|null);
+    }
+
+    /** Represents a HttpApiRegisterRequest. */
+    class HttpApiRegisterRequest implements IHttpApiRegisterRequest {
+
+        /**
+         * Constructs a new HttpApiRegisterRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: http_api.IHttpApiRegisterRequest);
+
+        /** HttpApiRegisterRequest nickname. */
+        public nickname: string;
+
+        /**
+         * Creates a new HttpApiRegisterRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HttpApiRegisterRequest instance
+         */
+        public static create(properties?: http_api.IHttpApiRegisterRequest): http_api.HttpApiRegisterRequest;
+
+        /**
+         * Encodes the specified HttpApiRegisterRequest message. Does not implicitly {@link http_api.HttpApiRegisterRequest.verify|verify} messages.
+         * @param message HttpApiRegisterRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: http_api.IHttpApiRegisterRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HttpApiRegisterRequest message, length delimited. Does not implicitly {@link http_api.HttpApiRegisterRequest.verify|verify} messages.
+         * @param message HttpApiRegisterRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: http_api.IHttpApiRegisterRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HttpApiRegisterRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HttpApiRegisterRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiRegisterRequest;
+
+        /**
+         * Decodes a HttpApiRegisterRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HttpApiRegisterRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiRegisterRequest;
+
+        /**
+         * Verifies a HttpApiRegisterRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HttpApiRegisterRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HttpApiRegisterRequest
+         */
+        public static fromObject(object: { [k: string]: any }): http_api.HttpApiRegisterRequest;
+
+        /**
+         * Creates a plain object from a HttpApiRegisterRequest message. Also converts values to other types if specified.
+         * @param message HttpApiRegisterRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: http_api.HttpApiRegisterRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HttpApiRegisterRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpApiRegisterRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a HttpApiRegisterResponse. */
+    interface IHttpApiRegisterResponse {
+
+        /** HttpApiRegisterResponse api_key */
+        api_key?: (string|null);
+
+        /** HttpApiRegisterResponse user_id */
+        user_id?: (number|null);
+    }
+
+    /** Represents a HttpApiRegisterResponse. */
+    class HttpApiRegisterResponse implements IHttpApiRegisterResponse {
+
+        /**
+         * Constructs a new HttpApiRegisterResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: http_api.IHttpApiRegisterResponse);
+
+        /** HttpApiRegisterResponse api_key. */
+        public api_key: string;
+
+        /** HttpApiRegisterResponse user_id. */
+        public user_id: number;
+
+        /**
+         * Creates a new HttpApiRegisterResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HttpApiRegisterResponse instance
+         */
+        public static create(properties?: http_api.IHttpApiRegisterResponse): http_api.HttpApiRegisterResponse;
+
+        /**
+         * Encodes the specified HttpApiRegisterResponse message. Does not implicitly {@link http_api.HttpApiRegisterResponse.verify|verify} messages.
+         * @param message HttpApiRegisterResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: http_api.IHttpApiRegisterResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HttpApiRegisterResponse message, length delimited. Does not implicitly {@link http_api.HttpApiRegisterResponse.verify|verify} messages.
+         * @param message HttpApiRegisterResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: http_api.IHttpApiRegisterResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HttpApiRegisterResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HttpApiRegisterResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiRegisterResponse;
+
+        /**
+         * Decodes a HttpApiRegisterResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HttpApiRegisterResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiRegisterResponse;
+
+        /**
+         * Verifies a HttpApiRegisterResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HttpApiRegisterResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HttpApiRegisterResponse
+         */
+        public static fromObject(object: { [k: string]: any }): http_api.HttpApiRegisterResponse;
+
+        /**
+         * Creates a plain object from a HttpApiRegisterResponse message. Also converts values to other types if specified.
+         * @param message HttpApiRegisterResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: http_api.HttpApiRegisterResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HttpApiRegisterResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpApiRegisterResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a HttpApiValidateRequest. */
+    interface IHttpApiValidateRequest {
+
+        /** HttpApiValidateRequest api_key */
+        api_key?: (string|null);
+    }
+
+    /** Represents a HttpApiValidateRequest. */
+    class HttpApiValidateRequest implements IHttpApiValidateRequest {
+
+        /**
+         * Constructs a new HttpApiValidateRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: http_api.IHttpApiValidateRequest);
+
+        /** HttpApiValidateRequest api_key. */
+        public api_key: string;
+
+        /**
+         * Creates a new HttpApiValidateRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HttpApiValidateRequest instance
+         */
+        public static create(properties?: http_api.IHttpApiValidateRequest): http_api.HttpApiValidateRequest;
+
+        /**
+         * Encodes the specified HttpApiValidateRequest message. Does not implicitly {@link http_api.HttpApiValidateRequest.verify|verify} messages.
+         * @param message HttpApiValidateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: http_api.IHttpApiValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HttpApiValidateRequest message, length delimited. Does not implicitly {@link http_api.HttpApiValidateRequest.verify|verify} messages.
+         * @param message HttpApiValidateRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: http_api.IHttpApiValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HttpApiValidateRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HttpApiValidateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiValidateRequest;
+
+        /**
+         * Decodes a HttpApiValidateRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HttpApiValidateRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiValidateRequest;
+
+        /**
+         * Verifies a HttpApiValidateRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HttpApiValidateRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HttpApiValidateRequest
+         */
+        public static fromObject(object: { [k: string]: any }): http_api.HttpApiValidateRequest;
+
+        /**
+         * Creates a plain object from a HttpApiValidateRequest message. Also converts values to other types if specified.
+         * @param message HttpApiValidateRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: http_api.HttpApiValidateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HttpApiValidateRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpApiValidateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a HttpApiValidateResponse. */
+    interface IHttpApiValidateResponse {
+
+        /** HttpApiValidateResponse player */
+        player?: (auth.IPlayerInfoDto|null);
+    }
+
+    /** Represents a HttpApiValidateResponse. */
+    class HttpApiValidateResponse implements IHttpApiValidateResponse {
+
+        /**
+         * Constructs a new HttpApiValidateResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: http_api.IHttpApiValidateResponse);
+
+        /** HttpApiValidateResponse player. */
+        public player?: (auth.IPlayerInfoDto|null);
+
+        /**
+         * Creates a new HttpApiValidateResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HttpApiValidateResponse instance
+         */
+        public static create(properties?: http_api.IHttpApiValidateResponse): http_api.HttpApiValidateResponse;
+
+        /**
+         * Encodes the specified HttpApiValidateResponse message. Does not implicitly {@link http_api.HttpApiValidateResponse.verify|verify} messages.
+         * @param message HttpApiValidateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: http_api.IHttpApiValidateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HttpApiValidateResponse message, length delimited. Does not implicitly {@link http_api.HttpApiValidateResponse.verify|verify} messages.
+         * @param message HttpApiValidateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: http_api.IHttpApiValidateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HttpApiValidateResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HttpApiValidateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiValidateResponse;
+
+        /**
+         * Decodes a HttpApiValidateResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HttpApiValidateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiValidateResponse;
+
+        /**
+         * Verifies a HttpApiValidateResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HttpApiValidateResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HttpApiValidateResponse
+         */
+        public static fromObject(object: { [k: string]: any }): http_api.HttpApiValidateResponse;
+
+        /**
+         * Creates a plain object from a HttpApiValidateResponse message. Also converts values to other types if specified.
+         * @param message HttpApiValidateResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: http_api.HttpApiValidateResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HttpApiValidateResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpApiValidateResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a HttpApiGetGameInfoRequest. */
+    interface IHttpApiGetGameInfoRequest {
+
+        /** HttpApiGetGameInfoRequest api_key */
+        api_key?: (string|null);
+
+        /** HttpApiGetGameInfoRequest game_id */
+        game_id?: (number|null);
+    }
+
+    /** Represents a HttpApiGetGameInfoRequest. */
+    class HttpApiGetGameInfoRequest implements IHttpApiGetGameInfoRequest {
+
+        /**
+         * Constructs a new HttpApiGetGameInfoRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: http_api.IHttpApiGetGameInfoRequest);
+
+        /** HttpApiGetGameInfoRequest api_key. */
+        public api_key: string;
+
+        /** HttpApiGetGameInfoRequest game_id. */
+        public game_id: number;
+
+        /**
+         * Creates a new HttpApiGetGameInfoRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HttpApiGetGameInfoRequest instance
+         */
+        public static create(properties?: http_api.IHttpApiGetGameInfoRequest): http_api.HttpApiGetGameInfoRequest;
+
+        /**
+         * Encodes the specified HttpApiGetGameInfoRequest message. Does not implicitly {@link http_api.HttpApiGetGameInfoRequest.verify|verify} messages.
+         * @param message HttpApiGetGameInfoRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: http_api.IHttpApiGetGameInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HttpApiGetGameInfoRequest message, length delimited. Does not implicitly {@link http_api.HttpApiGetGameInfoRequest.verify|verify} messages.
+         * @param message HttpApiGetGameInfoRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: http_api.IHttpApiGetGameInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HttpApiGetGameInfoRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HttpApiGetGameInfoRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiGetGameInfoRequest;
+
+        /**
+         * Decodes a HttpApiGetGameInfoRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HttpApiGetGameInfoRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiGetGameInfoRequest;
+
+        /**
+         * Verifies a HttpApiGetGameInfoRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HttpApiGetGameInfoRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HttpApiGetGameInfoRequest
+         */
+        public static fromObject(object: { [k: string]: any }): http_api.HttpApiGetGameInfoRequest;
+
+        /**
+         * Creates a plain object from a HttpApiGetGameInfoRequest message. Also converts values to other types if specified.
+         * @param message HttpApiGetGameInfoRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: http_api.HttpApiGetGameInfoRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HttpApiGetGameInfoRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpApiGetGameInfoRequest
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */

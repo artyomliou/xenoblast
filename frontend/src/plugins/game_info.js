@@ -1,6 +1,4 @@
 import { Plugins } from "phaser";
-// import * as common_pb from  "../pkg_proto/common.ts";
-// import * as game_pb from "../pkg_proto/game.ts";
 import { common, game } from "../pkg_proto/compiled.js";
 import { pixelToTile, tileToPixel } from "../helper/map.js";
 
@@ -25,8 +23,8 @@ export class GameInfo extends Plugins.BasePlugin {
    * @param {game.GetGameInfoResponse} gameInfo
    */
   applyGameInfo(gameInfo) {
-    this.mapWidth = gameInfo.mapWidth;
-    this.mapHeight = gameInfo.mapHeight;
+    this.mapWidth = gameInfo.map_width;
+    this.mapHeight = gameInfo.map_height;
 
     for (const playerPropertyDto of gameInfo.players) {
       this.players.push(new Player(playerPropertyDto));
@@ -35,10 +33,10 @@ export class GameInfo extends Plugins.BasePlugin {
     // To avoid directly reference gameInfo.tiles, we just copy types here
     // Sprite will be created in game.js
     const tiles = gameInfo.tiles;
-    for (let x = 0; x < gameInfo.mapWidth; x++) {
+    for (let x = 0; x < gameInfo.map_width; x++) {
       this.tiles[x] = [];
-      for (let y = 0; y < gameInfo.mapHeight; y++) {
-        const idx = x * gameInfo.mapHeight + y;
+      for (let y = 0; y < gameInfo.map_height; y++) {
+        const idx = x * gameInfo.map_height + y;
         const tileDto = gameInfo.tiles[idx];
 
         const tile = (this.tiles[x][y] = new Tile());

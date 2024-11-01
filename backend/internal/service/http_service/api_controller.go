@@ -13,19 +13,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type RegisterRequest struct {
-	Nickname string `json:"nickname,omitempty"`
-}
-
-type ValidateRequest struct {
-	ApiKey string `json:"api_key,omitempty"`
-}
-
-type GetGameInfoRequest struct {
-	ApiKey string `json:"api_key,omitempty"`
-	GameId int32  `json:"game_id,omitempty"`
-}
-
 type apiController struct {
 	logger *log.Logger
 }
@@ -37,7 +24,7 @@ func NewApiController() *apiController {
 }
 
 func (ctl *apiController) Register(ctx *gin.Context) {
-	var req RegisterRequest
+	var req pkg_proto.HttpApiRegisterRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -57,11 +44,14 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, resp)
+	ctx.JSON(http.StatusOK, &pkg_proto.HttpApiRegisterResponse{
+		ApiKey: resp.ApiKey,
+		UserId: resp.Player.UserId,
+	})
 }
 
 func (ctl *apiController) Validate(ctx *gin.Context) {
-	var req ValidateRequest
+	var req pkg_proto.HttpApiValidateRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -81,11 +71,13 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, player)
+	ctx.JSON(http.StatusOK, &pkg_proto.HttpApiValidateResponse{
+		Player: player,
+	})
 }
 
 func (ctl *apiController) Enroll(ctx *gin.Context) {
-	var req ValidateRequest
+	var req pkg_proto.HttpApiValidateRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -123,7 +115,7 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 }
 
 func (ctl *apiController) Cancel(ctx *gin.Context) {
-	var req ValidateRequest
+	var req pkg_proto.HttpApiValidateRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -161,7 +153,7 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 }
 
 func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
-	var req GetGameInfoRequest
+	var req pkg_proto.HttpApiGetGameInfoRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctl.logger.Print("bind error: ", err)
 		ctx.String(http.StatusBadRequest, "Invalid request")

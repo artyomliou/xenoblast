@@ -100,7 +100,7 @@ export class WaitingRoom extends BaseScene {
     const event = common.Event.fromObject({
       type: common.EventType.SubscribeNewMatch,
       timestamp: new Date().getTime / 1000,
-      gameId: this.session.gameId,
+      game_id: this.session.gameId,
     });
     console.debug("send " + common.EventType[event.type], event);
     const msg = common.Event.encode(event).finish();
@@ -112,11 +112,11 @@ export class WaitingRoom extends BaseScene {
       common.EventType.NewMatch,
       60
     );
-    this.session.gameId = event.gameId;
-    if (!event.gameId) {
+    this.session.gameId = event.game_id;
+    if (!event.game_id) {
       throw new Error("event.gameId should not be zero value");
     }
-    console.debug("gameId", event.gameId);
+    console.debug("gameId", event.game_id);
   }
 
   async receiveWaitingReadyFromWebsocket() {
@@ -139,9 +139,9 @@ export class WaitingRoom extends BaseScene {
     const event = common.Event.fromObject({
       type: common.EventType.PlayerReady,
       timestamp: new Date().getTime() / 1000,
-      gameId: this.session.gameId,
-      playerReady: {
-        userId: this.session.uid,
+      game_id: this.session.gameId,
+      player_ready: {
+        user_id: this.session.uid,
       },
     });
     console.debug("send " + common.EventType[event.type]);

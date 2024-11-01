@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
-        "proto-js": "npx pbjs -t static-module -w es6 -o ./src/pkg_proto/compiled.js ../backend/proto/common.proto ../backend/proto/auth.proto ../backend/proto/matchmaking.proto ../backend/proto/game.proto",
+        "proto-js": "npx pbjs --keep-case -t static-module -w es6 -o ./src/pkg_proto/compiled.js ../backend/proto/common.proto ../backend/proto/auth.proto ../backend/proto/matchmaking.proto ../backend/proto/game.proto ../backend/proto/http_api.proto",
         "proto-ts": "npx pbts -o ./src/pkg_proto/compiled.d.ts ./src/pkg_proto/compiled.js",
         "dev": "vite --config vite/config.dev.mjs",
         "build": "vite build --config vite/config.prod.mjs"

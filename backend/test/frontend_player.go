@@ -125,11 +125,11 @@ func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
 	respBytes, err := player.sendHttpRequest(http.MethodPost, "api/auth/register", body)
 	assert.NoError(t, err)
 
-	resp := &pkg_proto.RegisterResponse{}
+	resp := &pkg_proto.HttpApiRegisterResponse{}
 	err = json.Unmarshal(respBytes, resp)
 	assert.NoError(t, err)
 	player.apiKey = resp.ApiKey
-	player.userId = resp.Player.UserId
+	player.userId = resp.UserId
 }
 
 func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {

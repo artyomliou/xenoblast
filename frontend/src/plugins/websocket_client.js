@@ -1,5 +1,4 @@
 import { Plugins } from "phaser";
-import { common } from "../pkg_proto/compiled";
 
 export class WebsocketClient extends Plugins.BasePlugin {
   constructor(pluginManager) {

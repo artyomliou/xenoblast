@@ -24,7 +24,7 @@ proto: check-tools
 	@cd proto/ && protoc --go_out=../internal \
     --go-grpc_out=../internal \
 		--proto_path=. \
-    ./common.proto ./auth.proto ./matchmaking.proto ./game.proto 
+    ./common.proto ./auth.proto ./matchmaking.proto ./game.proto ./http_api.proto
 
 .PHONY: clean
 clean:

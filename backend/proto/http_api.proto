@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "auth.proto";
+package http_api;
+option go_package = "./pkg_proto";
+
+message HttpApiRegisterRequest {
+  string nickname = 1;
+}
+
+message HttpApiRegisterResponse{
+  string api_key = 1;
+  int32 user_id = 2;
+}
+
+message HttpApiValidateRequest {
+  string api_key = 1;
+}
+
+message HttpApiValidateResponse {
+  auth.PlayerInfoDto player = 1;
+}
+
+message HttpApiGetGameInfoRequest {
+  string api_key = 1;
+  int32 game_id = 2;
+}
