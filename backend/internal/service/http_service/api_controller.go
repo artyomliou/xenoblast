@@ -27,7 +27,7 @@ func NewApiController() *apiController {
 }
 
 func (ctl *apiController) Register(ctx *gin.Context) {
-	var req http_api.HttpApiRegisterRequest
+	var req http_api.RegisterRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -47,14 +47,14 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &http_api.HttpApiRegisterResponse{
+	ctx.JSON(http.StatusOK, &http_api.RegisterResponse{
 		ApiKey: resp.ApiKey,
 		UserId: resp.Player.UserId,
 	})
 }
 
 func (ctl *apiController) Validate(ctx *gin.Context) {
-	var req http_api.HttpApiValidateRequest
+	var req http_api.ValidateRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -74,13 +74,13 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &http_api.HttpApiValidateResponse{
+	ctx.JSON(http.StatusOK, &http_api.ValidateResponse{
 		Player: player,
 	})
 }
 
 func (ctl *apiController) Enroll(ctx *gin.Context) {
-	var req http_api.HttpApiValidateRequest
+	var req http_api.ValidateRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -118,7 +118,7 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 }
 
 func (ctl *apiController) Cancel(ctx *gin.Context) {
-	var req http_api.HttpApiValidateRequest
+	var req http_api.ValidateRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -156,7 +156,7 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 }
 
 func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
-	var req http_api.HttpApiGetGameInfoRequest
+	var req http_api.GetGameInfoRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctl.logger.Print("bind error: ", err)
 		ctx.String(http.StatusBadRequest, "Invalid request")

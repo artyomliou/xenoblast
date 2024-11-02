@@ -9895,24 +9895,24 @@ export const http_api = $root.http_api = (() => {
      */
     const http_api = {};
 
-    http_api.HttpApiRegisterRequest = (function() {
+    http_api.RegisterRequest = (function() {
 
         /**
-         * Properties of a HttpApiRegisterRequest.
+         * Properties of a RegisterRequest.
          * @memberof http_api
-         * @interface IHttpApiRegisterRequest
-         * @property {string|null} [nickname] HttpApiRegisterRequest nickname
+         * @interface IRegisterRequest
+         * @property {string|null} [nickname] RegisterRequest nickname
          */
 
         /**
-         * Constructs a new HttpApiRegisterRequest.
+         * Constructs a new RegisterRequest.
          * @memberof http_api
-         * @classdesc Represents a HttpApiRegisterRequest.
-         * @implements IHttpApiRegisterRequest
+         * @classdesc Represents a RegisterRequest.
+         * @implements IRegisterRequest
          * @constructor
-         * @param {http_api.IHttpApiRegisterRequest=} [properties] Properties to set
+         * @param {http_api.IRegisterRequest=} [properties] Properties to set
          */
-        function HttpApiRegisterRequest(properties) {
+        function RegisterRequest(properties) {
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -9920,35 +9920,35 @@ export const http_api = $root.http_api = (() => {
         }
 
         /**
-         * HttpApiRegisterRequest nickname.
+         * RegisterRequest nickname.
          * @member {string} nickname
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @instance
          */
-        HttpApiRegisterRequest.prototype.nickname = "";
+        RegisterRequest.prototype.nickname = "";
 
         /**
-         * Creates a new HttpApiRegisterRequest instance using the specified properties.
+         * Creates a new RegisterRequest instance using the specified properties.
          * @function create
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @static
-         * @param {http_api.IHttpApiRegisterRequest=} [properties] Properties to set
-         * @returns {http_api.HttpApiRegisterRequest} HttpApiRegisterRequest instance
+         * @param {http_api.IRegisterRequest=} [properties] Properties to set
+         * @returns {http_api.RegisterRequest} RegisterRequest instance
          */
-        HttpApiRegisterRequest.create = function create(properties) {
-            return new HttpApiRegisterRequest(properties);
+        RegisterRequest.create = function create(properties) {
+            return new RegisterRequest(properties);
         };
 
         /**
-         * Encodes the specified HttpApiRegisterRequest message. Does not implicitly {@link http_api.HttpApiRegisterRequest.verify|verify} messages.
+         * Encodes the specified RegisterRequest message. Does not implicitly {@link http_api.RegisterRequest.verify|verify} messages.
          * @function encode
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @static
-         * @param {http_api.IHttpApiRegisterRequest} message HttpApiRegisterRequest message or plain object to encode
+         * @param {http_api.IRegisterRequest} message RegisterRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiRegisterRequest.encode = function encode(message, writer) {
+        RegisterRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.nickname != null && Object.hasOwnProperty.call(message, "nickname"))
@@ -9957,33 +9957,33 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Encodes the specified HttpApiRegisterRequest message, length delimited. Does not implicitly {@link http_api.HttpApiRegisterRequest.verify|verify} messages.
+         * Encodes the specified RegisterRequest message, length delimited. Does not implicitly {@link http_api.RegisterRequest.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @static
-         * @param {http_api.IHttpApiRegisterRequest} message HttpApiRegisterRequest message or plain object to encode
+         * @param {http_api.IRegisterRequest} message RegisterRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiRegisterRequest.encodeDelimited = function encodeDelimited(message, writer) {
+        RegisterRequest.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a HttpApiRegisterRequest message from the specified reader or buffer.
+         * Decodes a RegisterRequest message from the specified reader or buffer.
          * @function decode
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {http_api.HttpApiRegisterRequest} HttpApiRegisterRequest
+         * @returns {http_api.RegisterRequest} RegisterRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiRegisterRequest.decode = function decode(reader, length) {
+        RegisterRequest.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.HttpApiRegisterRequest();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.RegisterRequest();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -10000,30 +10000,30 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Decodes a HttpApiRegisterRequest message from the specified reader or buffer, length delimited.
+         * Decodes a RegisterRequest message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {http_api.HttpApiRegisterRequest} HttpApiRegisterRequest
+         * @returns {http_api.RegisterRequest} RegisterRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiRegisterRequest.decodeDelimited = function decodeDelimited(reader) {
+        RegisterRequest.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a HttpApiRegisterRequest message.
+         * Verifies a RegisterRequest message.
          * @function verify
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        HttpApiRegisterRequest.verify = function verify(message) {
+        RegisterRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.nickname != null && message.hasOwnProperty("nickname"))
@@ -10033,32 +10033,32 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Creates a HttpApiRegisterRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a RegisterRequest message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {http_api.HttpApiRegisterRequest} HttpApiRegisterRequest
+         * @returns {http_api.RegisterRequest} RegisterRequest
          */
-        HttpApiRegisterRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.http_api.HttpApiRegisterRequest)
+        RegisterRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.http_api.RegisterRequest)
                 return object;
-            let message = new $root.http_api.HttpApiRegisterRequest();
+            let message = new $root.http_api.RegisterRequest();
             if (object.nickname != null)
                 message.nickname = String(object.nickname);
             return message;
         };
 
         /**
-         * Creates a plain object from a HttpApiRegisterRequest message. Also converts values to other types if specified.
+         * Creates a plain object from a RegisterRequest message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @static
-         * @param {http_api.HttpApiRegisterRequest} message HttpApiRegisterRequest
+         * @param {http_api.RegisterRequest} message RegisterRequest
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        HttpApiRegisterRequest.toObject = function toObject(message, options) {
+        RegisterRequest.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             let object = {};
@@ -10070,53 +10070,53 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Converts this HttpApiRegisterRequest to JSON.
+         * Converts this RegisterRequest to JSON.
          * @function toJSON
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        HttpApiRegisterRequest.prototype.toJSON = function toJSON() {
+        RegisterRequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
         /**
-         * Gets the default type url for HttpApiRegisterRequest
+         * Gets the default type url for RegisterRequest
          * @function getTypeUrl
-         * @memberof http_api.HttpApiRegisterRequest
+         * @memberof http_api.RegisterRequest
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
          */
-        HttpApiRegisterRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+        RegisterRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/http_api.HttpApiRegisterRequest";
+            return typeUrlPrefix + "/http_api.RegisterRequest";
         };
 
-        return HttpApiRegisterRequest;
+        return RegisterRequest;
     })();
 
-    http_api.HttpApiRegisterResponse = (function() {
+    http_api.RegisterResponse = (function() {
 
         /**
-         * Properties of a HttpApiRegisterResponse.
+         * Properties of a RegisterResponse.
          * @memberof http_api
-         * @interface IHttpApiRegisterResponse
-         * @property {string|null} [apiKey] HttpApiRegisterResponse apiKey
-         * @property {number|null} [userId] HttpApiRegisterResponse userId
+         * @interface IRegisterResponse
+         * @property {string|null} [apiKey] RegisterResponse apiKey
+         * @property {number|null} [userId] RegisterResponse userId
          */
 
         /**
-         * Constructs a new HttpApiRegisterResponse.
+         * Constructs a new RegisterResponse.
          * @memberof http_api
-         * @classdesc Represents a HttpApiRegisterResponse.
-         * @implements IHttpApiRegisterResponse
+         * @classdesc Represents a RegisterResponse.
+         * @implements IRegisterResponse
          * @constructor
-         * @param {http_api.IHttpApiRegisterResponse=} [properties] Properties to set
+         * @param {http_api.IRegisterResponse=} [properties] Properties to set
          */
-        function HttpApiRegisterResponse(properties) {
+        function RegisterResponse(properties) {
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -10124,43 +10124,43 @@ export const http_api = $root.http_api = (() => {
         }
 
         /**
-         * HttpApiRegisterResponse apiKey.
+         * RegisterResponse apiKey.
          * @member {string} apiKey
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @instance
          */
-        HttpApiRegisterResponse.prototype.apiKey = "";
+        RegisterResponse.prototype.apiKey = "";
 
         /**
-         * HttpApiRegisterResponse userId.
+         * RegisterResponse userId.
          * @member {number} userId
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @instance
          */
-        HttpApiRegisterResponse.prototype.userId = 0;
+        RegisterResponse.prototype.userId = 0;
 
         /**
-         * Creates a new HttpApiRegisterResponse instance using the specified properties.
+         * Creates a new RegisterResponse instance using the specified properties.
          * @function create
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @static
-         * @param {http_api.IHttpApiRegisterResponse=} [properties] Properties to set
-         * @returns {http_api.HttpApiRegisterResponse} HttpApiRegisterResponse instance
+         * @param {http_api.IRegisterResponse=} [properties] Properties to set
+         * @returns {http_api.RegisterResponse} RegisterResponse instance
          */
-        HttpApiRegisterResponse.create = function create(properties) {
-            return new HttpApiRegisterResponse(properties);
+        RegisterResponse.create = function create(properties) {
+            return new RegisterResponse(properties);
         };
 
         /**
-         * Encodes the specified HttpApiRegisterResponse message. Does not implicitly {@link http_api.HttpApiRegisterResponse.verify|verify} messages.
+         * Encodes the specified RegisterResponse message. Does not implicitly {@link http_api.RegisterResponse.verify|verify} messages.
          * @function encode
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @static
-         * @param {http_api.IHttpApiRegisterResponse} message HttpApiRegisterResponse message or plain object to encode
+         * @param {http_api.IRegisterResponse} message RegisterResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiRegisterResponse.encode = function encode(message, writer) {
+        RegisterResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
@@ -10171,33 +10171,33 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Encodes the specified HttpApiRegisterResponse message, length delimited. Does not implicitly {@link http_api.HttpApiRegisterResponse.verify|verify} messages.
+         * Encodes the specified RegisterResponse message, length delimited. Does not implicitly {@link http_api.RegisterResponse.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @static
-         * @param {http_api.IHttpApiRegisterResponse} message HttpApiRegisterResponse message or plain object to encode
+         * @param {http_api.IRegisterResponse} message RegisterResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiRegisterResponse.encodeDelimited = function encodeDelimited(message, writer) {
+        RegisterResponse.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a HttpApiRegisterResponse message from the specified reader or buffer.
+         * Decodes a RegisterResponse message from the specified reader or buffer.
          * @function decode
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {http_api.HttpApiRegisterResponse} HttpApiRegisterResponse
+         * @returns {http_api.RegisterResponse} RegisterResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiRegisterResponse.decode = function decode(reader, length) {
+        RegisterResponse.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.HttpApiRegisterResponse();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.RegisterResponse();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -10218,30 +10218,30 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Decodes a HttpApiRegisterResponse message from the specified reader or buffer, length delimited.
+         * Decodes a RegisterResponse message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {http_api.HttpApiRegisterResponse} HttpApiRegisterResponse
+         * @returns {http_api.RegisterResponse} RegisterResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiRegisterResponse.decodeDelimited = function decodeDelimited(reader) {
+        RegisterResponse.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a HttpApiRegisterResponse message.
+         * Verifies a RegisterResponse message.
          * @function verify
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        HttpApiRegisterResponse.verify = function verify(message) {
+        RegisterResponse.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.apiKey != null && message.hasOwnProperty("apiKey"))
@@ -10254,17 +10254,17 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Creates a HttpApiRegisterResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates a RegisterResponse message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {http_api.HttpApiRegisterResponse} HttpApiRegisterResponse
+         * @returns {http_api.RegisterResponse} RegisterResponse
          */
-        HttpApiRegisterResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.http_api.HttpApiRegisterResponse)
+        RegisterResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.http_api.RegisterResponse)
                 return object;
-            let message = new $root.http_api.HttpApiRegisterResponse();
+            let message = new $root.http_api.RegisterResponse();
             if (object.apiKey != null)
                 message.apiKey = String(object.apiKey);
             if (object.userId != null)
@@ -10273,15 +10273,15 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Creates a plain object from a HttpApiRegisterResponse message. Also converts values to other types if specified.
+         * Creates a plain object from a RegisterResponse message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @static
-         * @param {http_api.HttpApiRegisterResponse} message HttpApiRegisterResponse
+         * @param {http_api.RegisterResponse} message RegisterResponse
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        HttpApiRegisterResponse.toObject = function toObject(message, options) {
+        RegisterResponse.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             let object = {};
@@ -10297,52 +10297,52 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Converts this HttpApiRegisterResponse to JSON.
+         * Converts this RegisterResponse to JSON.
          * @function toJSON
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        HttpApiRegisterResponse.prototype.toJSON = function toJSON() {
+        RegisterResponse.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
         /**
-         * Gets the default type url for HttpApiRegisterResponse
+         * Gets the default type url for RegisterResponse
          * @function getTypeUrl
-         * @memberof http_api.HttpApiRegisterResponse
+         * @memberof http_api.RegisterResponse
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
          */
-        HttpApiRegisterResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+        RegisterResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/http_api.HttpApiRegisterResponse";
+            return typeUrlPrefix + "/http_api.RegisterResponse";
         };
 
-        return HttpApiRegisterResponse;
+        return RegisterResponse;
     })();
 
-    http_api.HttpApiValidateRequest = (function() {
+    http_api.ValidateRequest = (function() {
 
         /**
-         * Properties of a HttpApiValidateRequest.
+         * Properties of a ValidateRequest.
          * @memberof http_api
-         * @interface IHttpApiValidateRequest
-         * @property {string|null} [apiKey] HttpApiValidateRequest apiKey
+         * @interface IValidateRequest
+         * @property {string|null} [apiKey] ValidateRequest apiKey
          */
 
         /**
-         * Constructs a new HttpApiValidateRequest.
+         * Constructs a new ValidateRequest.
          * @memberof http_api
-         * @classdesc Represents a HttpApiValidateRequest.
-         * @implements IHttpApiValidateRequest
+         * @classdesc Represents a ValidateRequest.
+         * @implements IValidateRequest
          * @constructor
-         * @param {http_api.IHttpApiValidateRequest=} [properties] Properties to set
+         * @param {http_api.IValidateRequest=} [properties] Properties to set
          */
-        function HttpApiValidateRequest(properties) {
+        function ValidateRequest(properties) {
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -10350,35 +10350,35 @@ export const http_api = $root.http_api = (() => {
         }
 
         /**
-         * HttpApiValidateRequest apiKey.
+         * ValidateRequest apiKey.
          * @member {string} apiKey
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @instance
          */
-        HttpApiValidateRequest.prototype.apiKey = "";
+        ValidateRequest.prototype.apiKey = "";
 
         /**
-         * Creates a new HttpApiValidateRequest instance using the specified properties.
+         * Creates a new ValidateRequest instance using the specified properties.
          * @function create
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @static
-         * @param {http_api.IHttpApiValidateRequest=} [properties] Properties to set
-         * @returns {http_api.HttpApiValidateRequest} HttpApiValidateRequest instance
+         * @param {http_api.IValidateRequest=} [properties] Properties to set
+         * @returns {http_api.ValidateRequest} ValidateRequest instance
          */
-        HttpApiValidateRequest.create = function create(properties) {
-            return new HttpApiValidateRequest(properties);
+        ValidateRequest.create = function create(properties) {
+            return new ValidateRequest(properties);
         };
 
         /**
-         * Encodes the specified HttpApiValidateRequest message. Does not implicitly {@link http_api.HttpApiValidateRequest.verify|verify} messages.
+         * Encodes the specified ValidateRequest message. Does not implicitly {@link http_api.ValidateRequest.verify|verify} messages.
          * @function encode
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @static
-         * @param {http_api.IHttpApiValidateRequest} message HttpApiValidateRequest message or plain object to encode
+         * @param {http_api.IValidateRequest} message ValidateRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiValidateRequest.encode = function encode(message, writer) {
+        ValidateRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
@@ -10387,33 +10387,33 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Encodes the specified HttpApiValidateRequest message, length delimited. Does not implicitly {@link http_api.HttpApiValidateRequest.verify|verify} messages.
+         * Encodes the specified ValidateRequest message, length delimited. Does not implicitly {@link http_api.ValidateRequest.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @static
-         * @param {http_api.IHttpApiValidateRequest} message HttpApiValidateRequest message or plain object to encode
+         * @param {http_api.IValidateRequest} message ValidateRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiValidateRequest.encodeDelimited = function encodeDelimited(message, writer) {
+        ValidateRequest.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a HttpApiValidateRequest message from the specified reader or buffer.
+         * Decodes a ValidateRequest message from the specified reader or buffer.
          * @function decode
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {http_api.HttpApiValidateRequest} HttpApiValidateRequest
+         * @returns {http_api.ValidateRequest} ValidateRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiValidateRequest.decode = function decode(reader, length) {
+        ValidateRequest.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.HttpApiValidateRequest();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.ValidateRequest();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -10430,30 +10430,30 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Decodes a HttpApiValidateRequest message from the specified reader or buffer, length delimited.
+         * Decodes a ValidateRequest message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {http_api.HttpApiValidateRequest} HttpApiValidateRequest
+         * @returns {http_api.ValidateRequest} ValidateRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiValidateRequest.decodeDelimited = function decodeDelimited(reader) {
+        ValidateRequest.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a HttpApiValidateRequest message.
+         * Verifies a ValidateRequest message.
          * @function verify
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        HttpApiValidateRequest.verify = function verify(message) {
+        ValidateRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.apiKey != null && message.hasOwnProperty("apiKey"))
@@ -10463,32 +10463,32 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Creates a HttpApiValidateRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a ValidateRequest message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {http_api.HttpApiValidateRequest} HttpApiValidateRequest
+         * @returns {http_api.ValidateRequest} ValidateRequest
          */
-        HttpApiValidateRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.http_api.HttpApiValidateRequest)
+        ValidateRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.http_api.ValidateRequest)
                 return object;
-            let message = new $root.http_api.HttpApiValidateRequest();
+            let message = new $root.http_api.ValidateRequest();
             if (object.apiKey != null)
                 message.apiKey = String(object.apiKey);
             return message;
         };
 
         /**
-         * Creates a plain object from a HttpApiValidateRequest message. Also converts values to other types if specified.
+         * Creates a plain object from a ValidateRequest message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @static
-         * @param {http_api.HttpApiValidateRequest} message HttpApiValidateRequest
+         * @param {http_api.ValidateRequest} message ValidateRequest
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        HttpApiValidateRequest.toObject = function toObject(message, options) {
+        ValidateRequest.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             let object = {};
@@ -10500,52 +10500,52 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Converts this HttpApiValidateRequest to JSON.
+         * Converts this ValidateRequest to JSON.
          * @function toJSON
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        HttpApiValidateRequest.prototype.toJSON = function toJSON() {
+        ValidateRequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
         /**
-         * Gets the default type url for HttpApiValidateRequest
+         * Gets the default type url for ValidateRequest
          * @function getTypeUrl
-         * @memberof http_api.HttpApiValidateRequest
+         * @memberof http_api.ValidateRequest
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
          */
-        HttpApiValidateRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+        ValidateRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/http_api.HttpApiValidateRequest";
+            return typeUrlPrefix + "/http_api.ValidateRequest";
         };
 
-        return HttpApiValidateRequest;
+        return ValidateRequest;
     })();
 
-    http_api.HttpApiValidateResponse = (function() {
+    http_api.ValidateResponse = (function() {
 
         /**
-         * Properties of a HttpApiValidateResponse.
+         * Properties of a ValidateResponse.
          * @memberof http_api
-         * @interface IHttpApiValidateResponse
-         * @property {auth.IPlayerInfoDto|null} [player] HttpApiValidateResponse player
+         * @interface IValidateResponse
+         * @property {auth.IPlayerInfoDto|null} [player] ValidateResponse player
          */
 
         /**
-         * Constructs a new HttpApiValidateResponse.
+         * Constructs a new ValidateResponse.
          * @memberof http_api
-         * @classdesc Represents a HttpApiValidateResponse.
-         * @implements IHttpApiValidateResponse
+         * @classdesc Represents a ValidateResponse.
+         * @implements IValidateResponse
          * @constructor
-         * @param {http_api.IHttpApiValidateResponse=} [properties] Properties to set
+         * @param {http_api.IValidateResponse=} [properties] Properties to set
          */
-        function HttpApiValidateResponse(properties) {
+        function ValidateResponse(properties) {
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -10553,35 +10553,35 @@ export const http_api = $root.http_api = (() => {
         }
 
         /**
-         * HttpApiValidateResponse player.
+         * ValidateResponse player.
          * @member {auth.IPlayerInfoDto|null|undefined} player
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @instance
          */
-        HttpApiValidateResponse.prototype.player = null;
+        ValidateResponse.prototype.player = null;
 
         /**
-         * Creates a new HttpApiValidateResponse instance using the specified properties.
+         * Creates a new ValidateResponse instance using the specified properties.
          * @function create
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @static
-         * @param {http_api.IHttpApiValidateResponse=} [properties] Properties to set
-         * @returns {http_api.HttpApiValidateResponse} HttpApiValidateResponse instance
+         * @param {http_api.IValidateResponse=} [properties] Properties to set
+         * @returns {http_api.ValidateResponse} ValidateResponse instance
          */
-        HttpApiValidateResponse.create = function create(properties) {
-            return new HttpApiValidateResponse(properties);
+        ValidateResponse.create = function create(properties) {
+            return new ValidateResponse(properties);
         };
 
         /**
-         * Encodes the specified HttpApiValidateResponse message. Does not implicitly {@link http_api.HttpApiValidateResponse.verify|verify} messages.
+         * Encodes the specified ValidateResponse message. Does not implicitly {@link http_api.ValidateResponse.verify|verify} messages.
          * @function encode
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @static
-         * @param {http_api.IHttpApiValidateResponse} message HttpApiValidateResponse message or plain object to encode
+         * @param {http_api.IValidateResponse} message ValidateResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiValidateResponse.encode = function encode(message, writer) {
+        ValidateResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.player != null && Object.hasOwnProperty.call(message, "player"))
@@ -10590,33 +10590,33 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Encodes the specified HttpApiValidateResponse message, length delimited. Does not implicitly {@link http_api.HttpApiValidateResponse.verify|verify} messages.
+         * Encodes the specified ValidateResponse message, length delimited. Does not implicitly {@link http_api.ValidateResponse.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @static
-         * @param {http_api.IHttpApiValidateResponse} message HttpApiValidateResponse message or plain object to encode
+         * @param {http_api.IValidateResponse} message ValidateResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiValidateResponse.encodeDelimited = function encodeDelimited(message, writer) {
+        ValidateResponse.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a HttpApiValidateResponse message from the specified reader or buffer.
+         * Decodes a ValidateResponse message from the specified reader or buffer.
          * @function decode
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {http_api.HttpApiValidateResponse} HttpApiValidateResponse
+         * @returns {http_api.ValidateResponse} ValidateResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiValidateResponse.decode = function decode(reader, length) {
+        ValidateResponse.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.HttpApiValidateResponse();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.ValidateResponse();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -10633,30 +10633,30 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Decodes a HttpApiValidateResponse message from the specified reader or buffer, length delimited.
+         * Decodes a ValidateResponse message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {http_api.HttpApiValidateResponse} HttpApiValidateResponse
+         * @returns {http_api.ValidateResponse} ValidateResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiValidateResponse.decodeDelimited = function decodeDelimited(reader) {
+        ValidateResponse.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a HttpApiValidateResponse message.
+         * Verifies a ValidateResponse message.
          * @function verify
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        HttpApiValidateResponse.verify = function verify(message) {
+        ValidateResponse.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.player != null && message.hasOwnProperty("player")) {
@@ -10668,35 +10668,35 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Creates a HttpApiValidateResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates a ValidateResponse message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {http_api.HttpApiValidateResponse} HttpApiValidateResponse
+         * @returns {http_api.ValidateResponse} ValidateResponse
          */
-        HttpApiValidateResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.http_api.HttpApiValidateResponse)
+        ValidateResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.http_api.ValidateResponse)
                 return object;
-            let message = new $root.http_api.HttpApiValidateResponse();
+            let message = new $root.http_api.ValidateResponse();
             if (object.player != null) {
                 if (typeof object.player !== "object")
-                    throw TypeError(".http_api.HttpApiValidateResponse.player: object expected");
+                    throw TypeError(".http_api.ValidateResponse.player: object expected");
                 message.player = $root.auth.PlayerInfoDto.fromObject(object.player);
             }
             return message;
         };
 
         /**
-         * Creates a plain object from a HttpApiValidateResponse message. Also converts values to other types if specified.
+         * Creates a plain object from a ValidateResponse message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @static
-         * @param {http_api.HttpApiValidateResponse} message HttpApiValidateResponse
+         * @param {http_api.ValidateResponse} message ValidateResponse
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        HttpApiValidateResponse.toObject = function toObject(message, options) {
+        ValidateResponse.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             let object = {};
@@ -10708,53 +10708,53 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Converts this HttpApiValidateResponse to JSON.
+         * Converts this ValidateResponse to JSON.
          * @function toJSON
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        HttpApiValidateResponse.prototype.toJSON = function toJSON() {
+        ValidateResponse.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
         /**
-         * Gets the default type url for HttpApiValidateResponse
+         * Gets the default type url for ValidateResponse
          * @function getTypeUrl
-         * @memberof http_api.HttpApiValidateResponse
+         * @memberof http_api.ValidateResponse
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
          */
-        HttpApiValidateResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+        ValidateResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/http_api.HttpApiValidateResponse";
+            return typeUrlPrefix + "/http_api.ValidateResponse";
         };
 
-        return HttpApiValidateResponse;
+        return ValidateResponse;
     })();
 
-    http_api.HttpApiGetGameInfoRequest = (function() {
+    http_api.GetGameInfoRequest = (function() {
 
         /**
-         * Properties of a HttpApiGetGameInfoRequest.
+         * Properties of a GetGameInfoRequest.
          * @memberof http_api
-         * @interface IHttpApiGetGameInfoRequest
-         * @property {string|null} [apiKey] HttpApiGetGameInfoRequest apiKey
-         * @property {number|null} [gameId] HttpApiGetGameInfoRequest gameId
+         * @interface IGetGameInfoRequest
+         * @property {string|null} [apiKey] GetGameInfoRequest apiKey
+         * @property {number|null} [gameId] GetGameInfoRequest gameId
          */
 
         /**
-         * Constructs a new HttpApiGetGameInfoRequest.
+         * Constructs a new GetGameInfoRequest.
          * @memberof http_api
-         * @classdesc Represents a HttpApiGetGameInfoRequest.
-         * @implements IHttpApiGetGameInfoRequest
+         * @classdesc Represents a GetGameInfoRequest.
+         * @implements IGetGameInfoRequest
          * @constructor
-         * @param {http_api.IHttpApiGetGameInfoRequest=} [properties] Properties to set
+         * @param {http_api.IGetGameInfoRequest=} [properties] Properties to set
          */
-        function HttpApiGetGameInfoRequest(properties) {
+        function GetGameInfoRequest(properties) {
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -10762,43 +10762,43 @@ export const http_api = $root.http_api = (() => {
         }
 
         /**
-         * HttpApiGetGameInfoRequest apiKey.
+         * GetGameInfoRequest apiKey.
          * @member {string} apiKey
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @instance
          */
-        HttpApiGetGameInfoRequest.prototype.apiKey = "";
+        GetGameInfoRequest.prototype.apiKey = "";
 
         /**
-         * HttpApiGetGameInfoRequest gameId.
+         * GetGameInfoRequest gameId.
          * @member {number} gameId
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @instance
          */
-        HttpApiGetGameInfoRequest.prototype.gameId = 0;
+        GetGameInfoRequest.prototype.gameId = 0;
 
         /**
-         * Creates a new HttpApiGetGameInfoRequest instance using the specified properties.
+         * Creates a new GetGameInfoRequest instance using the specified properties.
          * @function create
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @static
-         * @param {http_api.IHttpApiGetGameInfoRequest=} [properties] Properties to set
-         * @returns {http_api.HttpApiGetGameInfoRequest} HttpApiGetGameInfoRequest instance
+         * @param {http_api.IGetGameInfoRequest=} [properties] Properties to set
+         * @returns {http_api.GetGameInfoRequest} GetGameInfoRequest instance
          */
-        HttpApiGetGameInfoRequest.create = function create(properties) {
-            return new HttpApiGetGameInfoRequest(properties);
+        GetGameInfoRequest.create = function create(properties) {
+            return new GetGameInfoRequest(properties);
         };
 
         /**
-         * Encodes the specified HttpApiGetGameInfoRequest message. Does not implicitly {@link http_api.HttpApiGetGameInfoRequest.verify|verify} messages.
+         * Encodes the specified GetGameInfoRequest message. Does not implicitly {@link http_api.GetGameInfoRequest.verify|verify} messages.
          * @function encode
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @static
-         * @param {http_api.IHttpApiGetGameInfoRequest} message HttpApiGetGameInfoRequest message or plain object to encode
+         * @param {http_api.IGetGameInfoRequest} message GetGameInfoRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiGetGameInfoRequest.encode = function encode(message, writer) {
+        GetGameInfoRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
@@ -10809,33 +10809,33 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Encodes the specified HttpApiGetGameInfoRequest message, length delimited. Does not implicitly {@link http_api.HttpApiGetGameInfoRequest.verify|verify} messages.
+         * Encodes the specified GetGameInfoRequest message, length delimited. Does not implicitly {@link http_api.GetGameInfoRequest.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @static
-         * @param {http_api.IHttpApiGetGameInfoRequest} message HttpApiGetGameInfoRequest message or plain object to encode
+         * @param {http_api.IGetGameInfoRequest} message GetGameInfoRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        HttpApiGetGameInfoRequest.encodeDelimited = function encodeDelimited(message, writer) {
+        GetGameInfoRequest.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a HttpApiGetGameInfoRequest message from the specified reader or buffer.
+         * Decodes a GetGameInfoRequest message from the specified reader or buffer.
          * @function decode
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {http_api.HttpApiGetGameInfoRequest} HttpApiGetGameInfoRequest
+         * @returns {http_api.GetGameInfoRequest} GetGameInfoRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiGetGameInfoRequest.decode = function decode(reader, length) {
+        GetGameInfoRequest.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.HttpApiGetGameInfoRequest();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.GetGameInfoRequest();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -10856,30 +10856,30 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Decodes a HttpApiGetGameInfoRequest message from the specified reader or buffer, length delimited.
+         * Decodes a GetGameInfoRequest message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {http_api.HttpApiGetGameInfoRequest} HttpApiGetGameInfoRequest
+         * @returns {http_api.GetGameInfoRequest} GetGameInfoRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        HttpApiGetGameInfoRequest.decodeDelimited = function decodeDelimited(reader) {
+        GetGameInfoRequest.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a HttpApiGetGameInfoRequest message.
+         * Verifies a GetGameInfoRequest message.
          * @function verify
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        HttpApiGetGameInfoRequest.verify = function verify(message) {
+        GetGameInfoRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.apiKey != null && message.hasOwnProperty("apiKey"))
@@ -10892,17 +10892,17 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Creates a HttpApiGetGameInfoRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a GetGameInfoRequest message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {http_api.HttpApiGetGameInfoRequest} HttpApiGetGameInfoRequest
+         * @returns {http_api.GetGameInfoRequest} GetGameInfoRequest
          */
-        HttpApiGetGameInfoRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.http_api.HttpApiGetGameInfoRequest)
+        GetGameInfoRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.http_api.GetGameInfoRequest)
                 return object;
-            let message = new $root.http_api.HttpApiGetGameInfoRequest();
+            let message = new $root.http_api.GetGameInfoRequest();
             if (object.apiKey != null)
                 message.apiKey = String(object.apiKey);
             if (object.gameId != null)
@@ -10911,15 +10911,15 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Creates a plain object from a HttpApiGetGameInfoRequest message. Also converts values to other types if specified.
+         * Creates a plain object from a GetGameInfoRequest message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @static
-         * @param {http_api.HttpApiGetGameInfoRequest} message HttpApiGetGameInfoRequest
+         * @param {http_api.GetGameInfoRequest} message GetGameInfoRequest
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        HttpApiGetGameInfoRequest.toObject = function toObject(message, options) {
+        GetGameInfoRequest.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             let object = {};
@@ -10935,32 +10935,32 @@ export const http_api = $root.http_api = (() => {
         };
 
         /**
-         * Converts this HttpApiGetGameInfoRequest to JSON.
+         * Converts this GetGameInfoRequest to JSON.
          * @function toJSON
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        HttpApiGetGameInfoRequest.prototype.toJSON = function toJSON() {
+        GetGameInfoRequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
         /**
-         * Gets the default type url for HttpApiGetGameInfoRequest
+         * Gets the default type url for GetGameInfoRequest
          * @function getTypeUrl
-         * @memberof http_api.HttpApiGetGameInfoRequest
+         * @memberof http_api.GetGameInfoRequest
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
          */
-        HttpApiGetGameInfoRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+        GetGameInfoRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/http_api.HttpApiGetGameInfoRequest";
+            return typeUrlPrefix + "/http_api.GetGameInfoRequest";
         };
 
-        return HttpApiGetGameInfoRequest;
+        return GetGameInfoRequest;
     })();
 
     return http_api;

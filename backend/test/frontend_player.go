@@ -121,13 +121,13 @@ func (player *frontendPlayer) Run(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
-	body := &http_api.HttpApiRegisterRequest{
+	body := &http_api.RegisterRequest{
 		Nickname: player.nickname,
 	}
 	respBytes, err := player.sendHttpRequest(http.MethodPost, "api/auth/register", body)
 	assert.NoError(t, err)
 
-	resp := &http_api.HttpApiRegisterResponse{}
+	resp := &http_api.RegisterResponse{}
 	err = json.Unmarshal(respBytes, resp)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, resp.ApiKey)
@@ -145,7 +145,7 @@ func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendEnrollMatchmakingOverHttp(t *testing.T) {
-	body := &http_api.HttpApiValidateRequest{
+	body := &http_api.ValidateRequest{
 		ApiKey: player.apiKey,
 	}
 	_, err := player.sendHttpRequest(http.MethodPost, "api/matchmaking/enroll", body)
@@ -189,7 +189,7 @@ func (player *frontendPlayer) receiveWaitingReadyFromWebsocket(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendGetGameInfoOverHttp(t *testing.T) {
-	body := &http_api.HttpApiGetGameInfoRequest{
+	body := &http_api.GetGameInfoRequest{
 		ApiKey: player.apiKey,
 		GameId: player.gameId,
 	}

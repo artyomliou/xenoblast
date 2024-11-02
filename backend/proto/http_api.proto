@@ -4,24 +4,24 @@ import "auth.proto";
 package http_api;
 option go_package = "artyomliou/xenoblast-backend/internal/pkg_proto/http_api";
 
-message HttpApiRegisterRequest {
+message RegisterRequest {
   string nickname = 1;
 }
 
-message HttpApiRegisterResponse{
+message RegisterResponse{
   string apiKey = 1;
   int32 userId = 2;
 }
 
-message HttpApiValidateRequest {
+message ValidateRequest {
   string apiKey = 1;
 }
 
-message HttpApiValidateResponse {
+message ValidateResponse {
   auth.PlayerInfoDto player = 1;
 }
 
-message HttpApiGetGameInfoRequest {
+message GetGameInfoRequest {
   string apiKey = 1;
   int32 gameId = 2;
 }

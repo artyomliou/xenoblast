@@ -4058,497 +4058,497 @@ export namespace game {
 /** Namespace http_api. */
 export namespace http_api {
 
-    /** Properties of a HttpApiRegisterRequest. */
-    interface IHttpApiRegisterRequest {
+    /** Properties of a RegisterRequest. */
+    interface IRegisterRequest {
 
-        /** HttpApiRegisterRequest nickname */
+        /** RegisterRequest nickname */
         nickname?: (string|null);
     }
 
-    /** Represents a HttpApiRegisterRequest. */
-    class HttpApiRegisterRequest implements IHttpApiRegisterRequest {
+    /** Represents a RegisterRequest. */
+    class RegisterRequest implements IRegisterRequest {
 
         /**
-         * Constructs a new HttpApiRegisterRequest.
+         * Constructs a new RegisterRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: http_api.IHttpApiRegisterRequest);
+        constructor(properties?: http_api.IRegisterRequest);
 
-        /** HttpApiRegisterRequest nickname. */
+        /** RegisterRequest nickname. */
         public nickname: string;
 
         /**
-         * Creates a new HttpApiRegisterRequest instance using the specified properties.
+         * Creates a new RegisterRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns HttpApiRegisterRequest instance
+         * @returns RegisterRequest instance
          */
-        public static create(properties?: http_api.IHttpApiRegisterRequest): http_api.HttpApiRegisterRequest;
+        public static create(properties?: http_api.IRegisterRequest): http_api.RegisterRequest;
 
         /**
-         * Encodes the specified HttpApiRegisterRequest message. Does not implicitly {@link http_api.HttpApiRegisterRequest.verify|verify} messages.
-         * @param message HttpApiRegisterRequest message or plain object to encode
+         * Encodes the specified RegisterRequest message. Does not implicitly {@link http_api.RegisterRequest.verify|verify} messages.
+         * @param message RegisterRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: http_api.IHttpApiRegisterRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: http_api.IRegisterRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified HttpApiRegisterRequest message, length delimited. Does not implicitly {@link http_api.HttpApiRegisterRequest.verify|verify} messages.
-         * @param message HttpApiRegisterRequest message or plain object to encode
+         * Encodes the specified RegisterRequest message, length delimited. Does not implicitly {@link http_api.RegisterRequest.verify|verify} messages.
+         * @param message RegisterRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: http_api.IHttpApiRegisterRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: http_api.IRegisterRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a HttpApiRegisterRequest message from the specified reader or buffer.
+         * Decodes a RegisterRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns HttpApiRegisterRequest
+         * @returns RegisterRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiRegisterRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.RegisterRequest;
 
         /**
-         * Decodes a HttpApiRegisterRequest message from the specified reader or buffer, length delimited.
+         * Decodes a RegisterRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns HttpApiRegisterRequest
+         * @returns RegisterRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiRegisterRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.RegisterRequest;
 
         /**
-         * Verifies a HttpApiRegisterRequest message.
+         * Verifies a RegisterRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a HttpApiRegisterRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a RegisterRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns HttpApiRegisterRequest
+         * @returns RegisterRequest
          */
-        public static fromObject(object: { [k: string]: any }): http_api.HttpApiRegisterRequest;
+        public static fromObject(object: { [k: string]: any }): http_api.RegisterRequest;
 
         /**
-         * Creates a plain object from a HttpApiRegisterRequest message. Also converts values to other types if specified.
-         * @param message HttpApiRegisterRequest
+         * Creates a plain object from a RegisterRequest message. Also converts values to other types if specified.
+         * @param message RegisterRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: http_api.HttpApiRegisterRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: http_api.RegisterRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this HttpApiRegisterRequest to JSON.
+         * Converts this RegisterRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
 
         /**
-         * Gets the default type url for HttpApiRegisterRequest
+         * Gets the default type url for RegisterRequest
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** Properties of a HttpApiRegisterResponse. */
-    interface IHttpApiRegisterResponse {
+    /** Properties of a RegisterResponse. */
+    interface IRegisterResponse {
 
-        /** HttpApiRegisterResponse apiKey */
+        /** RegisterResponse apiKey */
         apiKey?: (string|null);
 
-        /** HttpApiRegisterResponse userId */
+        /** RegisterResponse userId */
         userId?: (number|null);
     }
 
-    /** Represents a HttpApiRegisterResponse. */
-    class HttpApiRegisterResponse implements IHttpApiRegisterResponse {
+    /** Represents a RegisterResponse. */
+    class RegisterResponse implements IRegisterResponse {
 
         /**
-         * Constructs a new HttpApiRegisterResponse.
+         * Constructs a new RegisterResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: http_api.IHttpApiRegisterResponse);
+        constructor(properties?: http_api.IRegisterResponse);
 
-        /** HttpApiRegisterResponse apiKey. */
+        /** RegisterResponse apiKey. */
         public apiKey: string;
 
-        /** HttpApiRegisterResponse userId. */
+        /** RegisterResponse userId. */
         public userId: number;
 
         /**
-         * Creates a new HttpApiRegisterResponse instance using the specified properties.
+         * Creates a new RegisterResponse instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns HttpApiRegisterResponse instance
+         * @returns RegisterResponse instance
          */
-        public static create(properties?: http_api.IHttpApiRegisterResponse): http_api.HttpApiRegisterResponse;
+        public static create(properties?: http_api.IRegisterResponse): http_api.RegisterResponse;
 
         /**
-         * Encodes the specified HttpApiRegisterResponse message. Does not implicitly {@link http_api.HttpApiRegisterResponse.verify|verify} messages.
-         * @param message HttpApiRegisterResponse message or plain object to encode
+         * Encodes the specified RegisterResponse message. Does not implicitly {@link http_api.RegisterResponse.verify|verify} messages.
+         * @param message RegisterResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: http_api.IHttpApiRegisterResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: http_api.IRegisterResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified HttpApiRegisterResponse message, length delimited. Does not implicitly {@link http_api.HttpApiRegisterResponse.verify|verify} messages.
-         * @param message HttpApiRegisterResponse message or plain object to encode
+         * Encodes the specified RegisterResponse message, length delimited. Does not implicitly {@link http_api.RegisterResponse.verify|verify} messages.
+         * @param message RegisterResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: http_api.IHttpApiRegisterResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: http_api.IRegisterResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a HttpApiRegisterResponse message from the specified reader or buffer.
+         * Decodes a RegisterResponse message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns HttpApiRegisterResponse
+         * @returns RegisterResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiRegisterResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.RegisterResponse;
 
         /**
-         * Decodes a HttpApiRegisterResponse message from the specified reader or buffer, length delimited.
+         * Decodes a RegisterResponse message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns HttpApiRegisterResponse
+         * @returns RegisterResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiRegisterResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.RegisterResponse;
 
         /**
-         * Verifies a HttpApiRegisterResponse message.
+         * Verifies a RegisterResponse message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a HttpApiRegisterResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates a RegisterResponse message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns HttpApiRegisterResponse
+         * @returns RegisterResponse
          */
-        public static fromObject(object: { [k: string]: any }): http_api.HttpApiRegisterResponse;
+        public static fromObject(object: { [k: string]: any }): http_api.RegisterResponse;
 
         /**
-         * Creates a plain object from a HttpApiRegisterResponse message. Also converts values to other types if specified.
-         * @param message HttpApiRegisterResponse
+         * Creates a plain object from a RegisterResponse message. Also converts values to other types if specified.
+         * @param message RegisterResponse
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: http_api.HttpApiRegisterResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: http_api.RegisterResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this HttpApiRegisterResponse to JSON.
+         * Converts this RegisterResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
 
         /**
-         * Gets the default type url for HttpApiRegisterResponse
+         * Gets the default type url for RegisterResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** Properties of a HttpApiValidateRequest. */
-    interface IHttpApiValidateRequest {
+    /** Properties of a ValidateRequest. */
+    interface IValidateRequest {
 
-        /** HttpApiValidateRequest apiKey */
+        /** ValidateRequest apiKey */
         apiKey?: (string|null);
     }
 
-    /** Represents a HttpApiValidateRequest. */
-    class HttpApiValidateRequest implements IHttpApiValidateRequest {
+    /** Represents a ValidateRequest. */
+    class ValidateRequest implements IValidateRequest {
 
         /**
-         * Constructs a new HttpApiValidateRequest.
+         * Constructs a new ValidateRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: http_api.IHttpApiValidateRequest);
+        constructor(properties?: http_api.IValidateRequest);
 
-        /** HttpApiValidateRequest apiKey. */
+        /** ValidateRequest apiKey. */
         public apiKey: string;
 
         /**
-         * Creates a new HttpApiValidateRequest instance using the specified properties.
+         * Creates a new ValidateRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns HttpApiValidateRequest instance
+         * @returns ValidateRequest instance
          */
-        public static create(properties?: http_api.IHttpApiValidateRequest): http_api.HttpApiValidateRequest;
+        public static create(properties?: http_api.IValidateRequest): http_api.ValidateRequest;
 
         /**
-         * Encodes the specified HttpApiValidateRequest message. Does not implicitly {@link http_api.HttpApiValidateRequest.verify|verify} messages.
-         * @param message HttpApiValidateRequest message or plain object to encode
+         * Encodes the specified ValidateRequest message. Does not implicitly {@link http_api.ValidateRequest.verify|verify} messages.
+         * @param message ValidateRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: http_api.IHttpApiValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: http_api.IValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified HttpApiValidateRequest message, length delimited. Does not implicitly {@link http_api.HttpApiValidateRequest.verify|verify} messages.
-         * @param message HttpApiValidateRequest message or plain object to encode
+         * Encodes the specified ValidateRequest message, length delimited. Does not implicitly {@link http_api.ValidateRequest.verify|verify} messages.
+         * @param message ValidateRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: http_api.IHttpApiValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: http_api.IValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a HttpApiValidateRequest message from the specified reader or buffer.
+         * Decodes a ValidateRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns HttpApiValidateRequest
+         * @returns ValidateRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiValidateRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.ValidateRequest;
 
         /**
-         * Decodes a HttpApiValidateRequest message from the specified reader or buffer, length delimited.
+         * Decodes a ValidateRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns HttpApiValidateRequest
+         * @returns ValidateRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiValidateRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.ValidateRequest;
 
         /**
-         * Verifies a HttpApiValidateRequest message.
+         * Verifies a ValidateRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a HttpApiValidateRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a ValidateRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns HttpApiValidateRequest
+         * @returns ValidateRequest
          */
-        public static fromObject(object: { [k: string]: any }): http_api.HttpApiValidateRequest;
+        public static fromObject(object: { [k: string]: any }): http_api.ValidateRequest;
 
         /**
-         * Creates a plain object from a HttpApiValidateRequest message. Also converts values to other types if specified.
-         * @param message HttpApiValidateRequest
+         * Creates a plain object from a ValidateRequest message. Also converts values to other types if specified.
+         * @param message ValidateRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: http_api.HttpApiValidateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: http_api.ValidateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this HttpApiValidateRequest to JSON.
+         * Converts this ValidateRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
 
         /**
-         * Gets the default type url for HttpApiValidateRequest
+         * Gets the default type url for ValidateRequest
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** Properties of a HttpApiValidateResponse. */
-    interface IHttpApiValidateResponse {
+    /** Properties of a ValidateResponse. */
+    interface IValidateResponse {
 
-        /** HttpApiValidateResponse player */
+        /** ValidateResponse player */
         player?: (auth.IPlayerInfoDto|null);
     }
 
-    /** Represents a HttpApiValidateResponse. */
-    class HttpApiValidateResponse implements IHttpApiValidateResponse {
+    /** Represents a ValidateResponse. */
+    class ValidateResponse implements IValidateResponse {
 
         /**
-         * Constructs a new HttpApiValidateResponse.
+         * Constructs a new ValidateResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: http_api.IHttpApiValidateResponse);
+        constructor(properties?: http_api.IValidateResponse);
 
-        /** HttpApiValidateResponse player. */
+        /** ValidateResponse player. */
         public player?: (auth.IPlayerInfoDto|null);
 
         /**
-         * Creates a new HttpApiValidateResponse instance using the specified properties.
+         * Creates a new ValidateResponse instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns HttpApiValidateResponse instance
+         * @returns ValidateResponse instance
          */
-        public static create(properties?: http_api.IHttpApiValidateResponse): http_api.HttpApiValidateResponse;
+        public static create(properties?: http_api.IValidateResponse): http_api.ValidateResponse;
 
         /**
-         * Encodes the specified HttpApiValidateResponse message. Does not implicitly {@link http_api.HttpApiValidateResponse.verify|verify} messages.
-         * @param message HttpApiValidateResponse message or plain object to encode
+         * Encodes the specified ValidateResponse message. Does not implicitly {@link http_api.ValidateResponse.verify|verify} messages.
+         * @param message ValidateResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: http_api.IHttpApiValidateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: http_api.IValidateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified HttpApiValidateResponse message, length delimited. Does not implicitly {@link http_api.HttpApiValidateResponse.verify|verify} messages.
-         * @param message HttpApiValidateResponse message or plain object to encode
+         * Encodes the specified ValidateResponse message, length delimited. Does not implicitly {@link http_api.ValidateResponse.verify|verify} messages.
+         * @param message ValidateResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: http_api.IHttpApiValidateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: http_api.IValidateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a HttpApiValidateResponse message from the specified reader or buffer.
+         * Decodes a ValidateResponse message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns HttpApiValidateResponse
+         * @returns ValidateResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiValidateResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.ValidateResponse;
 
         /**
-         * Decodes a HttpApiValidateResponse message from the specified reader or buffer, length delimited.
+         * Decodes a ValidateResponse message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns HttpApiValidateResponse
+         * @returns ValidateResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiValidateResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.ValidateResponse;
 
         /**
-         * Verifies a HttpApiValidateResponse message.
+         * Verifies a ValidateResponse message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a HttpApiValidateResponse message from a plain object. Also converts values to their respective internal types.
+         * Creates a ValidateResponse message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns HttpApiValidateResponse
+         * @returns ValidateResponse
          */
-        public static fromObject(object: { [k: string]: any }): http_api.HttpApiValidateResponse;
+        public static fromObject(object: { [k: string]: any }): http_api.ValidateResponse;
 
         /**
-         * Creates a plain object from a HttpApiValidateResponse message. Also converts values to other types if specified.
-         * @param message HttpApiValidateResponse
+         * Creates a plain object from a ValidateResponse message. Also converts values to other types if specified.
+         * @param message ValidateResponse
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: http_api.HttpApiValidateResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: http_api.ValidateResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this HttpApiValidateResponse to JSON.
+         * Converts this ValidateResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
 
         /**
-         * Gets the default type url for HttpApiValidateResponse
+         * Gets the default type url for ValidateResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** Properties of a HttpApiGetGameInfoRequest. */
-    interface IHttpApiGetGameInfoRequest {
+    /** Properties of a GetGameInfoRequest. */
+    interface IGetGameInfoRequest {
 
-        /** HttpApiGetGameInfoRequest apiKey */
+        /** GetGameInfoRequest apiKey */
         apiKey?: (string|null);
 
-        /** HttpApiGetGameInfoRequest gameId */
+        /** GetGameInfoRequest gameId */
         gameId?: (number|null);
     }
 
-    /** Represents a HttpApiGetGameInfoRequest. */
-    class HttpApiGetGameInfoRequest implements IHttpApiGetGameInfoRequest {
+    /** Represents a GetGameInfoRequest. */
+    class GetGameInfoRequest implements IGetGameInfoRequest {
 
         /**
-         * Constructs a new HttpApiGetGameInfoRequest.
+         * Constructs a new GetGameInfoRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: http_api.IHttpApiGetGameInfoRequest);
+        constructor(properties?: http_api.IGetGameInfoRequest);
 
-        /** HttpApiGetGameInfoRequest apiKey. */
+        /** GetGameInfoRequest apiKey. */
         public apiKey: string;
 
-        /** HttpApiGetGameInfoRequest gameId. */
+        /** GetGameInfoRequest gameId. */
         public gameId: number;
 
         /**
-         * Creates a new HttpApiGetGameInfoRequest instance using the specified properties.
+         * Creates a new GetGameInfoRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns HttpApiGetGameInfoRequest instance
+         * @returns GetGameInfoRequest instance
          */
-        public static create(properties?: http_api.IHttpApiGetGameInfoRequest): http_api.HttpApiGetGameInfoRequest;
+        public static create(properties?: http_api.IGetGameInfoRequest): http_api.GetGameInfoRequest;
 
         /**
-         * Encodes the specified HttpApiGetGameInfoRequest message. Does not implicitly {@link http_api.HttpApiGetGameInfoRequest.verify|verify} messages.
-         * @param message HttpApiGetGameInfoRequest message or plain object to encode
+         * Encodes the specified GetGameInfoRequest message. Does not implicitly {@link http_api.GetGameInfoRequest.verify|verify} messages.
+         * @param message GetGameInfoRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: http_api.IHttpApiGetGameInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: http_api.IGetGameInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified HttpApiGetGameInfoRequest message, length delimited. Does not implicitly {@link http_api.HttpApiGetGameInfoRequest.verify|verify} messages.
-         * @param message HttpApiGetGameInfoRequest message or plain object to encode
+         * Encodes the specified GetGameInfoRequest message, length delimited. Does not implicitly {@link http_api.GetGameInfoRequest.verify|verify} messages.
+         * @param message GetGameInfoRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: http_api.IHttpApiGetGameInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: http_api.IGetGameInfoRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a HttpApiGetGameInfoRequest message from the specified reader or buffer.
+         * Decodes a GetGameInfoRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns HttpApiGetGameInfoRequest
+         * @returns GetGameInfoRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.HttpApiGetGameInfoRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.GetGameInfoRequest;
 
         /**
-         * Decodes a HttpApiGetGameInfoRequest message from the specified reader or buffer, length delimited.
+         * Decodes a GetGameInfoRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns HttpApiGetGameInfoRequest
+         * @returns GetGameInfoRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.HttpApiGetGameInfoRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.GetGameInfoRequest;
 
         /**
-         * Verifies a HttpApiGetGameInfoRequest message.
+         * Verifies a GetGameInfoRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a HttpApiGetGameInfoRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a GetGameInfoRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns HttpApiGetGameInfoRequest
+         * @returns GetGameInfoRequest
          */
-        public static fromObject(object: { [k: string]: any }): http_api.HttpApiGetGameInfoRequest;
+        public static fromObject(object: { [k: string]: any }): http_api.GetGameInfoRequest;
 
         /**
-         * Creates a plain object from a HttpApiGetGameInfoRequest message. Also converts values to other types if specified.
-         * @param message HttpApiGetGameInfoRequest
+         * Creates a plain object from a GetGameInfoRequest message. Also converts values to other types if specified.
+         * @param message GetGameInfoRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: http_api.HttpApiGetGameInfoRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: http_api.GetGameInfoRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this HttpApiGetGameInfoRequest to JSON.
+         * Converts this GetGameInfoRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
 
         /**
-         * Gets the default type url for HttpApiGetGameInfoRequest
+         * Gets the default type url for GetGameInfoRequest
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
