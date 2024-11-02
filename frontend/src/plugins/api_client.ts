@@ -2,13 +2,10 @@ import { Plugins } from "phaser";
 import { game, http_api } from "../pkg_proto/compiled.js";
 
 export class ApiClient extends Plugins.BasePlugin {
-  constructor(pluginManager) {
-    super(pluginManager);
-    this.https = false;
-    this.base = "localhost";
-  }
+  https = false;
+  base = "localhost";
 
-  async authRegister(nickname) {
+  async authRegister(nickname: string) {
     const req = http_api.HttpApiRegisterRequest.create();
     req.nickname = nickname;
     const httpResp = await this.sendRequest("POST", "api/auth/register", req);
@@ -16,14 +13,14 @@ export class ApiClient extends Plugins.BasePlugin {
     return new http_api.HttpApiRegisterResponse(json);
   }
 
-  async matchmakingEnroll(apiKey) {
+  async matchmakingEnroll(apiKey: string) {
     const req = http_api.HttpApiValidateRequest.create();
     req.api_key = apiKey;
     const resp = await this.sendRequest("POST", "api/matchmaking/enroll", req);
     return resp.ok;
   }
 
-  async gameInfo(apiKey, gameId) {
+  async gameInfo(apiKey: string, gameId: number) {
     const req = http_api.HttpApiGetGameInfoRequest.create();
     req.api_key = apiKey;
     req.game_id = gameId;
@@ -32,7 +29,7 @@ export class ApiClient extends Plugins.BasePlugin {
     return game.GetGameInfoResponse.decode(new Uint8Array(buf));
   }
 
-  async sendRequest(method, path, jsonBody) {
+  async sendRequest(method: string, path: string, jsonBody: any) {
     const url = this.url(path);
     const resp = await fetch(url, {
       method: method,
@@ -41,7 +38,7 @@ export class ApiClient extends Plugins.BasePlugin {
     return resp;
   }
 
-  url(path) {
+  url(path: string) {
     const protocol = this.https ? "https" : "http";
     return `${protocol}://${this.base}/${path}`;
   }

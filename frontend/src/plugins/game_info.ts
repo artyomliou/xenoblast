@@ -1,28 +1,14 @@
 import { Plugins } from "phaser";
 import { common, game } from "../pkg_proto/compiled.js";
-import { pixelToTile, tileToPixel } from "../helper/map.js";
+import { tileToPixel } from "../helper/map";
 
 export class GameInfo extends Plugins.BasePlugin {
-  constructor(pluginManager) {
-    super(pluginManager);
-    this.mapWidth = 0;
-    this.mapHeight = 0;
+  mapWidth = 0;
+  mapHeight = 0;
+  players: Player[] = [];
+  tiles: Tile[][] = [];
 
-    /**
-     * @type {Player[]}
-     */
-    this.players = [];
-
-    /**
-     * @type {Tile[][]}
-     */
-    this.tiles = [];
-  }
-
-  /**
-   * @param {game.GetGameInfoResponse} gameInfo
-   */
-  applyGameInfo(gameInfo) {
+  applyGameInfo(gameInfo: game.GetGameInfoResponse) {
     this.mapWidth = gameInfo.map_width;
     this.mapHeight = gameInfo.map_height;
 
@@ -32,7 +18,6 @@ export class GameInfo extends Plugins.BasePlugin {
 
     // To avoid directly reference gameInfo.tiles, we just copy types here
     // Sprite will be created in game.js
-    const tiles = gameInfo.tiles;
     for (let x = 0; x < gameInfo.map_width; x++) {
       this.tiles[x] = [];
       for (let y = 0; y < gameInfo.map_height; y++) {
@@ -59,32 +44,16 @@ export class GameInfo extends Plugins.BasePlugin {
 }
 
 export class Player extends common.PlayerPropertyDto {
-  /**
-   * @param {common.IPlayerPropertyDto} properties
-   */
-  constructor(properties) {
-    super(properties);
-
-    /**
-     * @type {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody|null}
-     */
-    this.sprite;
-
-    this.isAlive = true;
-
-    /**
-     * @type {number|null}
-     */
-    this.targetX = null;
-
-    /**
-     * @type {number|null}
-     */
-    this.targetY = null;
-  }
+  sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody|undefined;
+  isAlive = true;
+  targetX: number|undefined;
+  targetY: number|undefined;
 
   update() {
-    if (this.targetX !== null && this.targetY !== null) {
+    if (!this.sprite) {
+      return
+    }
+    if (this.targetX !== undefined && this.targetY !== undefined) {
       const { pixelX: targetPixelX, pixelY: targetPixelY } = tileToPixel(
         this.targetX,
         this.targetY
@@ -97,8 +66,8 @@ export class Player extends common.PlayerPropertyDto {
         this.sprite.setVelocity(0);
         this.x = this.targetX;
         this.y = this.targetY;
-        this.targetX = null;
-        this.targetY = null;
+        this.targetX = undefined;
+        this.targetY = undefined;
       } else {
         const velocityX = (distanceX / distance) * 160;
         const velocityY = (distanceY / distance) * 160;
@@ -110,31 +79,10 @@ export class Player extends common.PlayerPropertyDto {
 }
 
 export class Tile {
-  constructor() {
-    /**
-     * @type {common.ObstacleType | null}
-     */
-    this.obstacleType;
-    /**
-     * @type {common.DecorationType | null}
-     */
-    this.decorationType;
-    /**
-     * @type {common.PowerupType | null}
-     */
-    this.powerupType;
-
-    /**
-     * @type {Phaser.GameObjects.Sprite|null}
-     */
-    this.obstacle;
-    /**
-     * @type {Phaser.GameObjects.Sprite|null}
-     */
-    this.decoration;
-    /**
-     * @type {Phaser.GameObjects.Sprite|null}
-     */
-    this.powerup;
-  }
+  obstacleType: common.ObstacleType | null = null;
+  decorationType: common.DecorationType | null = null;
+  powerupType: common.PowerupType | null = null;
+  obstacle: Phaser.GameObjects.Sprite | null = null;
+  decoration: Phaser.GameObjects.Sprite | null = null;
+  powerup: Phaser.GameObjects.Sprite | null = null;
 }

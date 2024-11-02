@@ -1,23 +1,17 @@
 import { Plugins } from "phaser";
 
 export class WebsocketClient extends Plugins.BasePlugin {
-  constructor(pluginManager) {
-    super(pluginManager);
-    this.https = false;
-    this.base = "localhost";
 
-    /**
-     * @type {WebSocket|null}
-     */
-    this.ws = null;
-  }
+  https: boolean = false;
+  base: string = "localhost";
+  ws: WebSocket | null = null;
 
-  url(path, apiKey) {
+  url(path: string, apiKey: string) {
     const protocol = this.https ? "https" : "http";
     return `${protocol}://${this.base}/${path}?api_key=${apiKey}`;
   }
 
-  open(apiKey, onMessageCallback) {
+  open(apiKey: string, onMessageCallback: (ev: MessageEvent) => any) {
     return new Promise((resolve, reject) => {
       if (this.ws) {
         reject(
@@ -28,7 +22,7 @@ export class WebsocketClient extends Plugins.BasePlugin {
       this.ws.binaryType = "arraybuffer";
       this.ws.onopen = () => {
         console.debug("websocket opened");
-        resolve();
+        resolve(undefined);
       };
       this.ws.onmessage = (ev) => {
         onMessageCallback(ev);
@@ -42,10 +36,7 @@ export class WebsocketClient extends Plugins.BasePlugin {
     });
   }
 
-  /**
-   * @param {string | ArrayBufferLike | Blob | ArrayBufferView} data
-   */
-  send(data) {
+  send(data: string | ArrayBufferLike | Blob | ArrayBufferView) {
     if (!this.ws) {
       throw new Error("websocket connection is not established");
     }
@@ -56,10 +47,14 @@ export class WebsocketClient extends Plugins.BasePlugin {
   }
 
   close() {
-    if (this.ws && this.ws.readyState == WebSocket.OPEN) {
-      this.ws.close();
-      this.ws = null;
-      console.debug("websocket closed");
+    if (!this.ws) {
+      throw new Error("websocket connection is not established");
     }
+    if (this.ws.readyState != WebSocket.OPEN) {
+      throw new Error("websocket connection state is not open");
+    }
+    this.ws.close();
+    this.ws = null;
+    console.debug("websocket closed");
   }
 }

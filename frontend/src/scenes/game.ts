@@ -23,26 +23,24 @@ const SEND_MOVE_EVENT_INTERVAL = 100; // ms
 const SEND_MOVE_EVENT_THRESHOLD = 10; // px
 
 export class Game extends BaseScene {
+  state!: number;
+  newStateQueue!: number[];
+  handlePlayingOnce!: boolean;
+  player!: Player;
+  text!: Phaser.GameObjects.Text;
+  obstaclesGroup!: Phaser.Physics.Arcade.StaticGroup;
+  bushGroup!: Phaser.Physics.Arcade.Group;
+  powerupGroup!: Phaser.Physics.Arcade.Group;
+  bombGroup!: Phaser.Physics.Arcade.StaticGroup;
+  bombTiles!: Set<Tile>;
+  gettingPowerupTiles!: Set<Tile>;
+  prevX: number | undefined;
+  prevY: number | undefined;
+  cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  spaceKey!: Phaser.Input.Keyboard.Key;
+
   constructor() {
     super({ key: "Game" });
-    this.state = STATE_UNKNOWN;
-    this.newStateQueue = [];
-    this.handlePlayingOnce = false;
-
-    /**
-     * @type {Player}
-     */
-    this.player = null;
-
-    /**
-     * @type {Set<Tile>}
-     */
-    this.bombTiles = new Set();
-
-    /**
-     * @type {Set<Tile>}
-     */
-    this.gettingPowerupTiles = new Set();
   }
 
   preload() {
@@ -95,6 +93,10 @@ export class Game extends BaseScene {
       repeat: -1,
     });
 
+    this.state = STATE_UNKNOWN;
+    this.newStateQueue = [];
+    this.handlePlayingOnce = false;
+    this.player = new Player({});
     this.text = this.add
       .text(400, 300, "", {
         fontSize: "32px",
@@ -102,33 +104,27 @@ export class Game extends BaseScene {
       })
       .setOrigin(0.5, 0.5)
       .setActive(false);
+    this.obstaclesGroup = this.physics.add.staticGroup();
+    this.bushGroup = this.physics.add.group();
+    this.powerupGroup = this.physics.add.group();
+    this.bombGroup = this.physics.add.staticGroup();
+    this.bombTiles = new Set();
+    this.gettingPowerupTiles = new Set();
 
     this.setupMap();
+    this.setupPlayers();
+    this.setupPhysics();
+    this.setupControls();
+    this.setupMoveEventSending();
 
     this.newStateQueue.push(STATE_COUNTDOWN);
     setInterval(
       () => this.handleNewStateQueue(),
       NEW_STATE_QUEUE_HANDLE_INTERVAL
     );
-
-    this.prevX = this.player.sprite.x;
-    this.prevY = this.player.sprite.y;
-    setInterval(
-      () => this.sendPlayerMoveEventIfMoved(),
-      SEND_MOVE_EVENT_INTERVAL
-    );
   }
 
   setupMap() {
-    const obstaclesGroup = (this.obstaclesGroup =
-      this.physics.add.staticGroup());
-    const bushGroup = (this.bushGroup = this.physics.add.group());
-    const powerupGroup = (this.powerupGroup = this.physics.add.group());
-    const bombGroup = (this.bombGroup = this.physics.add.staticGroup());
-    const bombFactory = function (x, y) {
-      return new Bomb(x, y, bombGroup, obstaclesGroup);
-    };
-
     for (let x = 0; x < this.gameInfo.mapWidth; x++) {
       for (let y = 0; y < this.gameInfo.mapHeight; y++) {
         const tile = this.gameInfo.tiles[x][y];
@@ -143,63 +139,9 @@ export class Game extends BaseScene {
         }
       }
     }
-
-    // players
-    for (let i = 0; i < this.gameInfo.players.length; i++) {
-      const player = this.gameInfo.players[i];
-      const { pixelX, pixelY } = tileToPixel(player.x, player.y);
-      player.sprite = this.physics.add.sprite(pixelX, pixelY, "alien");
-      player.sprite.setBounce(0);
-      player.sprite.setCollideWorldBounds(true);
-
-      // Because we have lots of sprites placed on map without any gap,
-      // setting this avoids too many collision which is annoying.
-      player.sprite.setSize(35, 35).setOffset(2.5, 2.5);
-
-      if (player.user_id == this.session.uid) {
-        this.player = player;
-      }
-    }
-
-    // Physics
-    for (const player of this.gameInfo.players) {
-      this.physics.add.collider(this.player.sprite, obstaclesGroup);
-      this.physics.add.collider(this.player.sprite, bombGroup);
-
-      function hideSprite(sprite) {
-        sprite.setAlpha(0);
-      }
-      this.physics.add.overlap(
-        player.sprite,
-        bushGroup,
-        hideSprite,
-        null,
-        this
-      );
-    }
-
-    // Physics (will trigger event, only handle current player)
-    this.physics.add.overlap(
-      this.player.sprite,
-      powerupGroup,
-      (sprite, powerupSprite) => {
-        this.handlePlayerGetPowerup(powerupSprite);
-      }
-    );
-
-    // controls
-    this.cursors = this.input.keyboard.createCursorKeys();
-    this.spaceKey = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.SPACE
-    );
   }
 
-  /**
-   * @param {Tile} tile
-   * @param {number} x
-   * @param {number} y
-   */
-  setupObstacle(tile, x, y) {
+  setupObstacle(tile: Tile, x: number, y: number) {
     const { pixelX, pixelY } = tileToPixel(x, y);
     switch (tile.obstacleType) {
       case common.ObstacleType.Box:
@@ -219,12 +161,7 @@ export class Game extends BaseScene {
     }
   }
 
-  /**
-   * @param {Tile} tile
-   * @param {number} x
-   * @param {number} y
-   */
-  setupDecoration(tile, x, y) {
+  setupDecoration(tile: Tile, x: number, y: number) {
     const { pixelX, pixelY } = tileToPixel(x, y);
     switch (tile.decorationType) {
       case common.DecorationType.Bush:
@@ -234,12 +171,7 @@ export class Game extends BaseScene {
     }
   }
 
-  /**
-   * @param {Tile} tile
-   * @param {number} x
-   * @param {number} y
-   */
-  setupPowerup(tile, x, y) {
+  setupPowerup(tile: Tile, x: number, y: number) {
     const { pixelX, pixelY } = tileToPixel(x, y);
     switch (tile.powerupType) {
       case common.PowerupType.MoreBomb:
@@ -255,10 +187,75 @@ export class Game extends BaseScene {
     console.debug(tile, x, y);
   }
 
-  /**
-   * @param {Phaser.GameObjects.Sprite} powerupSprite
-   */
-  handlePlayerGetPowerup(powerupSprite) {
+  setupPlayers() {
+    for (let i = 0; i < this.gameInfo.players.length; i++) {
+      const player = this.gameInfo.players[i];
+      const { pixelX, pixelY } = tileToPixel(player.x, player.y);
+      player.sprite = this.physics.add.sprite(pixelX, pixelY, "alien");
+      player.sprite.setBounce(0);
+      player.sprite.setCollideWorldBounds(true);
+
+      // Because we have lots of sprites placed on map without any gap,
+      // setting this avoids too many collision which is annoying.
+      player.sprite.setSize(35, 35).setOffset(2.5, 2.5);
+
+      if (player.user_id == this.session.uid) {
+        this.player = player;
+      }
+    }
+  }
+
+  setupPhysics() {
+    for (const player of this.gameInfo.players) {
+      if (player.sprite ==undefined) {
+        continue
+      }
+      this.physics.add.collider(player.sprite, this.obstaclesGroup);
+      this.physics.add.collider(player.sprite, this.bombGroup);
+
+      this.physics.add.overlap(
+        player.sprite,
+        this.bushGroup,
+        (sprite) => {
+          (<Phaser.GameObjects.Sprite>sprite).setAlpha(0);
+        },
+        undefined,
+        this
+      );
+    }
+
+    // Physics (will trigger event, only handle current player)
+    if (this.player.sprite != undefined) {
+      this.physics.add.overlap(
+        this.player.sprite,
+        this.powerupGroup,
+        (sprite, powerupSprite) => {
+          this.handlePlayerGetPowerup(<Phaser.GameObjects.Sprite>powerupSprite);
+        }
+      );
+    }
+  }
+
+  setupControls() {
+    if (this.input.keyboard == null) {
+      throw new Error("cannot initialize keyboard because this.input.keyboard is null")
+    }
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.spaceKey = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SPACE
+    );
+  }
+
+  setupMoveEventSending() {
+    this.prevX = this.player.sprite?.x;
+    this.prevY = this.player.sprite?.y;
+    setInterval(
+      () => this.sendPlayerMoveEventIfMoved(),
+      SEND_MOVE_EVENT_INTERVAL
+    );
+  }
+
+  handlePlayerGetPowerup(powerupSprite: Phaser.GameObjects.Sprite) {
     if (this.state != STATE_PLAYING) {
       return;
     }
@@ -296,16 +293,16 @@ export class Game extends BaseScene {
   async handleNewStateQueue() {
     if (this.newStateQueue.length > 0) {
       const newState = this.newStateQueue.shift();
+      if (newState == undefined) {
+        return
+      }
       this.state = newState;
       console.debug(`newState = ${newState}`);
 
       try {
         switch (newState) {
           case STATE_COUNTDOWN:
-            await this.receivePlayingFromWebsocket(
-              common.EventType.StatePlaying,
-              5
-            );
+            await this.receivePlayingFromWebsocket();
             this.newStateQueue.push(STATE_PLAYING);
             break;
 
@@ -344,17 +341,14 @@ export class Game extends BaseScene {
       return;
     }
     this.handlePlayingOnce = true;
-    this.messageBox.registerListener((ev) => {
+    this.messageBox.registerListener((ev: common.Event) => {
       if (this.state == STATE_PLAYING) {
         this.handleGameEvent(ev);
       }
     });
   }
 
-  /**
-   * @param {common.Event} ev
-   */
-  handleGameEvent(ev) {
+  handleGameEvent(ev: common.Event) {
     switch (ev.type) {
       case common.EventType.PlayerMoved:
         this.handlePlayerMovedEvent(ev);
@@ -395,75 +389,72 @@ export class Game extends BaseScene {
     }
   }
 
-  /**
-   * @param {common.Event} ev
-   */
-  handlePlayerMovedEvent(ev) {
+  handlePlayerMovedEvent(ev: common.Event) {
+    if (ev.player_moved == null) {
+      return
+    }
     if (ev.player_moved.user_id == this.session.uid) {
       return;
     }
     for (const player of this.gameInfo.players) {
       if (player.isAlive && player.user_id == ev.player_moved.user_id) {
-        player.targetX = ev.player_moved.x;
-        player.targetY = ev.player_moved.y;
+        player.targetX = ev.player_moved.x || 0;
+        player.targetY = ev.player_moved.y || 0;
       }
     }
   }
 
-  /**
-   * @param {common.Event} ev
-   */
-  handlePlayerDeadEvent(ev) {
+  handlePlayerDeadEvent(ev: common.Event) {
+    if (ev.player_dead == null) {
+      return
+    }
     for (const player of this.gameInfo.players) {
       if (player.user_id == ev.player_dead.user_id) {
         player.isAlive = false;
-        player.sprite.destroy();
-        player.sprite = null;
+        if (player.sprite) {
+          player.sprite.destroy();
+          player.sprite = undefined;
+        }
         console.debug(`PlayerDead, user=${player.user_id}`);
       }
     }
   }
 
-  /**
-   * @param {common.Event} ev
-   */
-  handleBombPlantedEvent(ev) {
-    const data = ev.bomb_planted;
-    /**
-     * @type {Tile}
-     */
-    const tile = this.gameInfo.tiles[data.x][data.y];
-    tile.obstacleType = common.ObstacleType.Bomb;
-    this.setupBomb(tile, data.x, data.y);
-    this.bombTiles.add(tile);
-    console.debug(`BombPlanted, x=${data.x} y=${data.y}`);
+  handleBombPlantedEvent(ev: common.Event) {
+    if (!ev.bomb_planted) {
+      return
+    }
+    const x = ev.bomb_planted.x || 0; // workaround zero-value marshalling
+    const y = ev.bomb_planted.y || 0;
 
-    if (data.user_id == this.session.uid) {
-      this.player.bombcount = data.user_bombcount;
-      console.debug(`bombcount was set to ${data.user_bombcount}`);
+    const tile = this.gameInfo.tiles[x][y];
+    tile.obstacleType = common.ObstacleType.Bomb;
+    this.setupBomb(tile, x, y);
+    this.bombTiles.add(tile);
+    console.debug(`BombPlanted, x=${x} y=${y}`);
+
+    if (ev.bomb_planted.user_id == this.session.uid) {
+      this.player.bombcount = ev.bomb_planted.user_bombcount || 0;
+      console.debug(`bombcount was set to ${ev.bomb_planted.user_bombcount || 0}`);
     }
   }
 
-  /**
-   * @param {Tile} tile
-   * @param {number} x
-   * @param {number} y
-   */
-  setupBomb(tile, x, y) {
+  setupBomb(tile: Tile, x: number, y: number) {
     const { pixelX, pixelY } = tileToPixel(x, y);
     tile.obstacle = this.add.sprite(pixelX, pixelY, "bomb");
     this.bombGroup.add(tile.obstacle);
   }
 
-  /**
-   * @param {common.Event} ev
-   */
-  handleBombExplodedEvent(ev) {
+  handleBombExplodedEvent(ev: common.Event) {
+    if (!ev.bomb_exploded) {
+      return
+    }
+    const x = ev.bomb_exploded.x || 0; // workaround zero-value marshalling
+    const y = ev.bomb_exploded.y || 0;
+    const bombFirepower = ev.bomb_exploded.bomb_firepower || 0;
+
     const data = ev.bomb_exploded;
-    /**
-     * @type {Tile}
-     */
-    const tile = this.gameInfo.tiles[data.x][data.y];
+    const tile = this.gameInfo.tiles[x][y];
     if (tile.obstacleType != common.ObstacleType.Bomb || !tile.obstacle) {
       console.warn("this tile is not bomb", ev, tile);
       return;
@@ -478,7 +469,7 @@ export class Game extends BaseScene {
       bomb.y,
       -TILE_SIZE,
       0,
-      data.bomb_firepower,
+      bombFirepower,
       "fire_x"
     );
     this.setupFire(
@@ -487,7 +478,7 @@ export class Game extends BaseScene {
       bomb.y,
       TILE_SIZE,
       0,
-      data.bomb_firepower,
+      bombFirepower,
       "fire_x"
     );
     this.setupFire(
@@ -496,7 +487,7 @@ export class Game extends BaseScene {
       bomb.y,
       0,
       -TILE_SIZE,
-      data.bomb_firepower,
+      bombFirepower,
       "fire_y"
     );
     this.setupFire(
@@ -505,7 +496,7 @@ export class Game extends BaseScene {
       bomb.y,
       0,
       TILE_SIZE,
-      data.bomb_firepower,
+      bombFirepower,
       "fire_y"
     );
     setTimeout(() => {
@@ -521,14 +512,14 @@ export class Game extends BaseScene {
 
     // Restore current player bombcount
     if (data.user_id == this.session.uid) {
-      this.player.bombcount = data.user_bombcount;
+      this.player.bombcount = data.user_bombcount || 0;
       console.debug(
-        `bomb exploded, bombcount was set to ${data.user_bombcount}`
+        `bomb exploded, bombcount was set to ${data.user_bombcount || 0}`
       );
     }
   }
 
-  setupFire(fireGroup, bombX, bombY, offsetX, offsetY, firepower, textureKey) {
+  setupFire(fireGroup: Phaser.Physics.Arcade.Group, bombX: number, bombY: number, offsetX: number, offsetY: number, firepower: number, textureKey: string) {
     let currentFireIndex = 0;
     let stoppedByOverlapping = false;
     this.time.addEvent({
@@ -562,15 +553,14 @@ export class Game extends BaseScene {
     });
   }
 
-  /**
-   * @param {common.Event} ev
-   */
-  handleBoxRemovedEvent(ev) {
-    const data = ev.box_removed;
-    /**
-     * @type {Tile}
-     */
-    const tile = this.gameInfo.tiles[data.x][data.y];
+  handleBoxRemovedEvent(ev: common.Event) {
+    if (ev.box_removed == null || ev.box_removed == undefined) {
+      return
+    }
+    const x = ev.box_removed.x || 0; // workaround zero-value marshalling
+    const y = ev.box_removed.y || 0;
+
+    const tile = this.gameInfo.tiles[x][y];
     if (tile.obstacleType != common.ObstacleType.Box || !tile.obstacle) {
       console.warn("this tile is not box", ev, tile);
       return;
@@ -578,42 +568,44 @@ export class Game extends BaseScene {
     tile.obstacleType = null;
     tile.obstacle.destroy();
     tile.obstacle = null;
-    console.debug(`BoxRemoved, x=${data.x} y=${data.y}`);
+    console.debug(`BoxRemoved, x=${x} y=${y}`);
   }
 
-  /**
-   * @param {common.Event} ev
-   */
-  handlePowerupDroppedEvent(ev) {
-    const data = ev.powerup_dropped;
-    /**
-     * @type {Tile}
-     */
-    const tile = this.gameInfo.tiles[data.x][data.y];
-    tile.powerupType = data.type || common.PowerupType.MoreBomb; // workaround zero-value marshalling
-    this.setupPowerup(tile, data.x, data.y);
+  handlePowerupDroppedEvent(ev: common.Event) {
+    if (ev.powerup_dropped == null || ev.powerup_dropped == undefined) {
+      return
+    }
+    const x = ev.powerup_dropped.x || 0; // workaround zero-value marshalling
+    const y = ev.powerup_dropped.y || 0;
+    const powerupType = ev.powerup_dropped.type || common.PowerupType.MoreBomb;
+    
+    const tile = this.gameInfo.tiles[x][y];
+    tile.powerupType = powerupType;
+    this.setupPowerup(tile, x, y);
     console.debug(
-      `PowerupDropped, x=${data.x} y=${data.y} type=${
-        common.PowerupType[data.type]
+      `PowerupDropped, x=${x} y=${y} type=${
+        common.PowerupType[powerupType]
       }`
     );
   }
 
-  /**
-   * @param {common.Event} ev
-   */
-  handlePowerupConsumedEvent(ev) {
-    const data = ev.powerup_consumed;
-    /**
-     * @type {Tile}
-     */
-    const tile = this.gameInfo.tiles[data.x][data.y];
+  handlePowerupConsumedEvent(ev: common.Event) {
+    if (ev.powerup_consumed == null || ev.powerup_consumed == undefined) {
+      return
+    }
+    const x = ev.powerup_consumed.x || 0; // workaround zero-value marshalling
+    const y = ev.powerup_consumed.y || 0;
+    const userId = ev.powerup_consumed.user_id || 0;
+    const userBombcount = ev.powerup_consumed.user_bombcount || 0;
+    const userFirepower = ev.powerup_consumed.user_firepower || 0;
 
-    if (data.user_id == this.session.uid) {
-      this.player.bombcount = data.user_bombcount;
-      this.player.firepower = data.user_firepower;
+    const tile = this.gameInfo.tiles[x][y];
+
+    if (userId == this.session.uid) {
+      this.player.bombcount = userBombcount;
+      this.player.firepower = userFirepower;
       console.debug(
-        `PowerupConsumed, bombcount=${data.user_bombcount} firepower=${data.user_firepower}`
+        `PowerupConsumed, bombcount=${userBombcount} firepower=${userFirepower}`
       );
     }
 
@@ -622,14 +614,14 @@ export class Game extends BaseScene {
     }
     tile.powerupType = null;
     tile.powerup = null;
-    console.debug(`PowerupConsumed, x=${data.x} y=${data.y}`);
+    console.debug(`PowerupConsumed, x=${x} y=${y}`);
   }
 
-  handleGameoverEvent(ev) {
+  handleGameoverEvent(ev: common.Event) {
     this.newStateQueue.push(STATE_GAMEOVER);
   }
 
-  handleCrashEvent(ev) {
+  handleCrashEvent(ev: common.Event) {
     this.newStateQueue.push(STATE_CRASH);
   }
 
@@ -647,12 +639,12 @@ export class Game extends BaseScene {
     if (this.state == STATE_PLAYING) {
       // workaround leave bush
       this.gameInfo.players.forEach((player) => {
-        if (player.isAlive && !player.sprite.body.embedded) {
+        if (player.isAlive && player.sprite && !player.sprite.body.embedded) {
           player.sprite.setAlpha(1);
         }
       });
 
-      if (this.player.isAlive) {
+      if (this.player.isAlive && this.player.sprite) {
         // 根據輸入設定玩家速度
         const sprite = this.player.sprite;
         sprite.setVelocity(0);
@@ -709,10 +701,13 @@ export class Game extends BaseScene {
     if (!this.player.isAlive) {
       return;
     }
+    if (!this.player.sprite) {
+      return;
+    }
     const curX = this.player.sprite.x;
     const curY = this.player.sprite.y;
-    const deltaX = curX - this.prevX;
-    const deltaY = curY - this.prevY;
+    const deltaX = curX - (this.prevX || 0);
+    const deltaY = curY - (this.prevY || 0);
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     if (distance > SEND_MOVE_EVENT_THRESHOLD) {
       const { tileX, tileY } = pixelToTile(curX, curY);

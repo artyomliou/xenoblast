@@ -10,6 +10,11 @@ const STATE_READY = 5;
 const STATE_COUNTDOWN = 6;
 
 export class WaitingRoom extends BaseScene {
+
+  state!: number;
+  newStateQueue!: number[];
+  text!: Phaser.GameObjects.Text;
+
   constructor() {
     super({ key: "WaitingRoom" });
     this.state = STATE_UNKNOWN;
@@ -24,8 +29,6 @@ export class WaitingRoom extends BaseScene {
       })
       .setOrigin(0.5, 0.5);
 
-    this.playerName = this.session.nickname;
-
     this.newStateQueue.push(STATE_INIT);
     setInterval(() => this.handleNewStateQueue(), 100);
   }
@@ -33,6 +36,9 @@ export class WaitingRoom extends BaseScene {
   async handleNewStateQueue() {
     if (this.newStateQueue.length > 0) {
       const newState = this.newStateQueue.shift();
+      if (newState == undefined) {
+        return
+      }
       this.state = newState;
       console.debug(`newState = ${newState}`);
 
@@ -87,7 +93,7 @@ export class WaitingRoom extends BaseScene {
   }
 
   async startWebsocketConnection() {
-    await this.wsClient.open(this.session.apiKey, (ev) => {
+    await this.wsClient.open(this.session.apiKey, (ev: MessageEvent<any>) => {
       this.messageBox.handleMessageEvent(ev);
     });
   }
@@ -99,7 +105,7 @@ export class WaitingRoom extends BaseScene {
   async sendStartSubscribeOverWebsocket() {
     const event = common.Event.fromObject({
       type: common.EventType.SubscribeNewMatch,
-      timestamp: new Date().getTime / 1000,
+      timestamp: new Date().getTime() / 1000,
       game_id: this.session.gameId,
     });
     console.debug("send " + common.EventType[event.type], event);

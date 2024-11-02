@@ -1,4 +1,3 @@
-import { Scene } from "phaser";
 import { BaseScene } from "./base_scene";
 
 export class GameOver extends BaseScene {

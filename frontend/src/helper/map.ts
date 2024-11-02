@@ -1,66 +1,45 @@
 export const TILE_SIZE = 40;
 const MOVE_SPEED = 160;
 
-export function tileToPixel(tileX, tileY) {
+export function tileToPixel(tileX: number, tileY: number) {
   return {
     pixelX: tileX * TILE_SIZE + TILE_SIZE / 2,
     pixelY: tileY * TILE_SIZE + TILE_SIZE / 2,
   };
 }
 
-export function pixelToTile(pixelX, pixelY) {
+export function pixelToTile(pixelX: number, pixelY: number) {
   return {
     tileX: Math.floor(pixelX / TILE_SIZE),
     tileY: Math.floor(pixelY / TILE_SIZE),
   };
 }
 
-/**
- * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} sprite
- */
-export function stopMove(sprite) {
+export function stopMove(sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody) {
   sprite.setVelocity(0);
 }
 
-/**
- * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} sprite
- */
-export function startMoveLeft(sprite) {
+export function startMoveLeft(sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody) {
   sprite.setVelocityX(-MOVE_SPEED);
   sprite.anims.play("left", true);
 }
 
-/**
- * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} sprite
- */
-export function startMoveRight(sprite) {
+export function startMoveRight(sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody) {
   sprite.setVelocityX(MOVE_SPEED);
   sprite.anims.play("right", true);
 }
 
-/**
- * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} sprite
- */
-export function startMoveUp(sprite) {
+export function startMoveUp(sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody) {
   sprite.setVelocityY(-MOVE_SPEED);
   sprite.anims.play("up", true);
 }
 
-/**
- * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} sprite
- */
-export function startMoveDown(sprite) {
+export function startMoveDown(sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody) {
   sprite.setVelocityY(MOVE_SPEED);
   sprite.anims.play("down", true);
 }
 
-/**
- * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} sprite
- * @param {number} targetX
- * @param {number} targetY
- * @returns
- */
-export function startMoveTo(sprite, targetX, targetY) {
+export function startMoveTo(sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, targetX: number, targetY: number) {
   const deltaX = targetX - sprite.x;
   const deltaY = targetY - sprite.y;
 
