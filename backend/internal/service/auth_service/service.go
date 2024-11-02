@@ -1,7 +1,7 @@
 package auth_service
 
 import (
-	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/storage"
 	"artyomliou/xenoblast-backend/pkg/utils"
 	"context"
@@ -76,7 +76,7 @@ func (service *AuthService) Register(ctx context.Context, nickname string) (apiK
 	return apiKey, userId, nil
 }
 
-func (service *AuthService) Validate(ctx context.Context, apiKey string) (validated bool, dto *pkg_proto.PlayerInfoDto, err error) {
+func (service *AuthService) Validate(ctx context.Context, apiKey string) (validated bool, dto *auth.PlayerInfoDto, err error) {
 	validated, err = service.storage.Has(ctx, apiKey)
 	if err != nil {
 		return
@@ -104,7 +104,7 @@ func (service *AuthService) Validate(ctx context.Context, apiKey string) (valida
 		return
 	}
 
-	dto = &pkg_proto.PlayerInfoDto{
+	dto = &auth.PlayerInfoDto{
 		UserId:   userId,
 		Nickname: nickname,
 	}

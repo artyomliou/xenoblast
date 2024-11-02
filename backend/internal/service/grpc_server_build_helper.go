@@ -2,7 +2,9 @@ package service
 
 import (
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
-	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
@@ -22,7 +24,7 @@ func BuildAuthServer(listenAddr string) (net.Listener, *grpc.Server, error) {
 	service := auth_service.NewAuthService(storage)
 	server := auth_service.NewAuthServer(service)
 	grpcServer := grpc.NewServer()
-	pkg_proto.RegisterAuthServiceServer(grpcServer, server)
+	auth.RegisterAuthServiceServer(grpcServer, server)
 	return lis, grpcServer, nil
 }
 
@@ -37,7 +39,7 @@ func BuildMatchmakingServer(listenAddr string) (net.Listener, *matchmaking_servi
 	service := matchmaking_service.NewMatchmakingService(storage, eventBus)
 	server := matchmaking_service.NewMatchmakingServer(service)
 	grpcServer := grpc.NewServer()
-	pkg_proto.RegisterMatchmakingServiceServer(grpcServer, server)
+	matchmaking.RegisterMatchmakingServiceServer(grpcServer, server)
 	return lis, service, grpcServer, nil
 }
 
@@ -51,6 +53,6 @@ func BuildGameServer(listenAddr string) (net.Listener, *grpc.Server, error) {
 	service := game_service.NewGameService(storage)
 	server := game_service.NewGameServer(service)
 	grpcServer := grpc.NewServer()
-	pkg_proto.RegisterGameServiceServer(grpcServer, server)
+	game.RegisterGameServiceServer(grpcServer, server)
 	return lis, grpcServer, nil
 }

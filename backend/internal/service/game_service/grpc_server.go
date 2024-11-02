@@ -2,6 +2,7 @@ package game_service
 
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	"context"
 	"log"
 	"os"
@@ -15,7 +16,7 @@ var GrpcServerAddr = "game_service:50051"
 var GrpcServerListenAddr = ":50051"
 
 type gameServer struct {
-	pkg_proto.UnimplementedGameServiceServer
+	game.UnimplementedGameServiceServer
 	service *GameService
 	logger  *log.Logger
 	mutex   sync.Mutex
@@ -29,7 +30,7 @@ func NewGameServer(service *GameService) *gameServer {
 	}
 }
 
-func (server *gameServer) NewGame(ctx context.Context, req *pkg_proto.NewGameRequest) (*empty.Empty, error) {
+func (server *gameServer) NewGame(ctx context.Context, req *game.NewGameRequest) (*empty.Empty, error) {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -49,7 +50,7 @@ func (server *gameServer) NewGame(ctx context.Context, req *pkg_proto.NewGameReq
 	return nil, nil
 }
 
-func (server *gameServer) GetGameInfo(ctx context.Context, req *pkg_proto.GetGameInfoRequest) (*pkg_proto.GetGameInfoResponse, error) {
+func (server *gameServer) GetGameInfo(ctx context.Context, req *game.GetGameInfoRequest) (*game.GetGameInfoResponse, error) {
 	server.logger.Printf("GetGameInfo(): %d", req.GameId)
 	return server.service.GetGameInfo(ctx, req.GameId)
 }
@@ -63,7 +64,7 @@ func (server *gameServer) PlayerPublish(ctx context.Context, ev *pkg_proto.Event
 	return nil, nil
 }
 
-func (server *gameServer) Subscribe(req *pkg_proto.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
+func (server *gameServer) Subscribe(req *game.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	server.logger.Print("Subscribe()")
 	defer server.logger.Print("Subscribe() exit")
 

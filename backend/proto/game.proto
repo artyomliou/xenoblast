@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/empty.proto";
 import "common.proto";
 package game;
-option go_package = "./pkg_proto";
+option go_package = "artyomliou/xenoblast-backend/internal/pkg_proto/game";
 
 service GameService {
   rpc NewGame (NewGameRequest) returns (google.protobuf.Empty);

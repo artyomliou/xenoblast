@@ -1,7 +1,7 @@
 package websocket_service
 
 import (
-	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"context"
 	"log"
@@ -40,7 +40,7 @@ func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.
 	defer close()
 
 	apiKey := r.URL.Query().Get("apiKey")
-	player, err := authClient.Validate(r.Context(), &pkg_proto.ValidateRequest{ApiKey: apiKey})
+	player, err := authClient.Validate(r.Context(), &auth.ValidateRequest{ApiKey: apiKey})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Internal server error"))

@@ -3,6 +3,7 @@ package game_service
 import (
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
 	"artyomliou/xenoblast-backend/internal/service/game_service/state"
 	"artyomliou/xenoblast-backend/internal/storage"
@@ -69,7 +70,7 @@ func (service *GameService) MakeGameRun(ctx context.Context, gameId int32) error
 	return nil
 }
 
-func (service *GameService) GetGameInfo(ctx context.Context, gameId int32) (*pkg_proto.GetGameInfoResponse, error) {
+func (service *GameService) GetGameInfo(ctx context.Context, gameId int32) (*game.GetGameInfoResponse, error) {
 	sess, ok := service.sessions[gameId]
 	if !ok {
 		return nil, &InvalidGameIdError{GameId: gameId}
@@ -80,7 +81,7 @@ func (service *GameService) GetGameInfo(ctx context.Context, gameId int32) (*pkg
 		playerDtos = append(playerDtos, player.ToPlayerPropertyDto())
 	}
 
-	response := &pkg_proto.GetGameInfoResponse{
+	response := &game.GetGameInfoResponse{
 		GameId:    gameId,
 		State:     sess.state.CurrentState(),
 		Players:   playerDtos,

@@ -1,13 +1,13 @@
 package matchmaking_service
 
 import (
-	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewGrpcClient() (pkg_proto.MatchmakingServiceClient, func() error, error) {
+func NewGrpcClient() (matchmaking.MatchmakingServiceClient, func() error, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -16,5 +16,5 @@ func NewGrpcClient() (pkg_proto.MatchmakingServiceClient, func() error, error) {
 		return nil, nil, err
 	}
 
-	return pkg_proto.NewMatchmakingServiceClient(conn), conn.Close, nil
+	return matchmaking.NewMatchmakingServiceClient(conn), conn.Close, nil
 }

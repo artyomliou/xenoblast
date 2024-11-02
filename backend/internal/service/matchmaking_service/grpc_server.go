@@ -2,6 +2,8 @@ package matchmaking_service
 
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"context"
 	"log"
@@ -16,7 +18,7 @@ var GrpcServerAddr = "matchmaking_service:50051"
 var GrpcServerListenAddr = ":50051"
 
 type matchmakingServer struct {
-	pkg_proto.UnimplementedMatchmakingServiceServer
+	matchmaking.UnimplementedMatchmakingServiceServer
 	service      *MatchmakingService
 	logger       *log.Logger
 	mutex        sync.Mutex
@@ -32,19 +34,19 @@ func NewMatchmakingServer(service *MatchmakingService) *matchmakingServer {
 	}
 }
 
-func (server *matchmakingServer) Enroll(ctx context.Context, req *pkg_proto.MatchmakingRequest) (*empty.Empty, error) {
+func (server *matchmakingServer) Enroll(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
 	server.logger.Printf("Enroll(): %d", req.UserId)
 
 	return nil, server.service.Enroll(ctx, req.UserId)
 }
 
-func (server *matchmakingServer) Cancel(ctx context.Context, req *pkg_proto.MatchmakingRequest) (*empty.Empty, error) {
+func (server *matchmakingServer) Cancel(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
 	server.logger.Printf("Cancel(): %d", req.UserId)
 
 	return nil, server.service.Cancel(ctx, req.UserId)
 }
 
-func (server *matchmakingServer) SubscribeMatch(req *pkg_proto.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
+func (server *matchmakingServer) SubscribeMatch(req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	server.logger.Printf("SubscribeMatch(): %d", req.UserId)
 	defer server.logger.Printf("SubscribeMatch(): %d, exit", req.UserId)
 
@@ -67,7 +69,7 @@ func (server *matchmakingServer) SubscribeMatch(req *pkg_proto.MatchmakingReques
 	return nil
 }
 
-func (server *matchmakingServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *pkg_proto.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) {
+func (server *matchmakingServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) {
 	data := ev.GetNewMatch()
 	if data == nil {
 		server.logger.Printf("unexpected nil from GetNewMatch()")
@@ -105,7 +107,7 @@ func (server *matchmakingServer) sendNewGameRequest(ev *pkg_proto.Event) error {
 	}
 	defer close()
 
-	_, err = gameClient.NewGame(context.Background(), &pkg_proto.NewGameRequest{
+	_, err = gameClient.NewGame(context.Background(), &game.NewGameRequest{
 		GameId:  ev.GameId,
 		Players: data.Players,
 	})

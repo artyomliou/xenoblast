@@ -2,6 +2,8 @@ package test
 
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/http_api"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
 	"artyomliou/xenoblast-backend/internal/service/http_service"
 	"artyomliou/xenoblast-backend/internal/service/websocket_service"
@@ -119,13 +121,13 @@ func (player *frontendPlayer) Run(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
-	body := &pkg_proto.HttpApiRegisterRequest{
+	body := &http_api.HttpApiRegisterRequest{
 		Nickname: player.nickname,
 	}
 	respBytes, err := player.sendHttpRequest(http.MethodPost, "api/auth/register", body)
 	assert.NoError(t, err)
 
-	resp := &pkg_proto.HttpApiRegisterResponse{}
+	resp := &http_api.HttpApiRegisterResponse{}
 	err = json.Unmarshal(respBytes, resp)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, resp.ApiKey)
@@ -143,7 +145,7 @@ func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendEnrollMatchmakingOverHttp(t *testing.T) {
-	body := &pkg_proto.HttpApiValidateRequest{
+	body := &http_api.HttpApiValidateRequest{
 		ApiKey: player.apiKey,
 	}
 	_, err := player.sendHttpRequest(http.MethodPost, "api/matchmaking/enroll", body)
@@ -187,14 +189,14 @@ func (player *frontendPlayer) receiveWaitingReadyFromWebsocket(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendGetGameInfoOverHttp(t *testing.T) {
-	body := &pkg_proto.HttpApiGetGameInfoRequest{
+	body := &http_api.HttpApiGetGameInfoRequest{
 		ApiKey: player.apiKey,
 		GameId: player.gameId,
 	}
 	protobufBytes, err := player.sendHttpRequest(http.MethodPost, "api/game/get_game_info", body)
 	assert.NoError(t, err)
 
-	resp := &pkg_proto.GetGameInfoResponse{}
+	resp := &game.GetGameInfoResponse{}
 	err = proto.Unmarshal(protobufBytes, resp)
 	assert.NoError(t, err)
 

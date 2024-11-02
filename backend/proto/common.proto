@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package common;
-option go_package = "./pkg_proto";
+option go_package = "artyomliou/xenoblast-backend/internal/pkg_proto";
 
 enum GameState {
   Init = 0;

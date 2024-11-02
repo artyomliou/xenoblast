@@ -4,9 +4,10 @@
 // - protoc             v3.12.4
 // source: matchmaking.proto
 
-package pkg_proto
+package matchmaking
 
 import (
+	pkg_proto "artyomliou/xenoblast-backend/internal/pkg_proto"
 	context "context"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
@@ -31,7 +32,7 @@ const (
 type MatchmakingServiceClient interface {
 	Enroll(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	Cancel(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	SubscribeMatch(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Event], error)
+	SubscribeMatch(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[pkg_proto.Event], error)
 }
 
 type matchmakingServiceClient struct {
@@ -62,13 +63,13 @@ func (c *matchmakingServiceClient) Cancel(ctx context.Context, in *MatchmakingRe
 	return out, nil
 }
 
-func (c *matchmakingServiceClient) SubscribeMatch(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Event], error) {
+func (c *matchmakingServiceClient) SubscribeMatch(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[pkg_proto.Event], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &MatchmakingService_ServiceDesc.Streams[0], MatchmakingService_SubscribeMatch_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[MatchmakingRequest, Event]{ClientStream: stream}
+	x := &grpc.GenericClientStream[MatchmakingRequest, pkg_proto.Event]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -79,7 +80,7 @@ func (c *matchmakingServiceClient) SubscribeMatch(ctx context.Context, in *Match
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type MatchmakingService_SubscribeMatchClient = grpc.ServerStreamingClient[Event]
+type MatchmakingService_SubscribeMatchClient = grpc.ServerStreamingClient[pkg_proto.Event]
 
 // MatchmakingServiceServer is the server API for MatchmakingService service.
 // All implementations must embed UnimplementedMatchmakingServiceServer
@@ -87,7 +88,7 @@ type MatchmakingService_SubscribeMatchClient = grpc.ServerStreamingClient[Event]
 type MatchmakingServiceServer interface {
 	Enroll(context.Context, *MatchmakingRequest) (*empty.Empty, error)
 	Cancel(context.Context, *MatchmakingRequest) (*empty.Empty, error)
-	SubscribeMatch(*MatchmakingRequest, grpc.ServerStreamingServer[Event]) error
+	SubscribeMatch(*MatchmakingRequest, grpc.ServerStreamingServer[pkg_proto.Event]) error
 	mustEmbedUnimplementedMatchmakingServiceServer()
 }
 
@@ -104,7 +105,7 @@ func (UnimplementedMatchmakingServiceServer) Enroll(context.Context, *Matchmakin
 func (UnimplementedMatchmakingServiceServer) Cancel(context.Context, *MatchmakingRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Cancel not implemented")
 }
-func (UnimplementedMatchmakingServiceServer) SubscribeMatch(*MatchmakingRequest, grpc.ServerStreamingServer[Event]) error {
+func (UnimplementedMatchmakingServiceServer) SubscribeMatch(*MatchmakingRequest, grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeMatch not implemented")
 }
 func (UnimplementedMatchmakingServiceServer) mustEmbedUnimplementedMatchmakingServiceServer() {}
@@ -169,11 +170,11 @@ func _MatchmakingService_SubscribeMatch_Handler(srv interface{}, stream grpc.Ser
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(MatchmakingServiceServer).SubscribeMatch(m, &grpc.GenericServerStream[MatchmakingRequest, Event]{ServerStream: stream})
+	return srv.(MatchmakingServiceServer).SubscribeMatch(m, &grpc.GenericServerStream[MatchmakingRequest, pkg_proto.Event]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type MatchmakingService_SubscribeMatchServer = grpc.ServerStreamingServer[Event]
+type MatchmakingService_SubscribeMatchServer = grpc.ServerStreamingServer[pkg_proto.Event]
 
 // MatchmakingService_ServiceDesc is the grpc.ServiceDesc for MatchmakingService service.
 // It's only intended for direct use with grpc.RegisterService,

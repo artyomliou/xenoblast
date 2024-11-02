@@ -1,7 +1,10 @@
 package http_service
 
 import (
-	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/http_api"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
@@ -24,7 +27,7 @@ func NewApiController() *apiController {
 }
 
 func (ctl *apiController) Register(ctx *gin.Context) {
-	var req pkg_proto.HttpApiRegisterRequest
+	var req http_api.HttpApiRegisterRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -36,7 +39,7 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 		return
 	}
 	defer close()
-	resp, err := authClient.Register(ctx, &pkg_proto.RegisterRequest{
+	resp, err := authClient.Register(ctx, &auth.RegisterRequest{
 		Nickname: req.Nickname,
 	})
 	if err != nil {
@@ -44,14 +47,14 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &pkg_proto.HttpApiRegisterResponse{
+	ctx.JSON(http.StatusOK, &http_api.HttpApiRegisterResponse{
 		ApiKey: resp.ApiKey,
 		UserId: resp.Player.UserId,
 	})
 }
 
 func (ctl *apiController) Validate(ctx *gin.Context) {
-	var req pkg_proto.HttpApiValidateRequest
+	var req http_api.HttpApiValidateRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -63,7 +66,7 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 		return
 	}
 	defer close()
-	player, err := authClient.Validate(ctx, &pkg_proto.ValidateRequest{
+	player, err := authClient.Validate(ctx, &auth.ValidateRequest{
 		ApiKey: req.ApiKey,
 	})
 	if err != nil {
@@ -71,13 +74,13 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &pkg_proto.HttpApiValidateResponse{
+	ctx.JSON(http.StatusOK, &http_api.HttpApiValidateResponse{
 		Player: player,
 	})
 }
 
 func (ctl *apiController) Enroll(ctx *gin.Context) {
-	var req pkg_proto.HttpApiValidateRequest
+	var req http_api.HttpApiValidateRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -89,7 +92,7 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 		return
 	}
 	defer close()
-	player, err := authClient.Validate(ctx, &pkg_proto.ValidateRequest{
+	player, err := authClient.Validate(ctx, &auth.ValidateRequest{
 		ApiKey: req.ApiKey,
 	})
 	if err != nil {
@@ -103,7 +106,7 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 		return
 	}
 	defer matchmakingClientClose()
-	_, err = matchmakingClient.Enroll(ctx, &pkg_proto.MatchmakingRequest{
+	_, err = matchmakingClient.Enroll(ctx, &matchmaking.MatchmakingRequest{
 		UserId: player.UserId,
 	})
 	if err != nil {
@@ -115,7 +118,7 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 }
 
 func (ctl *apiController) Cancel(ctx *gin.Context) {
-	var req pkg_proto.HttpApiValidateRequest
+	var req http_api.HttpApiValidateRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
@@ -127,7 +130,7 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 		return
 	}
 	defer close()
-	player, err := authClient.Validate(ctx, &pkg_proto.ValidateRequest{
+	player, err := authClient.Validate(ctx, &auth.ValidateRequest{
 		ApiKey: req.ApiKey,
 	})
 	if err != nil {
@@ -141,7 +144,7 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 		return
 	}
 	defer matchmakingClientClose()
-	_, err = matchmakingClient.Cancel(ctx, &pkg_proto.MatchmakingRequest{
+	_, err = matchmakingClient.Cancel(ctx, &matchmaking.MatchmakingRequest{
 		UserId: player.UserId,
 	})
 	if err != nil {
@@ -153,7 +156,7 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 }
 
 func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
-	var req pkg_proto.HttpApiGetGameInfoRequest
+	var req http_api.HttpApiGetGameInfoRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctl.logger.Print("bind error: ", err)
 		ctx.String(http.StatusBadRequest, "Invalid request")
@@ -166,7 +169,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 		return
 	}
 	defer close()
-	_, err = authClient.Validate(ctx, &pkg_proto.ValidateRequest{
+	_, err = authClient.Validate(ctx, &auth.ValidateRequest{
 		ApiKey: req.ApiKey,
 	})
 	if err != nil {
@@ -180,7 +183,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 		return
 	}
 	defer gameClientClose()
-	resp, err := gameClient.GetGameInfo(ctx, &pkg_proto.GetGameInfoRequest{
+	resp, err := gameClient.GetGameInfo(ctx, &game.GetGameInfoRequest{
 		GameId: req.GameId,
 	})
 	if err != nil {

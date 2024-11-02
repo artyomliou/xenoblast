@@ -21,8 +21,10 @@ check-tools:
 
 .PHONY: proto
 proto: check-tools
-	@cd proto/ && protoc --go_out=../internal \
-    --go-grpc_out=../internal \
+	@cd proto/ && protoc --go_out=../internal/pkg_proto \
+    --go-grpc_out=../internal/pkg_proto \
+		--go_opt=module=artyomliou/xenoblast-backend/internal/pkg_proto \
+		--go-grpc_opt=module=artyomliou/xenoblast-backend/internal/pkg_proto \
 		--proto_path=. \
     ./common.proto ./auth.proto ./matchmaking.proto ./game.proto ./http_api.proto
 

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "auth.proto";
 package http_api;
-option go_package = "./pkg_proto";
+option go_package = "artyomliou/xenoblast-backend/internal/pkg_proto/http_api";
 
 message HttpApiRegisterRequest {
   string nickname = 1;

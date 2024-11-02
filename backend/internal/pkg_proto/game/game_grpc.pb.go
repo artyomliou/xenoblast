@@ -4,9 +4,10 @@
 // - protoc             v3.12.4
 // source: game.proto
 
-package pkg_proto
+package game
 
 import (
+	pkg_proto "artyomliou/xenoblast-backend/internal/pkg_proto"
 	context "context"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
@@ -32,8 +33,8 @@ const (
 type GameServiceClient interface {
 	NewGame(ctx context.Context, in *NewGameRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	GetGameInfo(ctx context.Context, in *GetGameInfoRequest, opts ...grpc.CallOption) (*GetGameInfoResponse, error)
-	PlayerPublish(ctx context.Context, in *Event, opts ...grpc.CallOption) (*empty.Empty, error)
-	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Event], error)
+	PlayerPublish(ctx context.Context, in *pkg_proto.Event, opts ...grpc.CallOption) (*empty.Empty, error)
+	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[pkg_proto.Event], error)
 }
 
 type gameServiceClient struct {
@@ -64,7 +65,7 @@ func (c *gameServiceClient) GetGameInfo(ctx context.Context, in *GetGameInfoRequ
 	return out, nil
 }
 
-func (c *gameServiceClient) PlayerPublish(ctx context.Context, in *Event, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *gameServiceClient) PlayerPublish(ctx context.Context, in *pkg_proto.Event, opts ...grpc.CallOption) (*empty.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, GameService_PlayerPublish_FullMethodName, in, out, cOpts...)
@@ -74,13 +75,13 @@ func (c *gameServiceClient) PlayerPublish(ctx context.Context, in *Event, opts .
 	return out, nil
 }
 
-func (c *gameServiceClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Event], error) {
+func (c *gameServiceClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[pkg_proto.Event], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &GameService_ServiceDesc.Streams[0], GameService_Subscribe_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[SubscribeRequest, Event]{ClientStream: stream}
+	x := &grpc.GenericClientStream[SubscribeRequest, pkg_proto.Event]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -91,7 +92,7 @@ func (c *gameServiceClient) Subscribe(ctx context.Context, in *SubscribeRequest,
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GameService_SubscribeClient = grpc.ServerStreamingClient[Event]
+type GameService_SubscribeClient = grpc.ServerStreamingClient[pkg_proto.Event]
 
 // GameServiceServer is the server API for GameService service.
 // All implementations must embed UnimplementedGameServiceServer
@@ -99,8 +100,8 @@ type GameService_SubscribeClient = grpc.ServerStreamingClient[Event]
 type GameServiceServer interface {
 	NewGame(context.Context, *NewGameRequest) (*empty.Empty, error)
 	GetGameInfo(context.Context, *GetGameInfoRequest) (*GetGameInfoResponse, error)
-	PlayerPublish(context.Context, *Event) (*empty.Empty, error)
-	Subscribe(*SubscribeRequest, grpc.ServerStreamingServer[Event]) error
+	PlayerPublish(context.Context, *pkg_proto.Event) (*empty.Empty, error)
+	Subscribe(*SubscribeRequest, grpc.ServerStreamingServer[pkg_proto.Event]) error
 	mustEmbedUnimplementedGameServiceServer()
 }
 
@@ -117,10 +118,10 @@ func (UnimplementedGameServiceServer) NewGame(context.Context, *NewGameRequest) 
 func (UnimplementedGameServiceServer) GetGameInfo(context.Context, *GetGameInfoRequest) (*GetGameInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGameInfo not implemented")
 }
-func (UnimplementedGameServiceServer) PlayerPublish(context.Context, *Event) (*empty.Empty, error) {
+func (UnimplementedGameServiceServer) PlayerPublish(context.Context, *pkg_proto.Event) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerPublish not implemented")
 }
-func (UnimplementedGameServiceServer) Subscribe(*SubscribeRequest, grpc.ServerStreamingServer[Event]) error {
+func (UnimplementedGameServiceServer) Subscribe(*SubscribeRequest, grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
 }
 func (UnimplementedGameServiceServer) mustEmbedUnimplementedGameServiceServer() {}
@@ -181,7 +182,7 @@ func _GameService_GetGameInfo_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _GameService_PlayerPublish_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Event)
+	in := new(pkg_proto.Event)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -193,7 +194,7 @@ func _GameService_PlayerPublish_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: GameService_PlayerPublish_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GameServiceServer).PlayerPublish(ctx, req.(*Event))
+		return srv.(GameServiceServer).PlayerPublish(ctx, req.(*pkg_proto.Event))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -203,11 +204,11 @@ func _GameService_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) e
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GameServiceServer).Subscribe(m, &grpc.GenericServerStream[SubscribeRequest, Event]{ServerStream: stream})
+	return srv.(GameServiceServer).Subscribe(m, &grpc.GenericServerStream[SubscribeRequest, pkg_proto.Event]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GameService_SubscribeServer = grpc.ServerStreamingServer[Event]
+type GameService_SubscribeServer = grpc.ServerStreamingServer[pkg_proto.Event]
 
 // GameService_ServiceDesc is the grpc.ServiceDesc for GameService service.
 // It's only intended for direct use with grpc.RegisterService,

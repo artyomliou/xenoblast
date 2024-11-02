@@ -1,13 +1,13 @@
 package game_service
 
 import (
-	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewGrpcClient() (pkg_proto.GameServiceClient, func() error, error) {
+func NewGrpcClient() (game.GameServiceClient, func() error, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -16,5 +16,5 @@ func NewGrpcClient() (pkg_proto.GameServiceClient, func() error, error) {
 		return nil, nil, err
 	}
 
-	return pkg_proto.NewGameServiceClient(conn), conn.Close, nil
+	return game.NewGameServiceClient(conn), conn.Close, nil
 }

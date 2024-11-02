@@ -2,6 +2,9 @@ package websocket_service
 
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"context"
@@ -15,13 +18,13 @@ import (
 
 type ClientHandler struct {
 	client *Client
-	player *pkg_proto.PlayerInfoDto
+	player *auth.PlayerInfoDto
 	gameId int32
 	logger *log.Logger
 	msgCh  chan *messageContainer
 }
 
-func NewClientHandler(client *Client, player *pkg_proto.PlayerInfoDto) *ClientHandler {
+func NewClientHandler(client *Client, player *auth.PlayerInfoDto) *ClientHandler {
 	return &ClientHandler{
 		client: client,
 		player: player,
@@ -138,7 +141,7 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 	}
 	defer close()
 
-	stream, err := matchmakingClient.SubscribeMatch(ctx, &pkg_proto.MatchmakingRequest{
+	stream, err := matchmakingClient.SubscribeMatch(ctx, &matchmaking.MatchmakingRequest{
 		UserId: h.player.UserId,
 	})
 	if err != nil {
@@ -186,7 +189,7 @@ func (h *ClientHandler) recvGameEvent(ctx context.Context) {
 	}
 	defer close()
 
-	stream, err := gameClient.Subscribe(ctx, &pkg_proto.SubscribeRequest{
+	stream, err := gameClient.Subscribe(ctx, &game.SubscribeRequest{
 		GameId: h.gameId,
 		Types: []pkg_proto.EventType{
 			pkg_proto.EventType_StateWaitingReady,

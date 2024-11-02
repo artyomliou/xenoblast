@@ -4,9 +4,10 @@
 // 	protoc        v3.12.4
 // source: game.proto
 
-package pkg_proto
+package game
 
 import (
+	pkg_proto "artyomliou/xenoblast-backend/internal/pkg_proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -124,12 +125,12 @@ type GetGameInfoResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GameId    int32                `protobuf:"varint,1,opt,name=gameId,proto3" json:"gameId,omitempty"`
-	State     GameState            `protobuf:"varint,2,opt,name=state,proto3,enum=common.GameState" json:"state,omitempty"`
-	Players   []*PlayerPropertyDto `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty"`
-	MapWidth  int32                `protobuf:"varint,4,opt,name=mapWidth,proto3" json:"mapWidth,omitempty"`
-	MapHeight int32                `protobuf:"varint,5,opt,name=mapHeight,proto3" json:"mapHeight,omitempty"`
-	Tiles     []*TileDto           `protobuf:"bytes,6,rep,name=tiles,proto3" json:"tiles,omitempty"`
+	GameId    int32                          `protobuf:"varint,1,opt,name=gameId,proto3" json:"gameId,omitempty"`
+	State     pkg_proto.GameState            `protobuf:"varint,2,opt,name=state,proto3,enum=common.GameState" json:"state,omitempty"`
+	Players   []*pkg_proto.PlayerPropertyDto `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty"`
+	MapWidth  int32                          `protobuf:"varint,4,opt,name=mapWidth,proto3" json:"mapWidth,omitempty"`
+	MapHeight int32                          `protobuf:"varint,5,opt,name=mapHeight,proto3" json:"mapHeight,omitempty"`
+	Tiles     []*pkg_proto.TileDto           `protobuf:"bytes,6,rep,name=tiles,proto3" json:"tiles,omitempty"`
 }
 
 func (x *GetGameInfoResponse) Reset() {
@@ -169,14 +170,14 @@ func (x *GetGameInfoResponse) GetGameId() int32 {
 	return 0
 }
 
-func (x *GetGameInfoResponse) GetState() GameState {
+func (x *GetGameInfoResponse) GetState() pkg_proto.GameState {
 	if x != nil {
 		return x.State
 	}
-	return GameState_Init
+	return pkg_proto.GameState(0)
 }
 
-func (x *GetGameInfoResponse) GetPlayers() []*PlayerPropertyDto {
+func (x *GetGameInfoResponse) GetPlayers() []*pkg_proto.PlayerPropertyDto {
 	if x != nil {
 		return x.Players
 	}
@@ -197,7 +198,7 @@ func (x *GetGameInfoResponse) GetMapHeight() int32 {
 	return 0
 }
 
-func (x *GetGameInfoResponse) GetTiles() []*TileDto {
+func (x *GetGameInfoResponse) GetTiles() []*pkg_proto.TileDto {
 	if x != nil {
 		return x.Tiles
 	}
@@ -209,8 +210,8 @@ type SubscribeRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GameId int32       `protobuf:"varint,1,opt,name=gameId,proto3" json:"gameId,omitempty"`
-	Types  []EventType `protobuf:"varint,2,rep,packed,name=types,proto3,enum=common.EventType" json:"types,omitempty"`
+	GameId int32                 `protobuf:"varint,1,opt,name=gameId,proto3" json:"gameId,omitempty"`
+	Types  []pkg_proto.EventType `protobuf:"varint,2,rep,packed,name=types,proto3,enum=common.EventType" json:"types,omitempty"`
 }
 
 func (x *SubscribeRequest) Reset() {
@@ -250,7 +251,7 @@ func (x *SubscribeRequest) GetGameId() int32 {
 	return 0
 }
 
-func (x *SubscribeRequest) GetTypes() []EventType {
+func (x *SubscribeRequest) GetTypes() []pkg_proto.EventType {
 	if x != nil {
 		return x.Types
 	}
@@ -306,9 +307,11 @@ var file_game_proto_rawDesc = []byte{
 	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x34, 0x0a, 0x09, 0x53, 0x75, 0x62, 0x73,
 	0x63, 0x72, 0x69, 0x62, 0x65, 0x12, 0x16, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x53, 0x75, 0x62,
 	0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0d, 0x2e,
-	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x30, 0x01, 0x42, 0x0d,
-	0x5a, 0x0b, 0x2e, 0x2f, 0x70, 0x6b, 0x67, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x30, 0x01, 0x42, 0x36,
+	0x5a, 0x34, 0x61, 0x72, 0x74, 0x79, 0x6f, 0x6d, 0x6c, 0x69, 0x6f, 0x75, 0x2f, 0x78, 0x65, 0x6e,
+	0x6f, 0x62, 0x6c, 0x61, 0x73, 0x74, 0x2d, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2f, 0x69,
+	0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x70, 0x6b, 0x67, 0x5f, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x2f, 0x67, 0x61, 0x6d, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -325,16 +328,16 @@ func file_game_proto_rawDescGZIP() []byte {
 
 var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_game_proto_goTypes = []any{
-	(*NewGameRequest)(nil),      // 0: game.NewGameRequest
-	(*GetGameInfoRequest)(nil),  // 1: game.GetGameInfoRequest
-	(*GetGameInfoResponse)(nil), // 2: game.GetGameInfoResponse
-	(*SubscribeRequest)(nil),    // 3: game.SubscribeRequest
-	(GameState)(0),              // 4: common.GameState
-	(*PlayerPropertyDto)(nil),   // 5: common.PlayerPropertyDto
-	(*TileDto)(nil),             // 6: common.TileDto
-	(EventType)(0),              // 7: common.EventType
-	(*Event)(nil),               // 8: common.Event
-	(*empty.Empty)(nil),         // 9: google.protobuf.Empty
+	(*NewGameRequest)(nil),              // 0: game.NewGameRequest
+	(*GetGameInfoRequest)(nil),          // 1: game.GetGameInfoRequest
+	(*GetGameInfoResponse)(nil),         // 2: game.GetGameInfoResponse
+	(*SubscribeRequest)(nil),            // 3: game.SubscribeRequest
+	(pkg_proto.GameState)(0),            // 4: common.GameState
+	(*pkg_proto.PlayerPropertyDto)(nil), // 5: common.PlayerPropertyDto
+	(*pkg_proto.TileDto)(nil),           // 6: common.TileDto
+	(pkg_proto.EventType)(0),            // 7: common.EventType
+	(*pkg_proto.Event)(nil),             // 8: common.Event
+	(*empty.Empty)(nil),                 // 9: google.protobuf.Empty
 }
 var file_game_proto_depIdxs = []int32{
 	4, // 0: game.GetGameInfoResponse.state:type_name -> common.GameState
@@ -361,7 +364,6 @@ func file_game_proto_init() {
 	if File_game_proto != nil {
 		return
 	}
-	file_common_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/empty.proto";
 import "common.proto";
 package matchmaking;
-option go_package = "./pkg_proto";
+option go_package = "artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking";
 
 service MatchmakingService {
   rpc Enroll (MatchmakingRequest) returns (google.protobuf.Empty);
