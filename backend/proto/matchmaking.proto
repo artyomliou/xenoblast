@@ -12,5 +12,5 @@ service MatchmakingService {
 }
 
 message MatchmakingRequest {
-  int32 user_id = 1;
+  int32 userId = 1;
 }

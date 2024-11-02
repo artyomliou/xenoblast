@@ -14,12 +14,12 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  string api_key = 1;
+  string apiKey = 1;
   PlayerInfoDto player = 2;
 }
 
 message ValidateRequest {
-  string api_key = 1;
+  string apiKey = 1;
 }
 
 message GetNicknameRequest {
@@ -31,6 +31,6 @@ message GetNicknameResponse {
 }
 
 message PlayerInfoDto {
-  int32 user_id = 1;
+  int32 userId = 1;
   string nickname = 2;
 }

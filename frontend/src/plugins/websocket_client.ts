@@ -1,4 +1,5 @@
 import { Plugins } from "phaser";
+import { http_api } from "../pkg_proto/compiled";
 
 export class WebsocketClient extends Plugins.BasePlugin {
 
@@ -8,7 +9,11 @@ export class WebsocketClient extends Plugins.BasePlugin {
 
   url(path: string, apiKey: string) {
     const protocol = this.https ? "https" : "http";
-    return `${protocol}://${this.base}/${path}?api_key=${apiKey}`;
+    const req = http_api.HttpApiValidateRequest.toObject(<http_api.HttpApiValidateRequest>{
+      apiKey: apiKey,
+    });
+    const query = new URLSearchParams(req as Record<string, string>).toString()
+    return `${protocol}://${this.base}/${path}?${query}`;
   }
 
   open(apiKey: string, onMessageCallback: (ev: MessageEvent) => any) {

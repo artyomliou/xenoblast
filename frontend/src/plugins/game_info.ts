@@ -9,8 +9,8 @@ export class GameInfo extends Plugins.BasePlugin {
   tiles: Tile[][] = [];
 
   applyGameInfo(gameInfo: game.GetGameInfoResponse) {
-    this.mapWidth = gameInfo.map_width;
-    this.mapHeight = gameInfo.map_height;
+    this.mapWidth = gameInfo.mapWidth;
+    this.mapHeight = gameInfo.mapHeight;
 
     for (const playerPropertyDto of gameInfo.players) {
       this.players.push(new Player(playerPropertyDto));
@@ -18,10 +18,10 @@ export class GameInfo extends Plugins.BasePlugin {
 
     // To avoid directly reference gameInfo.tiles, we just copy types here
     // Sprite will be created in game.js
-    for (let x = 0; x < gameInfo.map_width; x++) {
+    for (let x = 0; x < gameInfo.mapWidth; x++) {
       this.tiles[x] = [];
-      for (let y = 0; y < gameInfo.map_height; y++) {
-        const idx = x * gameInfo.map_height + y;
+      for (let y = 0; y < gameInfo.mapHeight; y++) {
+        const idx = x * gameInfo.mapHeight + y;
         const tileDto = gameInfo.tiles[idx];
 
         const tile = (this.tiles[x][y] = new Tile());

@@ -64,8 +64,8 @@ export class MainMenu extends BaseScene {
   async sendRegisterOverHttp(nickname: string) {
     const resp = await this.apiClient.authRegister(nickname);
     this.session.nickname = nickname;
-    this.session.apiKey = resp.api_key;
-    this.session.uid = resp.user_id;
+    this.session.apiKey = resp.apiKey;
+    this.session.uid = resp.userId;
     console.debug(`uid ${this.session.uid}`);
     this.scene.start("WaitingRoom");
   }

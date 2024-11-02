@@ -119,8 +119,8 @@ func (player *frontendPlayer) Run(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
-	body := map[string]any{
-		"nickname": player.nickname,
+	body := &pkg_proto.HttpApiRegisterRequest{
+		Nickname: player.nickname,
 	}
 	respBytes, err := player.sendHttpRequest(http.MethodPost, "api/auth/register", body)
 	assert.NoError(t, err)
@@ -128,19 +128,23 @@ func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
 	resp := &pkg_proto.HttpApiRegisterResponse{}
 	err = json.Unmarshal(respBytes, resp)
 	assert.NoError(t, err)
+	assert.NotEmpty(t, resp.ApiKey)
+	assert.NotEmpty(t, resp.UserId)
 	player.apiKey = resp.ApiKey
 	player.userId = resp.UserId
 }
 
 func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {
-	conn, _, err := websocket.DefaultDialer.DialContext(player.ctx, fmt.Sprintf("ws://%s/%s?api_key=%s", websocket_service.HttpServerAddr, "ws/", player.apiKey), nil)
+	wsUrl := fmt.Sprintf("ws://%s/%s?apiKey=%s", websocket_service.HttpServerAddr, "ws/", player.apiKey)
+	conn, _, err := websocket.DefaultDialer.DialContext(player.ctx, wsUrl, nil)
 	assert.NoError(t, err)
+	assert.NotNil(t, conn)
 	player.conn = conn
 }
 
 func (player *frontendPlayer) sendEnrollMatchmakingOverHttp(t *testing.T) {
-	body := map[string]any{
-		"api_key": player.apiKey,
+	body := &pkg_proto.HttpApiValidateRequest{
+		ApiKey: player.apiKey,
 	}
 	_, err := player.sendHttpRequest(http.MethodPost, "api/matchmaking/enroll", body)
 	assert.NoError(t, err)
@@ -183,9 +187,9 @@ func (player *frontendPlayer) receiveWaitingReadyFromWebsocket(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendGetGameInfoOverHttp(t *testing.T) {
-	body := map[string]any{
-		"api_key": player.apiKey,
-		"game_id": player.gameId,
+	body := &pkg_proto.HttpApiGetGameInfoRequest{
+		ApiKey: player.apiKey,
+		GameId: player.gameId,
 	}
 	protobufBytes, err := player.sendHttpRequest(http.MethodPost, "api/game/get_game_info", body)
 	assert.NoError(t, err)
@@ -289,7 +293,7 @@ func (player *frontendPlayer) receivePlayerMovedFromWebsocket(t *testing.T) {
 	assert.Equal(t, 1, int(data.PixelY))
 }
 
-func (player *frontendPlayer) sendHttpRequest(method string, path string, body map[string]any) ([]byte, error) {
+func (player *frontendPlayer) sendHttpRequest(method string, path string, body any) ([]byte, error) {
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return nil, err

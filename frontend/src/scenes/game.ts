@@ -199,7 +199,7 @@ export class Game extends BaseScene {
       // setting this avoids too many collision which is annoying.
       player.sprite.setSize(35, 35).setOffset(2.5, 2.5);
 
-      if (player.user_id == this.session.uid) {
+      if (player.userId == this.session.uid) {
         this.player = player;
       }
     }
@@ -271,9 +271,9 @@ export class Game extends BaseScene {
     const event = common.Event.create({
       type: common.EventType.PlayerGetPowerup,
       timestamp: new Date().getTime() / 1000,
-      game_id: this.session.gameId,
-      player_get_powerup: {
-        user_id: this.session.uid,
+      gameId: this.session.gameId,
+      playerGetPowerup: {
+        userId: this.session.uid,
         x: tileX,
         y: tileY,
       },
@@ -390,42 +390,42 @@ export class Game extends BaseScene {
   }
 
   handlePlayerMovedEvent(ev: common.Event) {
-    if (ev.player_moved == null) {
+    if (!ev.playerMoved) {
       return
     }
-    if (ev.player_moved.user_id == this.session.uid) {
+    if (ev.playerMoved.userId == this.session.uid) {
       return;
     }
     for (const player of this.gameInfo.players) {
-      if (player.isAlive && player.user_id == ev.player_moved.user_id) {
-        player.targetX = ev.player_moved.x || 0;
-        player.targetY = ev.player_moved.y || 0;
+      if (player.isAlive && player.userId == ev.playerMoved.userId) {
+        player.targetX = ev.playerMoved.x || 0;
+        player.targetY = ev.playerMoved.y || 0;
       }
     }
   }
 
   handlePlayerDeadEvent(ev: common.Event) {
-    if (ev.player_dead == null) {
+    if (!ev.playerDead) {
       return
     }
     for (const player of this.gameInfo.players) {
-      if (player.user_id == ev.player_dead.user_id) {
+      if (player.userId == ev.playerDead.userId) {
         player.isAlive = false;
         if (player.sprite) {
           player.sprite.destroy();
           player.sprite = undefined;
         }
-        console.debug(`PlayerDead, user=${player.user_id}`);
+        console.debug(`PlayerDead, user=${player.userId}`);
       }
     }
   }
 
   handleBombPlantedEvent(ev: common.Event) {
-    if (!ev.bomb_planted) {
+    if (!ev.bombPlanted) {
       return
     }
-    const x = ev.bomb_planted.x || 0; // workaround zero-value marshalling
-    const y = ev.bomb_planted.y || 0;
+    const x = ev.bombPlanted.x || 0; // workaround zero-value marshalling
+    const y = ev.bombPlanted.y || 0;
 
     const tile = this.gameInfo.tiles[x][y];
     tile.obstacleType = common.ObstacleType.Bomb;
@@ -433,9 +433,9 @@ export class Game extends BaseScene {
     this.bombTiles.add(tile);
     console.debug(`BombPlanted, x=${x} y=${y}`);
 
-    if (ev.bomb_planted.user_id == this.session.uid) {
-      this.player.bombcount = ev.bomb_planted.user_bombcount || 0;
-      console.debug(`bombcount was set to ${ev.bomb_planted.user_bombcount || 0}`);
+    if (ev.bombPlanted.userId == this.session.uid) {
+      this.player.bombcount = ev.bombPlanted.userBombcount || 0;
+      console.debug(`bombcount was set to ${ev.bombPlanted.userBombcount || 0}`);
     }
   }
 
@@ -446,14 +446,14 @@ export class Game extends BaseScene {
   }
 
   handleBombExplodedEvent(ev: common.Event) {
-    if (!ev.bomb_exploded) {
+    if (!ev.bombExploded) {
       return
     }
-    const x = ev.bomb_exploded.x || 0; // workaround zero-value marshalling
-    const y = ev.bomb_exploded.y || 0;
-    const bombFirepower = ev.bomb_exploded.bomb_firepower || 0;
+    const x = ev.bombExploded.x || 0; // workaround zero-value marshalling
+    const y = ev.bombExploded.y || 0;
+    const bombFirepower = ev.bombExploded.bombFirepower || 0;
+    const userBombcount = ev.bombExploded.userBombcount || 0;
 
-    const data = ev.bomb_exploded;
     const tile = this.gameInfo.tiles[x][y];
     if (tile.obstacleType != common.ObstacleType.Bomb || !tile.obstacle) {
       console.warn("this tile is not bomb", ev, tile);
@@ -508,13 +508,13 @@ export class Game extends BaseScene {
     tile.obstacle.destroy();
     tile.obstacle = null;
     this.bombTiles.delete(tile);
-    console.debug(`BombExploded, x=${data.x} y=${data.y}`);
+    console.debug(`BombExploded, x=${x} y=${y}`);
 
     // Restore current player bombcount
-    if (data.user_id == this.session.uid) {
-      this.player.bombcount = data.user_bombcount || 0;
+    if (ev.bombExploded.userId == this.session.uid) {
+      this.player.bombcount = userBombcount;
       console.debug(
-        `bomb exploded, bombcount was set to ${data.user_bombcount || 0}`
+        `bomb exploded, bombcount was set to ${userBombcount}`
       );
     }
   }
@@ -554,11 +554,11 @@ export class Game extends BaseScene {
   }
 
   handleBoxRemovedEvent(ev: common.Event) {
-    if (ev.box_removed == null || ev.box_removed == undefined) {
+    if (!ev.boxRemoved) {
       return
     }
-    const x = ev.box_removed.x || 0; // workaround zero-value marshalling
-    const y = ev.box_removed.y || 0;
+    const x = ev.boxRemoved.x || 0; // workaround zero-value marshalling
+    const y = ev.boxRemoved.y || 0;
 
     const tile = this.gameInfo.tiles[x][y];
     if (tile.obstacleType != common.ObstacleType.Box || !tile.obstacle) {
@@ -572,12 +572,12 @@ export class Game extends BaseScene {
   }
 
   handlePowerupDroppedEvent(ev: common.Event) {
-    if (ev.powerup_dropped == null || ev.powerup_dropped == undefined) {
+    if (!ev.powerupDropped) {
       return
     }
-    const x = ev.powerup_dropped.x || 0; // workaround zero-value marshalling
-    const y = ev.powerup_dropped.y || 0;
-    const powerupType = ev.powerup_dropped.type || common.PowerupType.MoreBomb;
+    const x = ev.powerupDropped.x || 0; // workaround zero-value marshalling
+    const y = ev.powerupDropped.y || 0;
+    const powerupType = ev.powerupDropped.type || common.PowerupType.MoreBomb;
     
     const tile = this.gameInfo.tiles[x][y];
     tile.powerupType = powerupType;
@@ -590,14 +590,14 @@ export class Game extends BaseScene {
   }
 
   handlePowerupConsumedEvent(ev: common.Event) {
-    if (ev.powerup_consumed == null || ev.powerup_consumed == undefined) {
+    if (!ev.powerupConsumed) {
       return
     }
-    const x = ev.powerup_consumed.x || 0; // workaround zero-value marshalling
-    const y = ev.powerup_consumed.y || 0;
-    const userId = ev.powerup_consumed.user_id || 0;
-    const userBombcount = ev.powerup_consumed.user_bombcount || 0;
-    const userFirepower = ev.powerup_consumed.user_firepower || 0;
+    const x = ev.powerupConsumed.x || 0; // workaround zero-value marshalling
+    const y = ev.powerupConsumed.y || 0;
+    const userId = ev.powerupConsumed.userId || 0;
+    const userBombcount = ev.powerupConsumed.userBombcount || 0;
+    const userFirepower = ev.powerupConsumed.userFirepower || 0;
 
     const tile = this.gameInfo.tiles[x][y];
 
@@ -672,9 +672,9 @@ export class Game extends BaseScene {
               const event = common.Event.create({
                 type: common.EventType.PlayerPlantBomb,
                 timestamp: new Date().getTime() / 1000,
-                game_id: this.session.gameId,
-                player_plant_bomb: {
-                  user_id: this.session.uid,
+                gameId: this.session.gameId,
+                playerPlantBomb: {
+                  userId: this.session.uid,
                   x: tileX,
                   y: tileY,
                 },
@@ -689,7 +689,7 @@ export class Game extends BaseScene {
 
       // process other players
       this.gameInfo.players.forEach((player) => {
-        if (player.user_id == this.session.uid) {
+        if (player.userId == this.session.uid) {
           return;
         }
         player.update();
@@ -714,9 +714,9 @@ export class Game extends BaseScene {
       const event = common.Event.create({
         type: common.EventType.PlayerMove,
         timestamp: new Date().getTime() / 1000,
-        game_id: this.session.gameId,
-        player_move: {
-          user_id: this.session.uid,
+        gameId: this.session.gameId,
+        playerMove: {
+          userId: this.session.uid,
           x: tileX,
           y: tileY,
           pixelX: curX,

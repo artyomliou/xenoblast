@@ -45,37 +45,37 @@ enum EventType {
 message Event {
   EventType type = 1;
   int64 timestamp = 2;
-  int32 game_id = 3;
+  int32 gameId = 3;
   oneof data {
-    NewMatchData new_match = 11;
+    NewMatchData newMatch = 11;
     CountdownData countdown = 12;
-    GameOverData game_over = 13;
+    GameOverData gameOver = 13;
     CrashData crash = 14;
 
-    PlayerReadyData player_ready = 21;
-    PlayerMoveData player_move = 22;
-    PlayerGetPowerupData player_get_powerup = 23;
-    PlayerPlantBombData player_plant_bomb = 24;
+    PlayerReadyData playerReady = 21;
+    PlayerMoveData playerMove = 22;
+    PlayerGetPowerupData playerGetPowerup = 23;
+    PlayerPlantBombData playerPlantBomb = 24;
 
-    PlayerMovedData player_moved = 31;
-    PlayerDeadData player_dead = 32;
-    BombPlantedData bomb_planted = 33;
-    BombWillExplodeData bomb_will_explode = 34;
-    BombExplodedData bomb_exploded = 35;
-    BoxRemovedData box_removed = 36;
-    PowerupDroppedData powerup_dropped = 37;
-    PowerupConsumedData powerup_consumed = 38;
+    PlayerMovedData playerMoved = 31;
+    PlayerDeadData playerDead = 32;
+    BombPlantedData bombPlanted = 33;
+    BombWillExplodeData bombWillExplode = 34;
+    BombExplodedData bombExploded = 35;
+    BoxRemovedData boxRemoved = 36;
+    PowerupDroppedData powerupDropped = 37;
+    PowerupConsumedData powerupConsumed = 38;
   }
 }
 
 message CountdownData {
-  int64 start_ts = 1;
-  int64 end_ts = 2;
+  int64 startTs = 1;
+  int64 endTs = 2;
 }
 
 message GameOverData {
   string reason = 1;
-  int32 winner_user_id = 2;
+  int32 winnerUserId = 2;
 }
 
 message CrashData {
@@ -87,11 +87,11 @@ message NewMatchData {
 }
 
 message PlayerReadyData {
-  int32 user_id = 1;
+  int32 userId = 1;
 }
 
 message PlayerMoveData {
-  int32 user_id = 1;
+  int32 userId = 1;
   int32 x = 2;
   int32 y = 3;
   int32 pixelX = 4;
@@ -99,19 +99,19 @@ message PlayerMoveData {
 }
 
 message PlayerGetPowerupData {
-  int32 user_id = 1;
+  int32 userId = 1;
   int32 x = 2;
   int32 y = 3;
 }
 
 message PlayerPlantBombData {
-  int32 user_id = 1;
+  int32 userId = 1;
   int32 x = 2;
   int32 y = 3;
 }
 
 message PlayerMovedData {
-  int32 user_id = 1;
+  int32 userId = 1;
   int32 x = 2;
   int32 y = 3;
   int32 pixelX = 4;
@@ -119,30 +119,30 @@ message PlayerMovedData {
 }
 
 message PlayerDeadData {
-  int32 user_id = 1;
+  int32 userId = 1;
 }
 
 message BombPlantedData {
   int32 x = 1;
   int32 y = 2;
-  int64 exploded_at = 3;
-  int32 user_id = 4;
-  int32 user_bombcount = 5;
+  int64 explodedAt = 3;
+  int32 userId = 4;
+  int32 userBombcount = 5;
 }
 
 message BombWillExplodeData {
   int32 x = 1;
   int32 y = 2;
-  int32 bomb_firepower = 3;
-  int32 user_id = 4;
+  int32 bombFirepower = 3;
+  int32 userId = 4;
 }
 
 message BombExplodedData {
   int32 x = 1;
   int32 y = 2;
-  int32 bomb_firepower = 3;
-  int32 user_id = 4;
-  int32 user_bombcount = 5;
+  int32 bombFirepower = 3;
+  int32 userId = 4;
+  int32 userBombcount = 5;
 }
 
 message BoxRemovedData {
@@ -157,16 +157,16 @@ message PowerupDroppedData {
 }
 
 message PowerupConsumedData {
-  int32 user_id = 1;
+  int32 userId = 1;
   int32 x = 2;
   int32 y = 3;
   PowerupType type = 4;
-  int32 user_bombcount = 5;
-  int32 user_firepower = 6;
+  int32 userBombcount = 5;
+  int32 userFirepower = 6;
 }
 
 message PlayerPropertyDto {
-  int32 user_id = 1;
+  int32 userId = 1;
   int32 x = 2;
   int32 y = 3;
   int32 firepower = 4;

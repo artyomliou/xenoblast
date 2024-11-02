@@ -25,7 +25,8 @@ func InitRoutes(ctx context.Context) http.Handler {
 }
 
 func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	if !r.URL.Query().Has("api_key") {
+	// TODO use protobuf for query
+	if !r.URL.Query().Has("apiKey") {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -38,7 +39,7 @@ func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.
 	}
 	defer close()
 
-	apiKey := r.URL.Query().Get("api_key")
+	apiKey := r.URL.Query().Get("apiKey")
 	player, err := authClient.Validate(r.Context(), &pkg_proto.ValidateRequest{ApiKey: apiKey})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

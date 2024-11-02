@@ -9,12 +9,12 @@ message HttpApiRegisterRequest {
 }
 
 message HttpApiRegisterResponse{
-  string api_key = 1;
-  int32 user_id = 2;
+  string apiKey = 1;
+  int32 userId = 2;
 }
 
 message HttpApiValidateRequest {
-  string api_key = 1;
+  string apiKey = 1;
 }
 
 message HttpApiValidateResponse {
@@ -22,6 +22,6 @@ message HttpApiValidateResponse {
 }
 
 message HttpApiGetGameInfoRequest {
-  string api_key = 1;
-  int32 game_id = 2;
+  string apiKey = 1;
+  int32 gameId = 2;
 }

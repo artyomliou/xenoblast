@@ -106,23 +106,23 @@ export const common = $root.common = (() => {
          * @interface IEvent
          * @property {common.EventType|null} [type] Event type
          * @property {number|Long|null} [timestamp] Event timestamp
-         * @property {number|null} [game_id] Event game_id
-         * @property {common.INewMatchData|null} [new_match] Event new_match
+         * @property {number|null} [gameId] Event gameId
+         * @property {common.INewMatchData|null} [newMatch] Event newMatch
          * @property {common.ICountdownData|null} [countdown] Event countdown
-         * @property {common.IGameOverData|null} [game_over] Event game_over
+         * @property {common.IGameOverData|null} [gameOver] Event gameOver
          * @property {common.ICrashData|null} [crash] Event crash
-         * @property {common.IPlayerReadyData|null} [player_ready] Event player_ready
-         * @property {common.IPlayerMoveData|null} [player_move] Event player_move
-         * @property {common.IPlayerGetPowerupData|null} [player_get_powerup] Event player_get_powerup
-         * @property {common.IPlayerPlantBombData|null} [player_plant_bomb] Event player_plant_bomb
-         * @property {common.IPlayerMovedData|null} [player_moved] Event player_moved
-         * @property {common.IPlayerDeadData|null} [player_dead] Event player_dead
-         * @property {common.IBombPlantedData|null} [bomb_planted] Event bomb_planted
-         * @property {common.IBombWillExplodeData|null} [bomb_will_explode] Event bomb_will_explode
-         * @property {common.IBombExplodedData|null} [bomb_exploded] Event bomb_exploded
-         * @property {common.IBoxRemovedData|null} [box_removed] Event box_removed
-         * @property {common.IPowerupDroppedData|null} [powerup_dropped] Event powerup_dropped
-         * @property {common.IPowerupConsumedData|null} [powerup_consumed] Event powerup_consumed
+         * @property {common.IPlayerReadyData|null} [playerReady] Event playerReady
+         * @property {common.IPlayerMoveData|null} [playerMove] Event playerMove
+         * @property {common.IPlayerGetPowerupData|null} [playerGetPowerup] Event playerGetPowerup
+         * @property {common.IPlayerPlantBombData|null} [playerPlantBomb] Event playerPlantBomb
+         * @property {common.IPlayerMovedData|null} [playerMoved] Event playerMoved
+         * @property {common.IPlayerDeadData|null} [playerDead] Event playerDead
+         * @property {common.IBombPlantedData|null} [bombPlanted] Event bombPlanted
+         * @property {common.IBombWillExplodeData|null} [bombWillExplode] Event bombWillExplode
+         * @property {common.IBombExplodedData|null} [bombExploded] Event bombExploded
+         * @property {common.IBoxRemovedData|null} [boxRemoved] Event boxRemoved
+         * @property {common.IPowerupDroppedData|null} [powerupDropped] Event powerupDropped
+         * @property {common.IPowerupConsumedData|null} [powerupConsumed] Event powerupConsumed
          */
 
         /**
@@ -157,20 +157,20 @@ export const common = $root.common = (() => {
         Event.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
-         * Event game_id.
-         * @member {number} game_id
+         * Event gameId.
+         * @member {number} gameId
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.game_id = 0;
+        Event.prototype.gameId = 0;
 
         /**
-         * Event new_match.
-         * @member {common.INewMatchData|null|undefined} new_match
+         * Event newMatch.
+         * @member {common.INewMatchData|null|undefined} newMatch
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.new_match = null;
+        Event.prototype.newMatch = null;
 
         /**
          * Event countdown.
@@ -181,12 +181,12 @@ export const common = $root.common = (() => {
         Event.prototype.countdown = null;
 
         /**
-         * Event game_over.
-         * @member {common.IGameOverData|null|undefined} game_over
+         * Event gameOver.
+         * @member {common.IGameOverData|null|undefined} gameOver
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.game_over = null;
+        Event.prototype.gameOver = null;
 
         /**
          * Event crash.
@@ -197,112 +197,112 @@ export const common = $root.common = (() => {
         Event.prototype.crash = null;
 
         /**
-         * Event player_ready.
-         * @member {common.IPlayerReadyData|null|undefined} player_ready
+         * Event playerReady.
+         * @member {common.IPlayerReadyData|null|undefined} playerReady
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.player_ready = null;
+        Event.prototype.playerReady = null;
 
         /**
-         * Event player_move.
-         * @member {common.IPlayerMoveData|null|undefined} player_move
+         * Event playerMove.
+         * @member {common.IPlayerMoveData|null|undefined} playerMove
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.player_move = null;
+        Event.prototype.playerMove = null;
 
         /**
-         * Event player_get_powerup.
-         * @member {common.IPlayerGetPowerupData|null|undefined} player_get_powerup
+         * Event playerGetPowerup.
+         * @member {common.IPlayerGetPowerupData|null|undefined} playerGetPowerup
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.player_get_powerup = null;
+        Event.prototype.playerGetPowerup = null;
 
         /**
-         * Event player_plant_bomb.
-         * @member {common.IPlayerPlantBombData|null|undefined} player_plant_bomb
+         * Event playerPlantBomb.
+         * @member {common.IPlayerPlantBombData|null|undefined} playerPlantBomb
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.player_plant_bomb = null;
+        Event.prototype.playerPlantBomb = null;
 
         /**
-         * Event player_moved.
-         * @member {common.IPlayerMovedData|null|undefined} player_moved
+         * Event playerMoved.
+         * @member {common.IPlayerMovedData|null|undefined} playerMoved
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.player_moved = null;
+        Event.prototype.playerMoved = null;
 
         /**
-         * Event player_dead.
-         * @member {common.IPlayerDeadData|null|undefined} player_dead
+         * Event playerDead.
+         * @member {common.IPlayerDeadData|null|undefined} playerDead
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.player_dead = null;
+        Event.prototype.playerDead = null;
 
         /**
-         * Event bomb_planted.
-         * @member {common.IBombPlantedData|null|undefined} bomb_planted
+         * Event bombPlanted.
+         * @member {common.IBombPlantedData|null|undefined} bombPlanted
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.bomb_planted = null;
+        Event.prototype.bombPlanted = null;
 
         /**
-         * Event bomb_will_explode.
-         * @member {common.IBombWillExplodeData|null|undefined} bomb_will_explode
+         * Event bombWillExplode.
+         * @member {common.IBombWillExplodeData|null|undefined} bombWillExplode
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.bomb_will_explode = null;
+        Event.prototype.bombWillExplode = null;
 
         /**
-         * Event bomb_exploded.
-         * @member {common.IBombExplodedData|null|undefined} bomb_exploded
+         * Event bombExploded.
+         * @member {common.IBombExplodedData|null|undefined} bombExploded
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.bomb_exploded = null;
+        Event.prototype.bombExploded = null;
 
         /**
-         * Event box_removed.
-         * @member {common.IBoxRemovedData|null|undefined} box_removed
+         * Event boxRemoved.
+         * @member {common.IBoxRemovedData|null|undefined} boxRemoved
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.box_removed = null;
+        Event.prototype.boxRemoved = null;
 
         /**
-         * Event powerup_dropped.
-         * @member {common.IPowerupDroppedData|null|undefined} powerup_dropped
+         * Event powerupDropped.
+         * @member {common.IPowerupDroppedData|null|undefined} powerupDropped
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.powerup_dropped = null;
+        Event.prototype.powerupDropped = null;
 
         /**
-         * Event powerup_consumed.
-         * @member {common.IPowerupConsumedData|null|undefined} powerup_consumed
+         * Event powerupConsumed.
+         * @member {common.IPowerupConsumedData|null|undefined} powerupConsumed
          * @memberof common.Event
          * @instance
          */
-        Event.prototype.powerup_consumed = null;
+        Event.prototype.powerupConsumed = null;
 
         // OneOf field names bound to virtual getters and setters
         let $oneOfFields;
 
         /**
          * Event data.
-         * @member {"new_match"|"countdown"|"game_over"|"crash"|"player_ready"|"player_move"|"player_get_powerup"|"player_plant_bomb"|"player_moved"|"player_dead"|"bomb_planted"|"bomb_will_explode"|"bomb_exploded"|"box_removed"|"powerup_dropped"|"powerup_consumed"|undefined} data
+         * @member {"newMatch"|"countdown"|"gameOver"|"crash"|"playerReady"|"playerMove"|"playerGetPowerup"|"playerPlantBomb"|"playerMoved"|"playerDead"|"bombPlanted"|"bombWillExplode"|"bombExploded"|"boxRemoved"|"powerupDropped"|"powerupConsumed"|undefined} data
          * @memberof common.Event
          * @instance
          */
         Object.defineProperty(Event.prototype, "data", {
-            get: $util.oneOfGetter($oneOfFields = ["new_match", "countdown", "game_over", "crash", "player_ready", "player_move", "player_get_powerup", "player_plant_bomb", "player_moved", "player_dead", "bomb_planted", "bomb_will_explode", "bomb_exploded", "box_removed", "powerup_dropped", "powerup_consumed"]),
+            get: $util.oneOfGetter($oneOfFields = ["newMatch", "countdown", "gameOver", "crash", "playerReady", "playerMove", "playerGetPowerup", "playerPlantBomb", "playerMoved", "playerDead", "bombPlanted", "bombWillExplode", "bombExploded", "boxRemoved", "powerupDropped", "powerupConsumed"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -334,40 +334,40 @@ export const common = $root.common = (() => {
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
             if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int64(message.timestamp);
-            if (message.game_id != null && Object.hasOwnProperty.call(message, "game_id"))
-                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.game_id);
-            if (message.new_match != null && Object.hasOwnProperty.call(message, "new_match"))
-                $root.common.NewMatchData.encode(message.new_match, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
+            if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.gameId);
+            if (message.newMatch != null && Object.hasOwnProperty.call(message, "newMatch"))
+                $root.common.NewMatchData.encode(message.newMatch, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
             if (message.countdown != null && Object.hasOwnProperty.call(message, "countdown"))
                 $root.common.CountdownData.encode(message.countdown, writer.uint32(/* id 12, wireType 2 =*/98).fork()).ldelim();
-            if (message.game_over != null && Object.hasOwnProperty.call(message, "game_over"))
-                $root.common.GameOverData.encode(message.game_over, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
+            if (message.gameOver != null && Object.hasOwnProperty.call(message, "gameOver"))
+                $root.common.GameOverData.encode(message.gameOver, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
             if (message.crash != null && Object.hasOwnProperty.call(message, "crash"))
                 $root.common.CrashData.encode(message.crash, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
-            if (message.player_ready != null && Object.hasOwnProperty.call(message, "player_ready"))
-                $root.common.PlayerReadyData.encode(message.player_ready, writer.uint32(/* id 21, wireType 2 =*/170).fork()).ldelim();
-            if (message.player_move != null && Object.hasOwnProperty.call(message, "player_move"))
-                $root.common.PlayerMoveData.encode(message.player_move, writer.uint32(/* id 22, wireType 2 =*/178).fork()).ldelim();
-            if (message.player_get_powerup != null && Object.hasOwnProperty.call(message, "player_get_powerup"))
-                $root.common.PlayerGetPowerupData.encode(message.player_get_powerup, writer.uint32(/* id 23, wireType 2 =*/186).fork()).ldelim();
-            if (message.player_plant_bomb != null && Object.hasOwnProperty.call(message, "player_plant_bomb"))
-                $root.common.PlayerPlantBombData.encode(message.player_plant_bomb, writer.uint32(/* id 24, wireType 2 =*/194).fork()).ldelim();
-            if (message.player_moved != null && Object.hasOwnProperty.call(message, "player_moved"))
-                $root.common.PlayerMovedData.encode(message.player_moved, writer.uint32(/* id 31, wireType 2 =*/250).fork()).ldelim();
-            if (message.player_dead != null && Object.hasOwnProperty.call(message, "player_dead"))
-                $root.common.PlayerDeadData.encode(message.player_dead, writer.uint32(/* id 32, wireType 2 =*/258).fork()).ldelim();
-            if (message.bomb_planted != null && Object.hasOwnProperty.call(message, "bomb_planted"))
-                $root.common.BombPlantedData.encode(message.bomb_planted, writer.uint32(/* id 33, wireType 2 =*/266).fork()).ldelim();
-            if (message.bomb_will_explode != null && Object.hasOwnProperty.call(message, "bomb_will_explode"))
-                $root.common.BombWillExplodeData.encode(message.bomb_will_explode, writer.uint32(/* id 34, wireType 2 =*/274).fork()).ldelim();
-            if (message.bomb_exploded != null && Object.hasOwnProperty.call(message, "bomb_exploded"))
-                $root.common.BombExplodedData.encode(message.bomb_exploded, writer.uint32(/* id 35, wireType 2 =*/282).fork()).ldelim();
-            if (message.box_removed != null && Object.hasOwnProperty.call(message, "box_removed"))
-                $root.common.BoxRemovedData.encode(message.box_removed, writer.uint32(/* id 36, wireType 2 =*/290).fork()).ldelim();
-            if (message.powerup_dropped != null && Object.hasOwnProperty.call(message, "powerup_dropped"))
-                $root.common.PowerupDroppedData.encode(message.powerup_dropped, writer.uint32(/* id 37, wireType 2 =*/298).fork()).ldelim();
-            if (message.powerup_consumed != null && Object.hasOwnProperty.call(message, "powerup_consumed"))
-                $root.common.PowerupConsumedData.encode(message.powerup_consumed, writer.uint32(/* id 38, wireType 2 =*/306).fork()).ldelim();
+            if (message.playerReady != null && Object.hasOwnProperty.call(message, "playerReady"))
+                $root.common.PlayerReadyData.encode(message.playerReady, writer.uint32(/* id 21, wireType 2 =*/170).fork()).ldelim();
+            if (message.playerMove != null && Object.hasOwnProperty.call(message, "playerMove"))
+                $root.common.PlayerMoveData.encode(message.playerMove, writer.uint32(/* id 22, wireType 2 =*/178).fork()).ldelim();
+            if (message.playerGetPowerup != null && Object.hasOwnProperty.call(message, "playerGetPowerup"))
+                $root.common.PlayerGetPowerupData.encode(message.playerGetPowerup, writer.uint32(/* id 23, wireType 2 =*/186).fork()).ldelim();
+            if (message.playerPlantBomb != null && Object.hasOwnProperty.call(message, "playerPlantBomb"))
+                $root.common.PlayerPlantBombData.encode(message.playerPlantBomb, writer.uint32(/* id 24, wireType 2 =*/194).fork()).ldelim();
+            if (message.playerMoved != null && Object.hasOwnProperty.call(message, "playerMoved"))
+                $root.common.PlayerMovedData.encode(message.playerMoved, writer.uint32(/* id 31, wireType 2 =*/250).fork()).ldelim();
+            if (message.playerDead != null && Object.hasOwnProperty.call(message, "playerDead"))
+                $root.common.PlayerDeadData.encode(message.playerDead, writer.uint32(/* id 32, wireType 2 =*/258).fork()).ldelim();
+            if (message.bombPlanted != null && Object.hasOwnProperty.call(message, "bombPlanted"))
+                $root.common.BombPlantedData.encode(message.bombPlanted, writer.uint32(/* id 33, wireType 2 =*/266).fork()).ldelim();
+            if (message.bombWillExplode != null && Object.hasOwnProperty.call(message, "bombWillExplode"))
+                $root.common.BombWillExplodeData.encode(message.bombWillExplode, writer.uint32(/* id 34, wireType 2 =*/274).fork()).ldelim();
+            if (message.bombExploded != null && Object.hasOwnProperty.call(message, "bombExploded"))
+                $root.common.BombExplodedData.encode(message.bombExploded, writer.uint32(/* id 35, wireType 2 =*/282).fork()).ldelim();
+            if (message.boxRemoved != null && Object.hasOwnProperty.call(message, "boxRemoved"))
+                $root.common.BoxRemovedData.encode(message.boxRemoved, writer.uint32(/* id 36, wireType 2 =*/290).fork()).ldelim();
+            if (message.powerupDropped != null && Object.hasOwnProperty.call(message, "powerupDropped"))
+                $root.common.PowerupDroppedData.encode(message.powerupDropped, writer.uint32(/* id 37, wireType 2 =*/298).fork()).ldelim();
+            if (message.powerupConsumed != null && Object.hasOwnProperty.call(message, "powerupConsumed"))
+                $root.common.PowerupConsumedData.encode(message.powerupConsumed, writer.uint32(/* id 38, wireType 2 =*/306).fork()).ldelim();
             return writer;
         };
 
@@ -411,11 +411,11 @@ export const common = $root.common = (() => {
                         break;
                     }
                 case 3: {
-                        message.game_id = reader.int32();
+                        message.gameId = reader.int32();
                         break;
                     }
                 case 11: {
-                        message.new_match = $root.common.NewMatchData.decode(reader, reader.uint32());
+                        message.newMatch = $root.common.NewMatchData.decode(reader, reader.uint32());
                         break;
                     }
                 case 12: {
@@ -423,7 +423,7 @@ export const common = $root.common = (() => {
                         break;
                     }
                 case 13: {
-                        message.game_over = $root.common.GameOverData.decode(reader, reader.uint32());
+                        message.gameOver = $root.common.GameOverData.decode(reader, reader.uint32());
                         break;
                     }
                 case 14: {
@@ -431,51 +431,51 @@ export const common = $root.common = (() => {
                         break;
                     }
                 case 21: {
-                        message.player_ready = $root.common.PlayerReadyData.decode(reader, reader.uint32());
+                        message.playerReady = $root.common.PlayerReadyData.decode(reader, reader.uint32());
                         break;
                     }
                 case 22: {
-                        message.player_move = $root.common.PlayerMoveData.decode(reader, reader.uint32());
+                        message.playerMove = $root.common.PlayerMoveData.decode(reader, reader.uint32());
                         break;
                     }
                 case 23: {
-                        message.player_get_powerup = $root.common.PlayerGetPowerupData.decode(reader, reader.uint32());
+                        message.playerGetPowerup = $root.common.PlayerGetPowerupData.decode(reader, reader.uint32());
                         break;
                     }
                 case 24: {
-                        message.player_plant_bomb = $root.common.PlayerPlantBombData.decode(reader, reader.uint32());
+                        message.playerPlantBomb = $root.common.PlayerPlantBombData.decode(reader, reader.uint32());
                         break;
                     }
                 case 31: {
-                        message.player_moved = $root.common.PlayerMovedData.decode(reader, reader.uint32());
+                        message.playerMoved = $root.common.PlayerMovedData.decode(reader, reader.uint32());
                         break;
                     }
                 case 32: {
-                        message.player_dead = $root.common.PlayerDeadData.decode(reader, reader.uint32());
+                        message.playerDead = $root.common.PlayerDeadData.decode(reader, reader.uint32());
                         break;
                     }
                 case 33: {
-                        message.bomb_planted = $root.common.BombPlantedData.decode(reader, reader.uint32());
+                        message.bombPlanted = $root.common.BombPlantedData.decode(reader, reader.uint32());
                         break;
                     }
                 case 34: {
-                        message.bomb_will_explode = $root.common.BombWillExplodeData.decode(reader, reader.uint32());
+                        message.bombWillExplode = $root.common.BombWillExplodeData.decode(reader, reader.uint32());
                         break;
                     }
                 case 35: {
-                        message.bomb_exploded = $root.common.BombExplodedData.decode(reader, reader.uint32());
+                        message.bombExploded = $root.common.BombExplodedData.decode(reader, reader.uint32());
                         break;
                     }
                 case 36: {
-                        message.box_removed = $root.common.BoxRemovedData.decode(reader, reader.uint32());
+                        message.boxRemoved = $root.common.BoxRemovedData.decode(reader, reader.uint32());
                         break;
                     }
                 case 37: {
-                        message.powerup_dropped = $root.common.PowerupDroppedData.decode(reader, reader.uint32());
+                        message.powerupDropped = $root.common.PowerupDroppedData.decode(reader, reader.uint32());
                         break;
                     }
                 case 38: {
-                        message.powerup_consumed = $root.common.PowerupConsumedData.decode(reader, reader.uint32());
+                        message.powerupConsumed = $root.common.PowerupConsumedData.decode(reader, reader.uint32());
                         break;
                     }
                 default:
@@ -546,15 +546,15 @@ export const common = $root.common = (() => {
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (!$util.isInteger(message.timestamp) && !(message.timestamp && $util.isInteger(message.timestamp.low) && $util.isInteger(message.timestamp.high)))
                     return "timestamp: integer|Long expected";
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                if (!$util.isInteger(message.game_id))
-                    return "game_id: integer expected";
-            if (message.new_match != null && message.hasOwnProperty("new_match")) {
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                if (!$util.isInteger(message.gameId))
+                    return "gameId: integer expected";
+            if (message.newMatch != null && message.hasOwnProperty("newMatch")) {
                 properties.data = 1;
                 {
-                    let error = $root.common.NewMatchData.verify(message.new_match);
+                    let error = $root.common.NewMatchData.verify(message.newMatch);
                     if (error)
-                        return "new_match." + error;
+                        return "newMatch." + error;
                 }
             }
             if (message.countdown != null && message.hasOwnProperty("countdown")) {
@@ -567,14 +567,14 @@ export const common = $root.common = (() => {
                         return "countdown." + error;
                 }
             }
-            if (message.game_over != null && message.hasOwnProperty("game_over")) {
+            if (message.gameOver != null && message.hasOwnProperty("gameOver")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.GameOverData.verify(message.game_over);
+                    let error = $root.common.GameOverData.verify(message.gameOver);
                     if (error)
-                        return "game_over." + error;
+                        return "gameOver." + error;
                 }
             }
             if (message.crash != null && message.hasOwnProperty("crash")) {
@@ -587,124 +587,124 @@ export const common = $root.common = (() => {
                         return "crash." + error;
                 }
             }
-            if (message.player_ready != null && message.hasOwnProperty("player_ready")) {
+            if (message.playerReady != null && message.hasOwnProperty("playerReady")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.PlayerReadyData.verify(message.player_ready);
+                    let error = $root.common.PlayerReadyData.verify(message.playerReady);
                     if (error)
-                        return "player_ready." + error;
+                        return "playerReady." + error;
                 }
             }
-            if (message.player_move != null && message.hasOwnProperty("player_move")) {
+            if (message.playerMove != null && message.hasOwnProperty("playerMove")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.PlayerMoveData.verify(message.player_move);
+                    let error = $root.common.PlayerMoveData.verify(message.playerMove);
                     if (error)
-                        return "player_move." + error;
+                        return "playerMove." + error;
                 }
             }
-            if (message.player_get_powerup != null && message.hasOwnProperty("player_get_powerup")) {
+            if (message.playerGetPowerup != null && message.hasOwnProperty("playerGetPowerup")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.PlayerGetPowerupData.verify(message.player_get_powerup);
+                    let error = $root.common.PlayerGetPowerupData.verify(message.playerGetPowerup);
                     if (error)
-                        return "player_get_powerup." + error;
+                        return "playerGetPowerup." + error;
                 }
             }
-            if (message.player_plant_bomb != null && message.hasOwnProperty("player_plant_bomb")) {
+            if (message.playerPlantBomb != null && message.hasOwnProperty("playerPlantBomb")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.PlayerPlantBombData.verify(message.player_plant_bomb);
+                    let error = $root.common.PlayerPlantBombData.verify(message.playerPlantBomb);
                     if (error)
-                        return "player_plant_bomb." + error;
+                        return "playerPlantBomb." + error;
                 }
             }
-            if (message.player_moved != null && message.hasOwnProperty("player_moved")) {
+            if (message.playerMoved != null && message.hasOwnProperty("playerMoved")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.PlayerMovedData.verify(message.player_moved);
+                    let error = $root.common.PlayerMovedData.verify(message.playerMoved);
                     if (error)
-                        return "player_moved." + error;
+                        return "playerMoved." + error;
                 }
             }
-            if (message.player_dead != null && message.hasOwnProperty("player_dead")) {
+            if (message.playerDead != null && message.hasOwnProperty("playerDead")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.PlayerDeadData.verify(message.player_dead);
+                    let error = $root.common.PlayerDeadData.verify(message.playerDead);
                     if (error)
-                        return "player_dead." + error;
+                        return "playerDead." + error;
                 }
             }
-            if (message.bomb_planted != null && message.hasOwnProperty("bomb_planted")) {
+            if (message.bombPlanted != null && message.hasOwnProperty("bombPlanted")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.BombPlantedData.verify(message.bomb_planted);
+                    let error = $root.common.BombPlantedData.verify(message.bombPlanted);
                     if (error)
-                        return "bomb_planted." + error;
+                        return "bombPlanted." + error;
                 }
             }
-            if (message.bomb_will_explode != null && message.hasOwnProperty("bomb_will_explode")) {
+            if (message.bombWillExplode != null && message.hasOwnProperty("bombWillExplode")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.BombWillExplodeData.verify(message.bomb_will_explode);
+                    let error = $root.common.BombWillExplodeData.verify(message.bombWillExplode);
                     if (error)
-                        return "bomb_will_explode." + error;
+                        return "bombWillExplode." + error;
                 }
             }
-            if (message.bomb_exploded != null && message.hasOwnProperty("bomb_exploded")) {
+            if (message.bombExploded != null && message.hasOwnProperty("bombExploded")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.BombExplodedData.verify(message.bomb_exploded);
+                    let error = $root.common.BombExplodedData.verify(message.bombExploded);
                     if (error)
-                        return "bomb_exploded." + error;
+                        return "bombExploded." + error;
                 }
             }
-            if (message.box_removed != null && message.hasOwnProperty("box_removed")) {
+            if (message.boxRemoved != null && message.hasOwnProperty("boxRemoved")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.BoxRemovedData.verify(message.box_removed);
+                    let error = $root.common.BoxRemovedData.verify(message.boxRemoved);
                     if (error)
-                        return "box_removed." + error;
+                        return "boxRemoved." + error;
                 }
             }
-            if (message.powerup_dropped != null && message.hasOwnProperty("powerup_dropped")) {
+            if (message.powerupDropped != null && message.hasOwnProperty("powerupDropped")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.PowerupDroppedData.verify(message.powerup_dropped);
+                    let error = $root.common.PowerupDroppedData.verify(message.powerupDropped);
                     if (error)
-                        return "powerup_dropped." + error;
+                        return "powerupDropped." + error;
                 }
             }
-            if (message.powerup_consumed != null && message.hasOwnProperty("powerup_consumed")) {
+            if (message.powerupConsumed != null && message.hasOwnProperty("powerupConsumed")) {
                 if (properties.data === 1)
                     return "data: multiple values";
                 properties.data = 1;
                 {
-                    let error = $root.common.PowerupConsumedData.verify(message.powerup_consumed);
+                    let error = $root.common.PowerupConsumedData.verify(message.powerupConsumed);
                     if (error)
-                        return "powerup_consumed." + error;
+                        return "powerupConsumed." + error;
                 }
             }
             return null;
@@ -831,87 +831,87 @@ export const common = $root.common = (() => {
                     message.timestamp = object.timestamp;
                 else if (typeof object.timestamp === "object")
                     message.timestamp = new $util.LongBits(object.timestamp.low >>> 0, object.timestamp.high >>> 0).toNumber();
-            if (object.game_id != null)
-                message.game_id = object.game_id | 0;
-            if (object.new_match != null) {
-                if (typeof object.new_match !== "object")
-                    throw TypeError(".common.Event.new_match: object expected");
-                message.new_match = $root.common.NewMatchData.fromObject(object.new_match);
+            if (object.gameId != null)
+                message.gameId = object.gameId | 0;
+            if (object.newMatch != null) {
+                if (typeof object.newMatch !== "object")
+                    throw TypeError(".common.Event.newMatch: object expected");
+                message.newMatch = $root.common.NewMatchData.fromObject(object.newMatch);
             }
             if (object.countdown != null) {
                 if (typeof object.countdown !== "object")
                     throw TypeError(".common.Event.countdown: object expected");
                 message.countdown = $root.common.CountdownData.fromObject(object.countdown);
             }
-            if (object.game_over != null) {
-                if (typeof object.game_over !== "object")
-                    throw TypeError(".common.Event.game_over: object expected");
-                message.game_over = $root.common.GameOverData.fromObject(object.game_over);
+            if (object.gameOver != null) {
+                if (typeof object.gameOver !== "object")
+                    throw TypeError(".common.Event.gameOver: object expected");
+                message.gameOver = $root.common.GameOverData.fromObject(object.gameOver);
             }
             if (object.crash != null) {
                 if (typeof object.crash !== "object")
                     throw TypeError(".common.Event.crash: object expected");
                 message.crash = $root.common.CrashData.fromObject(object.crash);
             }
-            if (object.player_ready != null) {
-                if (typeof object.player_ready !== "object")
-                    throw TypeError(".common.Event.player_ready: object expected");
-                message.player_ready = $root.common.PlayerReadyData.fromObject(object.player_ready);
+            if (object.playerReady != null) {
+                if (typeof object.playerReady !== "object")
+                    throw TypeError(".common.Event.playerReady: object expected");
+                message.playerReady = $root.common.PlayerReadyData.fromObject(object.playerReady);
             }
-            if (object.player_move != null) {
-                if (typeof object.player_move !== "object")
-                    throw TypeError(".common.Event.player_move: object expected");
-                message.player_move = $root.common.PlayerMoveData.fromObject(object.player_move);
+            if (object.playerMove != null) {
+                if (typeof object.playerMove !== "object")
+                    throw TypeError(".common.Event.playerMove: object expected");
+                message.playerMove = $root.common.PlayerMoveData.fromObject(object.playerMove);
             }
-            if (object.player_get_powerup != null) {
-                if (typeof object.player_get_powerup !== "object")
-                    throw TypeError(".common.Event.player_get_powerup: object expected");
-                message.player_get_powerup = $root.common.PlayerGetPowerupData.fromObject(object.player_get_powerup);
+            if (object.playerGetPowerup != null) {
+                if (typeof object.playerGetPowerup !== "object")
+                    throw TypeError(".common.Event.playerGetPowerup: object expected");
+                message.playerGetPowerup = $root.common.PlayerGetPowerupData.fromObject(object.playerGetPowerup);
             }
-            if (object.player_plant_bomb != null) {
-                if (typeof object.player_plant_bomb !== "object")
-                    throw TypeError(".common.Event.player_plant_bomb: object expected");
-                message.player_plant_bomb = $root.common.PlayerPlantBombData.fromObject(object.player_plant_bomb);
+            if (object.playerPlantBomb != null) {
+                if (typeof object.playerPlantBomb !== "object")
+                    throw TypeError(".common.Event.playerPlantBomb: object expected");
+                message.playerPlantBomb = $root.common.PlayerPlantBombData.fromObject(object.playerPlantBomb);
             }
-            if (object.player_moved != null) {
-                if (typeof object.player_moved !== "object")
-                    throw TypeError(".common.Event.player_moved: object expected");
-                message.player_moved = $root.common.PlayerMovedData.fromObject(object.player_moved);
+            if (object.playerMoved != null) {
+                if (typeof object.playerMoved !== "object")
+                    throw TypeError(".common.Event.playerMoved: object expected");
+                message.playerMoved = $root.common.PlayerMovedData.fromObject(object.playerMoved);
             }
-            if (object.player_dead != null) {
-                if (typeof object.player_dead !== "object")
-                    throw TypeError(".common.Event.player_dead: object expected");
-                message.player_dead = $root.common.PlayerDeadData.fromObject(object.player_dead);
+            if (object.playerDead != null) {
+                if (typeof object.playerDead !== "object")
+                    throw TypeError(".common.Event.playerDead: object expected");
+                message.playerDead = $root.common.PlayerDeadData.fromObject(object.playerDead);
             }
-            if (object.bomb_planted != null) {
-                if (typeof object.bomb_planted !== "object")
-                    throw TypeError(".common.Event.bomb_planted: object expected");
-                message.bomb_planted = $root.common.BombPlantedData.fromObject(object.bomb_planted);
+            if (object.bombPlanted != null) {
+                if (typeof object.bombPlanted !== "object")
+                    throw TypeError(".common.Event.bombPlanted: object expected");
+                message.bombPlanted = $root.common.BombPlantedData.fromObject(object.bombPlanted);
             }
-            if (object.bomb_will_explode != null) {
-                if (typeof object.bomb_will_explode !== "object")
-                    throw TypeError(".common.Event.bomb_will_explode: object expected");
-                message.bomb_will_explode = $root.common.BombWillExplodeData.fromObject(object.bomb_will_explode);
+            if (object.bombWillExplode != null) {
+                if (typeof object.bombWillExplode !== "object")
+                    throw TypeError(".common.Event.bombWillExplode: object expected");
+                message.bombWillExplode = $root.common.BombWillExplodeData.fromObject(object.bombWillExplode);
             }
-            if (object.bomb_exploded != null) {
-                if (typeof object.bomb_exploded !== "object")
-                    throw TypeError(".common.Event.bomb_exploded: object expected");
-                message.bomb_exploded = $root.common.BombExplodedData.fromObject(object.bomb_exploded);
+            if (object.bombExploded != null) {
+                if (typeof object.bombExploded !== "object")
+                    throw TypeError(".common.Event.bombExploded: object expected");
+                message.bombExploded = $root.common.BombExplodedData.fromObject(object.bombExploded);
             }
-            if (object.box_removed != null) {
-                if (typeof object.box_removed !== "object")
-                    throw TypeError(".common.Event.box_removed: object expected");
-                message.box_removed = $root.common.BoxRemovedData.fromObject(object.box_removed);
+            if (object.boxRemoved != null) {
+                if (typeof object.boxRemoved !== "object")
+                    throw TypeError(".common.Event.boxRemoved: object expected");
+                message.boxRemoved = $root.common.BoxRemovedData.fromObject(object.boxRemoved);
             }
-            if (object.powerup_dropped != null) {
-                if (typeof object.powerup_dropped !== "object")
-                    throw TypeError(".common.Event.powerup_dropped: object expected");
-                message.powerup_dropped = $root.common.PowerupDroppedData.fromObject(object.powerup_dropped);
+            if (object.powerupDropped != null) {
+                if (typeof object.powerupDropped !== "object")
+                    throw TypeError(".common.Event.powerupDropped: object expected");
+                message.powerupDropped = $root.common.PowerupDroppedData.fromObject(object.powerupDropped);
             }
-            if (object.powerup_consumed != null) {
-                if (typeof object.powerup_consumed !== "object")
-                    throw TypeError(".common.Event.powerup_consumed: object expected");
-                message.powerup_consumed = $root.common.PowerupConsumedData.fromObject(object.powerup_consumed);
+            if (object.powerupConsumed != null) {
+                if (typeof object.powerupConsumed !== "object")
+                    throw TypeError(".common.Event.powerupConsumed: object expected");
+                message.powerupConsumed = $root.common.PowerupConsumedData.fromObject(object.powerupConsumed);
             }
             return message;
         };
@@ -936,7 +936,7 @@ export const common = $root.common = (() => {
                     object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.timestamp = options.longs === String ? "0" : 0;
-                object.game_id = 0;
+                object.gameId = 0;
             }
             if (message.type != null && message.hasOwnProperty("type"))
                 object.type = options.enums === String ? $root.common.EventType[message.type] === undefined ? message.type : $root.common.EventType[message.type] : message.type;
@@ -945,87 +945,87 @@ export const common = $root.common = (() => {
                     object.timestamp = options.longs === String ? String(message.timestamp) : message.timestamp;
                 else
                     object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber() : message.timestamp;
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                object.game_id = message.game_id;
-            if (message.new_match != null && message.hasOwnProperty("new_match")) {
-                object.new_match = $root.common.NewMatchData.toObject(message.new_match, options);
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                object.gameId = message.gameId;
+            if (message.newMatch != null && message.hasOwnProperty("newMatch")) {
+                object.newMatch = $root.common.NewMatchData.toObject(message.newMatch, options);
                 if (options.oneofs)
-                    object.data = "new_match";
+                    object.data = "newMatch";
             }
             if (message.countdown != null && message.hasOwnProperty("countdown")) {
                 object.countdown = $root.common.CountdownData.toObject(message.countdown, options);
                 if (options.oneofs)
                     object.data = "countdown";
             }
-            if (message.game_over != null && message.hasOwnProperty("game_over")) {
-                object.game_over = $root.common.GameOverData.toObject(message.game_over, options);
+            if (message.gameOver != null && message.hasOwnProperty("gameOver")) {
+                object.gameOver = $root.common.GameOverData.toObject(message.gameOver, options);
                 if (options.oneofs)
-                    object.data = "game_over";
+                    object.data = "gameOver";
             }
             if (message.crash != null && message.hasOwnProperty("crash")) {
                 object.crash = $root.common.CrashData.toObject(message.crash, options);
                 if (options.oneofs)
                     object.data = "crash";
             }
-            if (message.player_ready != null && message.hasOwnProperty("player_ready")) {
-                object.player_ready = $root.common.PlayerReadyData.toObject(message.player_ready, options);
+            if (message.playerReady != null && message.hasOwnProperty("playerReady")) {
+                object.playerReady = $root.common.PlayerReadyData.toObject(message.playerReady, options);
                 if (options.oneofs)
-                    object.data = "player_ready";
+                    object.data = "playerReady";
             }
-            if (message.player_move != null && message.hasOwnProperty("player_move")) {
-                object.player_move = $root.common.PlayerMoveData.toObject(message.player_move, options);
+            if (message.playerMove != null && message.hasOwnProperty("playerMove")) {
+                object.playerMove = $root.common.PlayerMoveData.toObject(message.playerMove, options);
                 if (options.oneofs)
-                    object.data = "player_move";
+                    object.data = "playerMove";
             }
-            if (message.player_get_powerup != null && message.hasOwnProperty("player_get_powerup")) {
-                object.player_get_powerup = $root.common.PlayerGetPowerupData.toObject(message.player_get_powerup, options);
+            if (message.playerGetPowerup != null && message.hasOwnProperty("playerGetPowerup")) {
+                object.playerGetPowerup = $root.common.PlayerGetPowerupData.toObject(message.playerGetPowerup, options);
                 if (options.oneofs)
-                    object.data = "player_get_powerup";
+                    object.data = "playerGetPowerup";
             }
-            if (message.player_plant_bomb != null && message.hasOwnProperty("player_plant_bomb")) {
-                object.player_plant_bomb = $root.common.PlayerPlantBombData.toObject(message.player_plant_bomb, options);
+            if (message.playerPlantBomb != null && message.hasOwnProperty("playerPlantBomb")) {
+                object.playerPlantBomb = $root.common.PlayerPlantBombData.toObject(message.playerPlantBomb, options);
                 if (options.oneofs)
-                    object.data = "player_plant_bomb";
+                    object.data = "playerPlantBomb";
             }
-            if (message.player_moved != null && message.hasOwnProperty("player_moved")) {
-                object.player_moved = $root.common.PlayerMovedData.toObject(message.player_moved, options);
+            if (message.playerMoved != null && message.hasOwnProperty("playerMoved")) {
+                object.playerMoved = $root.common.PlayerMovedData.toObject(message.playerMoved, options);
                 if (options.oneofs)
-                    object.data = "player_moved";
+                    object.data = "playerMoved";
             }
-            if (message.player_dead != null && message.hasOwnProperty("player_dead")) {
-                object.player_dead = $root.common.PlayerDeadData.toObject(message.player_dead, options);
+            if (message.playerDead != null && message.hasOwnProperty("playerDead")) {
+                object.playerDead = $root.common.PlayerDeadData.toObject(message.playerDead, options);
                 if (options.oneofs)
-                    object.data = "player_dead";
+                    object.data = "playerDead";
             }
-            if (message.bomb_planted != null && message.hasOwnProperty("bomb_planted")) {
-                object.bomb_planted = $root.common.BombPlantedData.toObject(message.bomb_planted, options);
+            if (message.bombPlanted != null && message.hasOwnProperty("bombPlanted")) {
+                object.bombPlanted = $root.common.BombPlantedData.toObject(message.bombPlanted, options);
                 if (options.oneofs)
-                    object.data = "bomb_planted";
+                    object.data = "bombPlanted";
             }
-            if (message.bomb_will_explode != null && message.hasOwnProperty("bomb_will_explode")) {
-                object.bomb_will_explode = $root.common.BombWillExplodeData.toObject(message.bomb_will_explode, options);
+            if (message.bombWillExplode != null && message.hasOwnProperty("bombWillExplode")) {
+                object.bombWillExplode = $root.common.BombWillExplodeData.toObject(message.bombWillExplode, options);
                 if (options.oneofs)
-                    object.data = "bomb_will_explode";
+                    object.data = "bombWillExplode";
             }
-            if (message.bomb_exploded != null && message.hasOwnProperty("bomb_exploded")) {
-                object.bomb_exploded = $root.common.BombExplodedData.toObject(message.bomb_exploded, options);
+            if (message.bombExploded != null && message.hasOwnProperty("bombExploded")) {
+                object.bombExploded = $root.common.BombExplodedData.toObject(message.bombExploded, options);
                 if (options.oneofs)
-                    object.data = "bomb_exploded";
+                    object.data = "bombExploded";
             }
-            if (message.box_removed != null && message.hasOwnProperty("box_removed")) {
-                object.box_removed = $root.common.BoxRemovedData.toObject(message.box_removed, options);
+            if (message.boxRemoved != null && message.hasOwnProperty("boxRemoved")) {
+                object.boxRemoved = $root.common.BoxRemovedData.toObject(message.boxRemoved, options);
                 if (options.oneofs)
-                    object.data = "box_removed";
+                    object.data = "boxRemoved";
             }
-            if (message.powerup_dropped != null && message.hasOwnProperty("powerup_dropped")) {
-                object.powerup_dropped = $root.common.PowerupDroppedData.toObject(message.powerup_dropped, options);
+            if (message.powerupDropped != null && message.hasOwnProperty("powerupDropped")) {
+                object.powerupDropped = $root.common.PowerupDroppedData.toObject(message.powerupDropped, options);
                 if (options.oneofs)
-                    object.data = "powerup_dropped";
+                    object.data = "powerupDropped";
             }
-            if (message.powerup_consumed != null && message.hasOwnProperty("powerup_consumed")) {
-                object.powerup_consumed = $root.common.PowerupConsumedData.toObject(message.powerup_consumed, options);
+            if (message.powerupConsumed != null && message.hasOwnProperty("powerupConsumed")) {
+                object.powerupConsumed = $root.common.PowerupConsumedData.toObject(message.powerupConsumed, options);
                 if (options.oneofs)
-                    object.data = "powerup_consumed";
+                    object.data = "powerupConsumed";
             }
             return object;
         };
@@ -1065,8 +1065,8 @@ export const common = $root.common = (() => {
          * Properties of a CountdownData.
          * @memberof common
          * @interface ICountdownData
-         * @property {number|Long|null} [start_ts] CountdownData start_ts
-         * @property {number|Long|null} [end_ts] CountdownData end_ts
+         * @property {number|Long|null} [startTs] CountdownData startTs
+         * @property {number|Long|null} [endTs] CountdownData endTs
          */
 
         /**
@@ -1085,20 +1085,20 @@ export const common = $root.common = (() => {
         }
 
         /**
-         * CountdownData start_ts.
-         * @member {number|Long} start_ts
+         * CountdownData startTs.
+         * @member {number|Long} startTs
          * @memberof common.CountdownData
          * @instance
          */
-        CountdownData.prototype.start_ts = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+        CountdownData.prototype.startTs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
-         * CountdownData end_ts.
-         * @member {number|Long} end_ts
+         * CountdownData endTs.
+         * @member {number|Long} endTs
          * @memberof common.CountdownData
          * @instance
          */
-        CountdownData.prototype.end_ts = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+        CountdownData.prototype.endTs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
          * Creates a new CountdownData instance using the specified properties.
@@ -1124,10 +1124,10 @@ export const common = $root.common = (() => {
         CountdownData.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.start_ts != null && Object.hasOwnProperty.call(message, "start_ts"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.start_ts);
-            if (message.end_ts != null && Object.hasOwnProperty.call(message, "end_ts"))
-                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.end_ts);
+            if (message.startTs != null && Object.hasOwnProperty.call(message, "startTs"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.startTs);
+            if (message.endTs != null && Object.hasOwnProperty.call(message, "endTs"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.endTs);
             return writer;
         };
 
@@ -1163,11 +1163,11 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.start_ts = reader.int64();
+                        message.startTs = reader.int64();
                         break;
                     }
                 case 2: {
-                        message.end_ts = reader.int64();
+                        message.endTs = reader.int64();
                         break;
                     }
                 default:
@@ -1205,12 +1205,12 @@ export const common = $root.common = (() => {
         CountdownData.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.start_ts != null && message.hasOwnProperty("start_ts"))
-                if (!$util.isInteger(message.start_ts) && !(message.start_ts && $util.isInteger(message.start_ts.low) && $util.isInteger(message.start_ts.high)))
-                    return "start_ts: integer|Long expected";
-            if (message.end_ts != null && message.hasOwnProperty("end_ts"))
-                if (!$util.isInteger(message.end_ts) && !(message.end_ts && $util.isInteger(message.end_ts.low) && $util.isInteger(message.end_ts.high)))
-                    return "end_ts: integer|Long expected";
+            if (message.startTs != null && message.hasOwnProperty("startTs"))
+                if (!$util.isInteger(message.startTs) && !(message.startTs && $util.isInteger(message.startTs.low) && $util.isInteger(message.startTs.high)))
+                    return "startTs: integer|Long expected";
+            if (message.endTs != null && message.hasOwnProperty("endTs"))
+                if (!$util.isInteger(message.endTs) && !(message.endTs && $util.isInteger(message.endTs.low) && $util.isInteger(message.endTs.high)))
+                    return "endTs: integer|Long expected";
             return null;
         };
 
@@ -1226,24 +1226,24 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.CountdownData)
                 return object;
             let message = new $root.common.CountdownData();
-            if (object.start_ts != null)
+            if (object.startTs != null)
                 if ($util.Long)
-                    (message.start_ts = $util.Long.fromValue(object.start_ts)).unsigned = false;
-                else if (typeof object.start_ts === "string")
-                    message.start_ts = parseInt(object.start_ts, 10);
-                else if (typeof object.start_ts === "number")
-                    message.start_ts = object.start_ts;
-                else if (typeof object.start_ts === "object")
-                    message.start_ts = new $util.LongBits(object.start_ts.low >>> 0, object.start_ts.high >>> 0).toNumber();
-            if (object.end_ts != null)
+                    (message.startTs = $util.Long.fromValue(object.startTs)).unsigned = false;
+                else if (typeof object.startTs === "string")
+                    message.startTs = parseInt(object.startTs, 10);
+                else if (typeof object.startTs === "number")
+                    message.startTs = object.startTs;
+                else if (typeof object.startTs === "object")
+                    message.startTs = new $util.LongBits(object.startTs.low >>> 0, object.startTs.high >>> 0).toNumber();
+            if (object.endTs != null)
                 if ($util.Long)
-                    (message.end_ts = $util.Long.fromValue(object.end_ts)).unsigned = false;
-                else if (typeof object.end_ts === "string")
-                    message.end_ts = parseInt(object.end_ts, 10);
-                else if (typeof object.end_ts === "number")
-                    message.end_ts = object.end_ts;
-                else if (typeof object.end_ts === "object")
-                    message.end_ts = new $util.LongBits(object.end_ts.low >>> 0, object.end_ts.high >>> 0).toNumber();
+                    (message.endTs = $util.Long.fromValue(object.endTs)).unsigned = false;
+                else if (typeof object.endTs === "string")
+                    message.endTs = parseInt(object.endTs, 10);
+                else if (typeof object.endTs === "number")
+                    message.endTs = object.endTs;
+                else if (typeof object.endTs === "object")
+                    message.endTs = new $util.LongBits(object.endTs.low >>> 0, object.endTs.high >>> 0).toNumber();
             return message;
         };
 
@@ -1263,25 +1263,25 @@ export const common = $root.common = (() => {
             if (options.defaults) {
                 if ($util.Long) {
                     let long = new $util.Long(0, 0, false);
-                    object.start_ts = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                    object.startTs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
-                    object.start_ts = options.longs === String ? "0" : 0;
+                    object.startTs = options.longs === String ? "0" : 0;
                 if ($util.Long) {
                     let long = new $util.Long(0, 0, false);
-                    object.end_ts = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                    object.endTs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
-                    object.end_ts = options.longs === String ? "0" : 0;
+                    object.endTs = options.longs === String ? "0" : 0;
             }
-            if (message.start_ts != null && message.hasOwnProperty("start_ts"))
-                if (typeof message.start_ts === "number")
-                    object.start_ts = options.longs === String ? String(message.start_ts) : message.start_ts;
+            if (message.startTs != null && message.hasOwnProperty("startTs"))
+                if (typeof message.startTs === "number")
+                    object.startTs = options.longs === String ? String(message.startTs) : message.startTs;
                 else
-                    object.start_ts = options.longs === String ? $util.Long.prototype.toString.call(message.start_ts) : options.longs === Number ? new $util.LongBits(message.start_ts.low >>> 0, message.start_ts.high >>> 0).toNumber() : message.start_ts;
-            if (message.end_ts != null && message.hasOwnProperty("end_ts"))
-                if (typeof message.end_ts === "number")
-                    object.end_ts = options.longs === String ? String(message.end_ts) : message.end_ts;
+                    object.startTs = options.longs === String ? $util.Long.prototype.toString.call(message.startTs) : options.longs === Number ? new $util.LongBits(message.startTs.low >>> 0, message.startTs.high >>> 0).toNumber() : message.startTs;
+            if (message.endTs != null && message.hasOwnProperty("endTs"))
+                if (typeof message.endTs === "number")
+                    object.endTs = options.longs === String ? String(message.endTs) : message.endTs;
                 else
-                    object.end_ts = options.longs === String ? $util.Long.prototype.toString.call(message.end_ts) : options.longs === Number ? new $util.LongBits(message.end_ts.low >>> 0, message.end_ts.high >>> 0).toNumber() : message.end_ts;
+                    object.endTs = options.longs === String ? $util.Long.prototype.toString.call(message.endTs) : options.longs === Number ? new $util.LongBits(message.endTs.low >>> 0, message.endTs.high >>> 0).toNumber() : message.endTs;
             return object;
         };
 
@@ -1321,7 +1321,7 @@ export const common = $root.common = (() => {
          * @memberof common
          * @interface IGameOverData
          * @property {string|null} [reason] GameOverData reason
-         * @property {number|null} [winner_user_id] GameOverData winner_user_id
+         * @property {number|null} [winnerUserId] GameOverData winnerUserId
          */
 
         /**
@@ -1348,12 +1348,12 @@ export const common = $root.common = (() => {
         GameOverData.prototype.reason = "";
 
         /**
-         * GameOverData winner_user_id.
-         * @member {number} winner_user_id
+         * GameOverData winnerUserId.
+         * @member {number} winnerUserId
          * @memberof common.GameOverData
          * @instance
          */
-        GameOverData.prototype.winner_user_id = 0;
+        GameOverData.prototype.winnerUserId = 0;
 
         /**
          * Creates a new GameOverData instance using the specified properties.
@@ -1381,8 +1381,8 @@ export const common = $root.common = (() => {
                 writer = $Writer.create();
             if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.reason);
-            if (message.winner_user_id != null && Object.hasOwnProperty.call(message, "winner_user_id"))
-                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.winner_user_id);
+            if (message.winnerUserId != null && Object.hasOwnProperty.call(message, "winnerUserId"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.winnerUserId);
             return writer;
         };
 
@@ -1422,7 +1422,7 @@ export const common = $root.common = (() => {
                         break;
                     }
                 case 2: {
-                        message.winner_user_id = reader.int32();
+                        message.winnerUserId = reader.int32();
                         break;
                     }
                 default:
@@ -1463,9 +1463,9 @@ export const common = $root.common = (() => {
             if (message.reason != null && message.hasOwnProperty("reason"))
                 if (!$util.isString(message.reason))
                     return "reason: string expected";
-            if (message.winner_user_id != null && message.hasOwnProperty("winner_user_id"))
-                if (!$util.isInteger(message.winner_user_id))
-                    return "winner_user_id: integer expected";
+            if (message.winnerUserId != null && message.hasOwnProperty("winnerUserId"))
+                if (!$util.isInteger(message.winnerUserId))
+                    return "winnerUserId: integer expected";
             return null;
         };
 
@@ -1483,8 +1483,8 @@ export const common = $root.common = (() => {
             let message = new $root.common.GameOverData();
             if (object.reason != null)
                 message.reason = String(object.reason);
-            if (object.winner_user_id != null)
-                message.winner_user_id = object.winner_user_id | 0;
+            if (object.winnerUserId != null)
+                message.winnerUserId = object.winnerUserId | 0;
             return message;
         };
 
@@ -1503,12 +1503,12 @@ export const common = $root.common = (() => {
             let object = {};
             if (options.defaults) {
                 object.reason = "";
-                object.winner_user_id = 0;
+                object.winnerUserId = 0;
             }
             if (message.reason != null && message.hasOwnProperty("reason"))
                 object.reason = message.reason;
-            if (message.winner_user_id != null && message.hasOwnProperty("winner_user_id"))
-                object.winner_user_id = message.winner_user_id;
+            if (message.winnerUserId != null && message.hasOwnProperty("winnerUserId"))
+                object.winnerUserId = message.winnerUserId;
             return object;
         };
 
@@ -1977,7 +1977,7 @@ export const common = $root.common = (() => {
          * Properties of a PlayerReadyData.
          * @memberof common
          * @interface IPlayerReadyData
-         * @property {number|null} [user_id] PlayerReadyData user_id
+         * @property {number|null} [userId] PlayerReadyData userId
          */
 
         /**
@@ -1996,12 +1996,12 @@ export const common = $root.common = (() => {
         }
 
         /**
-         * PlayerReadyData user_id.
-         * @member {number} user_id
+         * PlayerReadyData userId.
+         * @member {number} userId
          * @memberof common.PlayerReadyData
          * @instance
          */
-        PlayerReadyData.prototype.user_id = 0;
+        PlayerReadyData.prototype.userId = 0;
 
         /**
          * Creates a new PlayerReadyData instance using the specified properties.
@@ -2027,8 +2027,8 @@ export const common = $root.common = (() => {
         PlayerReadyData.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             return writer;
         };
 
@@ -2064,7 +2064,7 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 default:
@@ -2102,9 +2102,9 @@ export const common = $root.common = (() => {
         PlayerReadyData.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             return null;
         };
 
@@ -2120,8 +2120,8 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.PlayerReadyData)
                 return object;
             let message = new $root.common.PlayerReadyData();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             return message;
         };
 
@@ -2139,9 +2139,9 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults)
-                object.user_id = 0;
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+                object.userId = 0;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             return object;
         };
 
@@ -2180,7 +2180,7 @@ export const common = $root.common = (() => {
          * Properties of a PlayerMoveData.
          * @memberof common
          * @interface IPlayerMoveData
-         * @property {number|null} [user_id] PlayerMoveData user_id
+         * @property {number|null} [userId] PlayerMoveData userId
          * @property {number|null} [x] PlayerMoveData x
          * @property {number|null} [y] PlayerMoveData y
          * @property {number|null} [pixelX] PlayerMoveData pixelX
@@ -2203,12 +2203,12 @@ export const common = $root.common = (() => {
         }
 
         /**
-         * PlayerMoveData user_id.
-         * @member {number} user_id
+         * PlayerMoveData userId.
+         * @member {number} userId
          * @memberof common.PlayerMoveData
          * @instance
          */
-        PlayerMoveData.prototype.user_id = 0;
+        PlayerMoveData.prototype.userId = 0;
 
         /**
          * PlayerMoveData x.
@@ -2266,8 +2266,8 @@ export const common = $root.common = (() => {
         PlayerMoveData.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             if (message.x != null && Object.hasOwnProperty.call(message, "x"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
@@ -2311,7 +2311,7 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -2365,9 +2365,9 @@ export const common = $root.common = (() => {
         PlayerMoveData.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             if (message.x != null && message.hasOwnProperty("x"))
                 if (!$util.isInteger(message.x))
                     return "x: integer expected";
@@ -2395,8 +2395,8 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.PlayerMoveData)
                 return object;
             let message = new $root.common.PlayerMoveData();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             if (object.x != null)
                 message.x = object.x | 0;
             if (object.y != null)
@@ -2422,14 +2422,14 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.user_id = 0;
+                object.userId = 0;
                 object.x = 0;
                 object.y = 0;
                 object.pixelX = 0;
                 object.pixelY = 0;
             }
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
@@ -2476,7 +2476,7 @@ export const common = $root.common = (() => {
          * Properties of a PlayerGetPowerupData.
          * @memberof common
          * @interface IPlayerGetPowerupData
-         * @property {number|null} [user_id] PlayerGetPowerupData user_id
+         * @property {number|null} [userId] PlayerGetPowerupData userId
          * @property {number|null} [x] PlayerGetPowerupData x
          * @property {number|null} [y] PlayerGetPowerupData y
          */
@@ -2497,12 +2497,12 @@ export const common = $root.common = (() => {
         }
 
         /**
-         * PlayerGetPowerupData user_id.
-         * @member {number} user_id
+         * PlayerGetPowerupData userId.
+         * @member {number} userId
          * @memberof common.PlayerGetPowerupData
          * @instance
          */
-        PlayerGetPowerupData.prototype.user_id = 0;
+        PlayerGetPowerupData.prototype.userId = 0;
 
         /**
          * PlayerGetPowerupData x.
@@ -2544,8 +2544,8 @@ export const common = $root.common = (() => {
         PlayerGetPowerupData.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             if (message.x != null && Object.hasOwnProperty.call(message, "x"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
@@ -2585,7 +2585,7 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -2631,9 +2631,9 @@ export const common = $root.common = (() => {
         PlayerGetPowerupData.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             if (message.x != null && message.hasOwnProperty("x"))
                 if (!$util.isInteger(message.x))
                     return "x: integer expected";
@@ -2655,8 +2655,8 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.PlayerGetPowerupData)
                 return object;
             let message = new $root.common.PlayerGetPowerupData();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             if (object.x != null)
                 message.x = object.x | 0;
             if (object.y != null)
@@ -2678,12 +2678,12 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.user_id = 0;
+                object.userId = 0;
                 object.x = 0;
                 object.y = 0;
             }
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
@@ -2726,7 +2726,7 @@ export const common = $root.common = (() => {
          * Properties of a PlayerPlantBombData.
          * @memberof common
          * @interface IPlayerPlantBombData
-         * @property {number|null} [user_id] PlayerPlantBombData user_id
+         * @property {number|null} [userId] PlayerPlantBombData userId
          * @property {number|null} [x] PlayerPlantBombData x
          * @property {number|null} [y] PlayerPlantBombData y
          */
@@ -2747,12 +2747,12 @@ export const common = $root.common = (() => {
         }
 
         /**
-         * PlayerPlantBombData user_id.
-         * @member {number} user_id
+         * PlayerPlantBombData userId.
+         * @member {number} userId
          * @memberof common.PlayerPlantBombData
          * @instance
          */
-        PlayerPlantBombData.prototype.user_id = 0;
+        PlayerPlantBombData.prototype.userId = 0;
 
         /**
          * PlayerPlantBombData x.
@@ -2794,8 +2794,8 @@ export const common = $root.common = (() => {
         PlayerPlantBombData.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             if (message.x != null && Object.hasOwnProperty.call(message, "x"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
@@ -2835,7 +2835,7 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -2881,9 +2881,9 @@ export const common = $root.common = (() => {
         PlayerPlantBombData.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             if (message.x != null && message.hasOwnProperty("x"))
                 if (!$util.isInteger(message.x))
                     return "x: integer expected";
@@ -2905,8 +2905,8 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.PlayerPlantBombData)
                 return object;
             let message = new $root.common.PlayerPlantBombData();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             if (object.x != null)
                 message.x = object.x | 0;
             if (object.y != null)
@@ -2928,12 +2928,12 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.user_id = 0;
+                object.userId = 0;
                 object.x = 0;
                 object.y = 0;
             }
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
@@ -2976,7 +2976,7 @@ export const common = $root.common = (() => {
          * Properties of a PlayerMovedData.
          * @memberof common
          * @interface IPlayerMovedData
-         * @property {number|null} [user_id] PlayerMovedData user_id
+         * @property {number|null} [userId] PlayerMovedData userId
          * @property {number|null} [x] PlayerMovedData x
          * @property {number|null} [y] PlayerMovedData y
          * @property {number|null} [pixelX] PlayerMovedData pixelX
@@ -2999,12 +2999,12 @@ export const common = $root.common = (() => {
         }
 
         /**
-         * PlayerMovedData user_id.
-         * @member {number} user_id
+         * PlayerMovedData userId.
+         * @member {number} userId
          * @memberof common.PlayerMovedData
          * @instance
          */
-        PlayerMovedData.prototype.user_id = 0;
+        PlayerMovedData.prototype.userId = 0;
 
         /**
          * PlayerMovedData x.
@@ -3062,8 +3062,8 @@ export const common = $root.common = (() => {
         PlayerMovedData.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             if (message.x != null && Object.hasOwnProperty.call(message, "x"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
@@ -3107,7 +3107,7 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -3161,9 +3161,9 @@ export const common = $root.common = (() => {
         PlayerMovedData.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             if (message.x != null && message.hasOwnProperty("x"))
                 if (!$util.isInteger(message.x))
                     return "x: integer expected";
@@ -3191,8 +3191,8 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.PlayerMovedData)
                 return object;
             let message = new $root.common.PlayerMovedData();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             if (object.x != null)
                 message.x = object.x | 0;
             if (object.y != null)
@@ -3218,14 +3218,14 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.user_id = 0;
+                object.userId = 0;
                 object.x = 0;
                 object.y = 0;
                 object.pixelX = 0;
                 object.pixelY = 0;
             }
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
@@ -3272,7 +3272,7 @@ export const common = $root.common = (() => {
          * Properties of a PlayerDeadData.
          * @memberof common
          * @interface IPlayerDeadData
-         * @property {number|null} [user_id] PlayerDeadData user_id
+         * @property {number|null} [userId] PlayerDeadData userId
          */
 
         /**
@@ -3291,12 +3291,12 @@ export const common = $root.common = (() => {
         }
 
         /**
-         * PlayerDeadData user_id.
-         * @member {number} user_id
+         * PlayerDeadData userId.
+         * @member {number} userId
          * @memberof common.PlayerDeadData
          * @instance
          */
-        PlayerDeadData.prototype.user_id = 0;
+        PlayerDeadData.prototype.userId = 0;
 
         /**
          * Creates a new PlayerDeadData instance using the specified properties.
@@ -3322,8 +3322,8 @@ export const common = $root.common = (() => {
         PlayerDeadData.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             return writer;
         };
 
@@ -3359,7 +3359,7 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 default:
@@ -3397,9 +3397,9 @@ export const common = $root.common = (() => {
         PlayerDeadData.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             return null;
         };
 
@@ -3415,8 +3415,8 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.PlayerDeadData)
                 return object;
             let message = new $root.common.PlayerDeadData();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             return message;
         };
 
@@ -3434,9 +3434,9 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults)
-                object.user_id = 0;
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+                object.userId = 0;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             return object;
         };
 
@@ -3477,9 +3477,9 @@ export const common = $root.common = (() => {
          * @interface IBombPlantedData
          * @property {number|null} [x] BombPlantedData x
          * @property {number|null} [y] BombPlantedData y
-         * @property {number|Long|null} [exploded_at] BombPlantedData exploded_at
-         * @property {number|null} [user_id] BombPlantedData user_id
-         * @property {number|null} [user_bombcount] BombPlantedData user_bombcount
+         * @property {number|Long|null} [explodedAt] BombPlantedData explodedAt
+         * @property {number|null} [userId] BombPlantedData userId
+         * @property {number|null} [userBombcount] BombPlantedData userBombcount
          */
 
         /**
@@ -3514,28 +3514,28 @@ export const common = $root.common = (() => {
         BombPlantedData.prototype.y = 0;
 
         /**
-         * BombPlantedData exploded_at.
-         * @member {number|Long} exploded_at
+         * BombPlantedData explodedAt.
+         * @member {number|Long} explodedAt
          * @memberof common.BombPlantedData
          * @instance
          */
-        BombPlantedData.prototype.exploded_at = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+        BombPlantedData.prototype.explodedAt = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
-         * BombPlantedData user_id.
-         * @member {number} user_id
+         * BombPlantedData userId.
+         * @member {number} userId
          * @memberof common.BombPlantedData
          * @instance
          */
-        BombPlantedData.prototype.user_id = 0;
+        BombPlantedData.prototype.userId = 0;
 
         /**
-         * BombPlantedData user_bombcount.
-         * @member {number} user_bombcount
+         * BombPlantedData userBombcount.
+         * @member {number} userBombcount
          * @memberof common.BombPlantedData
          * @instance
          */
-        BombPlantedData.prototype.user_bombcount = 0;
+        BombPlantedData.prototype.userBombcount = 0;
 
         /**
          * Creates a new BombPlantedData instance using the specified properties.
@@ -3565,12 +3565,12 @@ export const common = $root.common = (() => {
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.y);
-            if (message.exploded_at != null && Object.hasOwnProperty.call(message, "exploded_at"))
-                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.exploded_at);
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.user_id);
-            if (message.user_bombcount != null && Object.hasOwnProperty.call(message, "user_bombcount"))
-                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.user_bombcount);
+            if (message.explodedAt != null && Object.hasOwnProperty.call(message, "explodedAt"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.explodedAt);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.userId);
+            if (message.userBombcount != null && Object.hasOwnProperty.call(message, "userBombcount"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.userBombcount);
             return writer;
         };
 
@@ -3614,15 +3614,15 @@ export const common = $root.common = (() => {
                         break;
                     }
                 case 3: {
-                        message.exploded_at = reader.int64();
+                        message.explodedAt = reader.int64();
                         break;
                     }
                 case 4: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 case 5: {
-                        message.user_bombcount = reader.int32();
+                        message.userBombcount = reader.int32();
                         break;
                     }
                 default:
@@ -3666,15 +3666,15 @@ export const common = $root.common = (() => {
             if (message.y != null && message.hasOwnProperty("y"))
                 if (!$util.isInteger(message.y))
                     return "y: integer expected";
-            if (message.exploded_at != null && message.hasOwnProperty("exploded_at"))
-                if (!$util.isInteger(message.exploded_at) && !(message.exploded_at && $util.isInteger(message.exploded_at.low) && $util.isInteger(message.exploded_at.high)))
-                    return "exploded_at: integer|Long expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
-            if (message.user_bombcount != null && message.hasOwnProperty("user_bombcount"))
-                if (!$util.isInteger(message.user_bombcount))
-                    return "user_bombcount: integer expected";
+            if (message.explodedAt != null && message.hasOwnProperty("explodedAt"))
+                if (!$util.isInteger(message.explodedAt) && !(message.explodedAt && $util.isInteger(message.explodedAt.low) && $util.isInteger(message.explodedAt.high)))
+                    return "explodedAt: integer|Long expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
+            if (message.userBombcount != null && message.hasOwnProperty("userBombcount"))
+                if (!$util.isInteger(message.userBombcount))
+                    return "userBombcount: integer expected";
             return null;
         };
 
@@ -3694,19 +3694,19 @@ export const common = $root.common = (() => {
                 message.x = object.x | 0;
             if (object.y != null)
                 message.y = object.y | 0;
-            if (object.exploded_at != null)
+            if (object.explodedAt != null)
                 if ($util.Long)
-                    (message.exploded_at = $util.Long.fromValue(object.exploded_at)).unsigned = false;
-                else if (typeof object.exploded_at === "string")
-                    message.exploded_at = parseInt(object.exploded_at, 10);
-                else if (typeof object.exploded_at === "number")
-                    message.exploded_at = object.exploded_at;
-                else if (typeof object.exploded_at === "object")
-                    message.exploded_at = new $util.LongBits(object.exploded_at.low >>> 0, object.exploded_at.high >>> 0).toNumber();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
-            if (object.user_bombcount != null)
-                message.user_bombcount = object.user_bombcount | 0;
+                    (message.explodedAt = $util.Long.fromValue(object.explodedAt)).unsigned = false;
+                else if (typeof object.explodedAt === "string")
+                    message.explodedAt = parseInt(object.explodedAt, 10);
+                else if (typeof object.explodedAt === "number")
+                    message.explodedAt = object.explodedAt;
+                else if (typeof object.explodedAt === "object")
+                    message.explodedAt = new $util.LongBits(object.explodedAt.low >>> 0, object.explodedAt.high >>> 0).toNumber();
+            if (object.userId != null)
+                message.userId = object.userId | 0;
+            if (object.userBombcount != null)
+                message.userBombcount = object.userBombcount | 0;
             return message;
         };
 
@@ -3728,25 +3728,25 @@ export const common = $root.common = (() => {
                 object.y = 0;
                 if ($util.Long) {
                     let long = new $util.Long(0, 0, false);
-                    object.exploded_at = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                    object.explodedAt = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
-                    object.exploded_at = options.longs === String ? "0" : 0;
-                object.user_id = 0;
-                object.user_bombcount = 0;
+                    object.explodedAt = options.longs === String ? "0" : 0;
+                object.userId = 0;
+                object.userBombcount = 0;
             }
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
                 object.y = message.y;
-            if (message.exploded_at != null && message.hasOwnProperty("exploded_at"))
-                if (typeof message.exploded_at === "number")
-                    object.exploded_at = options.longs === String ? String(message.exploded_at) : message.exploded_at;
+            if (message.explodedAt != null && message.hasOwnProperty("explodedAt"))
+                if (typeof message.explodedAt === "number")
+                    object.explodedAt = options.longs === String ? String(message.explodedAt) : message.explodedAt;
                 else
-                    object.exploded_at = options.longs === String ? $util.Long.prototype.toString.call(message.exploded_at) : options.longs === Number ? new $util.LongBits(message.exploded_at.low >>> 0, message.exploded_at.high >>> 0).toNumber() : message.exploded_at;
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
-            if (message.user_bombcount != null && message.hasOwnProperty("user_bombcount"))
-                object.user_bombcount = message.user_bombcount;
+                    object.explodedAt = options.longs === String ? $util.Long.prototype.toString.call(message.explodedAt) : options.longs === Number ? new $util.LongBits(message.explodedAt.low >>> 0, message.explodedAt.high >>> 0).toNumber() : message.explodedAt;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
+            if (message.userBombcount != null && message.hasOwnProperty("userBombcount"))
+                object.userBombcount = message.userBombcount;
             return object;
         };
 
@@ -3787,8 +3787,8 @@ export const common = $root.common = (() => {
          * @interface IBombWillExplodeData
          * @property {number|null} [x] BombWillExplodeData x
          * @property {number|null} [y] BombWillExplodeData y
-         * @property {number|null} [bomb_firepower] BombWillExplodeData bomb_firepower
-         * @property {number|null} [user_id] BombWillExplodeData user_id
+         * @property {number|null} [bombFirepower] BombWillExplodeData bombFirepower
+         * @property {number|null} [userId] BombWillExplodeData userId
          */
 
         /**
@@ -3823,20 +3823,20 @@ export const common = $root.common = (() => {
         BombWillExplodeData.prototype.y = 0;
 
         /**
-         * BombWillExplodeData bomb_firepower.
-         * @member {number} bomb_firepower
+         * BombWillExplodeData bombFirepower.
+         * @member {number} bombFirepower
          * @memberof common.BombWillExplodeData
          * @instance
          */
-        BombWillExplodeData.prototype.bomb_firepower = 0;
+        BombWillExplodeData.prototype.bombFirepower = 0;
 
         /**
-         * BombWillExplodeData user_id.
-         * @member {number} user_id
+         * BombWillExplodeData userId.
+         * @member {number} userId
          * @memberof common.BombWillExplodeData
          * @instance
          */
-        BombWillExplodeData.prototype.user_id = 0;
+        BombWillExplodeData.prototype.userId = 0;
 
         /**
          * Creates a new BombWillExplodeData instance using the specified properties.
@@ -3866,10 +3866,10 @@ export const common = $root.common = (() => {
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.y);
-            if (message.bomb_firepower != null && Object.hasOwnProperty.call(message, "bomb_firepower"))
-                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.bomb_firepower);
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.user_id);
+            if (message.bombFirepower != null && Object.hasOwnProperty.call(message, "bombFirepower"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.bombFirepower);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.userId);
             return writer;
         };
 
@@ -3913,11 +3913,11 @@ export const common = $root.common = (() => {
                         break;
                     }
                 case 3: {
-                        message.bomb_firepower = reader.int32();
+                        message.bombFirepower = reader.int32();
                         break;
                     }
                 case 4: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 default:
@@ -3961,12 +3961,12 @@ export const common = $root.common = (() => {
             if (message.y != null && message.hasOwnProperty("y"))
                 if (!$util.isInteger(message.y))
                     return "y: integer expected";
-            if (message.bomb_firepower != null && message.hasOwnProperty("bomb_firepower"))
-                if (!$util.isInteger(message.bomb_firepower))
-                    return "bomb_firepower: integer expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.bombFirepower != null && message.hasOwnProperty("bombFirepower"))
+                if (!$util.isInteger(message.bombFirepower))
+                    return "bombFirepower: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             return null;
         };
 
@@ -3986,10 +3986,10 @@ export const common = $root.common = (() => {
                 message.x = object.x | 0;
             if (object.y != null)
                 message.y = object.y | 0;
-            if (object.bomb_firepower != null)
-                message.bomb_firepower = object.bomb_firepower | 0;
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.bombFirepower != null)
+                message.bombFirepower = object.bombFirepower | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             return message;
         };
 
@@ -4009,17 +4009,17 @@ export const common = $root.common = (() => {
             if (options.defaults) {
                 object.x = 0;
                 object.y = 0;
-                object.bomb_firepower = 0;
-                object.user_id = 0;
+                object.bombFirepower = 0;
+                object.userId = 0;
             }
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
                 object.y = message.y;
-            if (message.bomb_firepower != null && message.hasOwnProperty("bomb_firepower"))
-                object.bomb_firepower = message.bomb_firepower;
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+            if (message.bombFirepower != null && message.hasOwnProperty("bombFirepower"))
+                object.bombFirepower = message.bombFirepower;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             return object;
         };
 
@@ -4060,9 +4060,9 @@ export const common = $root.common = (() => {
          * @interface IBombExplodedData
          * @property {number|null} [x] BombExplodedData x
          * @property {number|null} [y] BombExplodedData y
-         * @property {number|null} [bomb_firepower] BombExplodedData bomb_firepower
-         * @property {number|null} [user_id] BombExplodedData user_id
-         * @property {number|null} [user_bombcount] BombExplodedData user_bombcount
+         * @property {number|null} [bombFirepower] BombExplodedData bombFirepower
+         * @property {number|null} [userId] BombExplodedData userId
+         * @property {number|null} [userBombcount] BombExplodedData userBombcount
          */
 
         /**
@@ -4097,28 +4097,28 @@ export const common = $root.common = (() => {
         BombExplodedData.prototype.y = 0;
 
         /**
-         * BombExplodedData bomb_firepower.
-         * @member {number} bomb_firepower
+         * BombExplodedData bombFirepower.
+         * @member {number} bombFirepower
          * @memberof common.BombExplodedData
          * @instance
          */
-        BombExplodedData.prototype.bomb_firepower = 0;
+        BombExplodedData.prototype.bombFirepower = 0;
 
         /**
-         * BombExplodedData user_id.
-         * @member {number} user_id
+         * BombExplodedData userId.
+         * @member {number} userId
          * @memberof common.BombExplodedData
          * @instance
          */
-        BombExplodedData.prototype.user_id = 0;
+        BombExplodedData.prototype.userId = 0;
 
         /**
-         * BombExplodedData user_bombcount.
-         * @member {number} user_bombcount
+         * BombExplodedData userBombcount.
+         * @member {number} userBombcount
          * @memberof common.BombExplodedData
          * @instance
          */
-        BombExplodedData.prototype.user_bombcount = 0;
+        BombExplodedData.prototype.userBombcount = 0;
 
         /**
          * Creates a new BombExplodedData instance using the specified properties.
@@ -4148,12 +4148,12 @@ export const common = $root.common = (() => {
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.y);
-            if (message.bomb_firepower != null && Object.hasOwnProperty.call(message, "bomb_firepower"))
-                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.bomb_firepower);
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.user_id);
-            if (message.user_bombcount != null && Object.hasOwnProperty.call(message, "user_bombcount"))
-                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.user_bombcount);
+            if (message.bombFirepower != null && Object.hasOwnProperty.call(message, "bombFirepower"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.bombFirepower);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.userId);
+            if (message.userBombcount != null && Object.hasOwnProperty.call(message, "userBombcount"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.userBombcount);
             return writer;
         };
 
@@ -4197,15 +4197,15 @@ export const common = $root.common = (() => {
                         break;
                     }
                 case 3: {
-                        message.bomb_firepower = reader.int32();
+                        message.bombFirepower = reader.int32();
                         break;
                     }
                 case 4: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 case 5: {
-                        message.user_bombcount = reader.int32();
+                        message.userBombcount = reader.int32();
                         break;
                     }
                 default:
@@ -4249,15 +4249,15 @@ export const common = $root.common = (() => {
             if (message.y != null && message.hasOwnProperty("y"))
                 if (!$util.isInteger(message.y))
                     return "y: integer expected";
-            if (message.bomb_firepower != null && message.hasOwnProperty("bomb_firepower"))
-                if (!$util.isInteger(message.bomb_firepower))
-                    return "bomb_firepower: integer expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
-            if (message.user_bombcount != null && message.hasOwnProperty("user_bombcount"))
-                if (!$util.isInteger(message.user_bombcount))
-                    return "user_bombcount: integer expected";
+            if (message.bombFirepower != null && message.hasOwnProperty("bombFirepower"))
+                if (!$util.isInteger(message.bombFirepower))
+                    return "bombFirepower: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
+            if (message.userBombcount != null && message.hasOwnProperty("userBombcount"))
+                if (!$util.isInteger(message.userBombcount))
+                    return "userBombcount: integer expected";
             return null;
         };
 
@@ -4277,12 +4277,12 @@ export const common = $root.common = (() => {
                 message.x = object.x | 0;
             if (object.y != null)
                 message.y = object.y | 0;
-            if (object.bomb_firepower != null)
-                message.bomb_firepower = object.bomb_firepower | 0;
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
-            if (object.user_bombcount != null)
-                message.user_bombcount = object.user_bombcount | 0;
+            if (object.bombFirepower != null)
+                message.bombFirepower = object.bombFirepower | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
+            if (object.userBombcount != null)
+                message.userBombcount = object.userBombcount | 0;
             return message;
         };
 
@@ -4302,20 +4302,20 @@ export const common = $root.common = (() => {
             if (options.defaults) {
                 object.x = 0;
                 object.y = 0;
-                object.bomb_firepower = 0;
-                object.user_id = 0;
-                object.user_bombcount = 0;
+                object.bombFirepower = 0;
+                object.userId = 0;
+                object.userBombcount = 0;
             }
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
                 object.y = message.y;
-            if (message.bomb_firepower != null && message.hasOwnProperty("bomb_firepower"))
-                object.bomb_firepower = message.bomb_firepower;
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
-            if (message.user_bombcount != null && message.hasOwnProperty("user_bombcount"))
-                object.user_bombcount = message.user_bombcount;
+            if (message.bombFirepower != null && message.hasOwnProperty("bombFirepower"))
+                object.bombFirepower = message.bombFirepower;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
+            if (message.userBombcount != null && message.hasOwnProperty("userBombcount"))
+                object.userBombcount = message.userBombcount;
             return object;
         };
 
@@ -4850,12 +4850,12 @@ export const common = $root.common = (() => {
          * Properties of a PowerupConsumedData.
          * @memberof common
          * @interface IPowerupConsumedData
-         * @property {number|null} [user_id] PowerupConsumedData user_id
+         * @property {number|null} [userId] PowerupConsumedData userId
          * @property {number|null} [x] PowerupConsumedData x
          * @property {number|null} [y] PowerupConsumedData y
          * @property {common.PowerupType|null} [type] PowerupConsumedData type
-         * @property {number|null} [user_bombcount] PowerupConsumedData user_bombcount
-         * @property {number|null} [user_firepower] PowerupConsumedData user_firepower
+         * @property {number|null} [userBombcount] PowerupConsumedData userBombcount
+         * @property {number|null} [userFirepower] PowerupConsumedData userFirepower
          */
 
         /**
@@ -4874,12 +4874,12 @@ export const common = $root.common = (() => {
         }
 
         /**
-         * PowerupConsumedData user_id.
-         * @member {number} user_id
+         * PowerupConsumedData userId.
+         * @member {number} userId
          * @memberof common.PowerupConsumedData
          * @instance
          */
-        PowerupConsumedData.prototype.user_id = 0;
+        PowerupConsumedData.prototype.userId = 0;
 
         /**
          * PowerupConsumedData x.
@@ -4906,20 +4906,20 @@ export const common = $root.common = (() => {
         PowerupConsumedData.prototype.type = 0;
 
         /**
-         * PowerupConsumedData user_bombcount.
-         * @member {number} user_bombcount
+         * PowerupConsumedData userBombcount.
+         * @member {number} userBombcount
          * @memberof common.PowerupConsumedData
          * @instance
          */
-        PowerupConsumedData.prototype.user_bombcount = 0;
+        PowerupConsumedData.prototype.userBombcount = 0;
 
         /**
-         * PowerupConsumedData user_firepower.
-         * @member {number} user_firepower
+         * PowerupConsumedData userFirepower.
+         * @member {number} userFirepower
          * @memberof common.PowerupConsumedData
          * @instance
          */
-        PowerupConsumedData.prototype.user_firepower = 0;
+        PowerupConsumedData.prototype.userFirepower = 0;
 
         /**
          * Creates a new PowerupConsumedData instance using the specified properties.
@@ -4945,18 +4945,18 @@ export const common = $root.common = (() => {
         PowerupConsumedData.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             if (message.x != null && Object.hasOwnProperty.call(message, "x"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
                 writer.uint32(/* id 3, wireType 0 =*/24).int32(message.y);
             if (message.type != null && Object.hasOwnProperty.call(message, "type"))
                 writer.uint32(/* id 4, wireType 0 =*/32).int32(message.type);
-            if (message.user_bombcount != null && Object.hasOwnProperty.call(message, "user_bombcount"))
-                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.user_bombcount);
-            if (message.user_firepower != null && Object.hasOwnProperty.call(message, "user_firepower"))
-                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.user_firepower);
+            if (message.userBombcount != null && Object.hasOwnProperty.call(message, "userBombcount"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.userBombcount);
+            if (message.userFirepower != null && Object.hasOwnProperty.call(message, "userFirepower"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.userFirepower);
             return writer;
         };
 
@@ -4992,7 +4992,7 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -5008,11 +5008,11 @@ export const common = $root.common = (() => {
                         break;
                     }
                 case 5: {
-                        message.user_bombcount = reader.int32();
+                        message.userBombcount = reader.int32();
                         break;
                     }
                 case 6: {
-                        message.user_firepower = reader.int32();
+                        message.userFirepower = reader.int32();
                         break;
                     }
                 default:
@@ -5050,9 +5050,9 @@ export const common = $root.common = (() => {
         PowerupConsumedData.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             if (message.x != null && message.hasOwnProperty("x"))
                 if (!$util.isInteger(message.x))
                     return "x: integer expected";
@@ -5067,12 +5067,12 @@ export const common = $root.common = (() => {
                 case 1:
                     break;
                 }
-            if (message.user_bombcount != null && message.hasOwnProperty("user_bombcount"))
-                if (!$util.isInteger(message.user_bombcount))
-                    return "user_bombcount: integer expected";
-            if (message.user_firepower != null && message.hasOwnProperty("user_firepower"))
-                if (!$util.isInteger(message.user_firepower))
-                    return "user_firepower: integer expected";
+            if (message.userBombcount != null && message.hasOwnProperty("userBombcount"))
+                if (!$util.isInteger(message.userBombcount))
+                    return "userBombcount: integer expected";
+            if (message.userFirepower != null && message.hasOwnProperty("userFirepower"))
+                if (!$util.isInteger(message.userFirepower))
+                    return "userFirepower: integer expected";
             return null;
         };
 
@@ -5088,8 +5088,8 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.PowerupConsumedData)
                 return object;
             let message = new $root.common.PowerupConsumedData();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             if (object.x != null)
                 message.x = object.x | 0;
             if (object.y != null)
@@ -5110,10 +5110,10 @@ export const common = $root.common = (() => {
                 message.type = 1;
                 break;
             }
-            if (object.user_bombcount != null)
-                message.user_bombcount = object.user_bombcount | 0;
-            if (object.user_firepower != null)
-                message.user_firepower = object.user_firepower | 0;
+            if (object.userBombcount != null)
+                message.userBombcount = object.userBombcount | 0;
+            if (object.userFirepower != null)
+                message.userFirepower = object.userFirepower | 0;
             return message;
         };
 
@@ -5131,25 +5131,25 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.user_id = 0;
+                object.userId = 0;
                 object.x = 0;
                 object.y = 0;
                 object.type = options.enums === String ? "MoreBomb" : 0;
-                object.user_bombcount = 0;
-                object.user_firepower = 0;
+                object.userBombcount = 0;
+                object.userFirepower = 0;
             }
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
                 object.y = message.y;
             if (message.type != null && message.hasOwnProperty("type"))
                 object.type = options.enums === String ? $root.common.PowerupType[message.type] === undefined ? message.type : $root.common.PowerupType[message.type] : message.type;
-            if (message.user_bombcount != null && message.hasOwnProperty("user_bombcount"))
-                object.user_bombcount = message.user_bombcount;
-            if (message.user_firepower != null && message.hasOwnProperty("user_firepower"))
-                object.user_firepower = message.user_firepower;
+            if (message.userBombcount != null && message.hasOwnProperty("userBombcount"))
+                object.userBombcount = message.userBombcount;
+            if (message.userFirepower != null && message.hasOwnProperty("userFirepower"))
+                object.userFirepower = message.userFirepower;
             return object;
         };
 
@@ -5188,7 +5188,7 @@ export const common = $root.common = (() => {
          * Properties of a PlayerPropertyDto.
          * @memberof common
          * @interface IPlayerPropertyDto
-         * @property {number|null} [user_id] PlayerPropertyDto user_id
+         * @property {number|null} [userId] PlayerPropertyDto userId
          * @property {number|null} [x] PlayerPropertyDto x
          * @property {number|null} [y] PlayerPropertyDto y
          * @property {number|null} [firepower] PlayerPropertyDto firepower
@@ -5211,12 +5211,12 @@ export const common = $root.common = (() => {
         }
 
         /**
-         * PlayerPropertyDto user_id.
-         * @member {number} user_id
+         * PlayerPropertyDto userId.
+         * @member {number} userId
          * @memberof common.PlayerPropertyDto
          * @instance
          */
-        PlayerPropertyDto.prototype.user_id = 0;
+        PlayerPropertyDto.prototype.userId = 0;
 
         /**
          * PlayerPropertyDto x.
@@ -5274,8 +5274,8 @@ export const common = $root.common = (() => {
         PlayerPropertyDto.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             if (message.x != null && Object.hasOwnProperty.call(message, "x"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
@@ -5319,7 +5319,7 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -5373,9 +5373,9 @@ export const common = $root.common = (() => {
         PlayerPropertyDto.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             if (message.x != null && message.hasOwnProperty("x"))
                 if (!$util.isInteger(message.x))
                     return "x: integer expected";
@@ -5403,8 +5403,8 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.PlayerPropertyDto)
                 return object;
             let message = new $root.common.PlayerPropertyDto();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             if (object.x != null)
                 message.x = object.x | 0;
             if (object.y != null)
@@ -5430,14 +5430,14 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.user_id = 0;
+                object.userId = 0;
                 object.x = 0;
                 object.y = 0;
                 object.firepower = 0;
                 object.bombcount = 0;
             }
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
@@ -6813,7 +6813,7 @@ export const auth = $root.auth = (() => {
          * Properties of a RegisterResponse.
          * @memberof auth
          * @interface IRegisterResponse
-         * @property {string|null} [api_key] RegisterResponse api_key
+         * @property {string|null} [apiKey] RegisterResponse apiKey
          * @property {auth.IPlayerInfoDto|null} [player] RegisterResponse player
          */
 
@@ -6833,12 +6833,12 @@ export const auth = $root.auth = (() => {
         }
 
         /**
-         * RegisterResponse api_key.
-         * @member {string} api_key
+         * RegisterResponse apiKey.
+         * @member {string} apiKey
          * @memberof auth.RegisterResponse
          * @instance
          */
-        RegisterResponse.prototype.api_key = "";
+        RegisterResponse.prototype.apiKey = "";
 
         /**
          * RegisterResponse player.
@@ -6872,8 +6872,8 @@ export const auth = $root.auth = (() => {
         RegisterResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.api_key != null && Object.hasOwnProperty.call(message, "api_key"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.api_key);
+            if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.apiKey);
             if (message.player != null && Object.hasOwnProperty.call(message, "player"))
                 $root.auth.PlayerInfoDto.encode(message.player, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
@@ -6911,7 +6911,7 @@ export const auth = $root.auth = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.api_key = reader.string();
+                        message.apiKey = reader.string();
                         break;
                     }
                 case 2: {
@@ -6953,9 +6953,9 @@ export const auth = $root.auth = (() => {
         RegisterResponse.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                if (!$util.isString(message.api_key))
-                    return "api_key: string expected";
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                if (!$util.isString(message.apiKey))
+                    return "apiKey: string expected";
             if (message.player != null && message.hasOwnProperty("player")) {
                 let error = $root.auth.PlayerInfoDto.verify(message.player);
                 if (error)
@@ -6976,8 +6976,8 @@ export const auth = $root.auth = (() => {
             if (object instanceof $root.auth.RegisterResponse)
                 return object;
             let message = new $root.auth.RegisterResponse();
-            if (object.api_key != null)
-                message.api_key = String(object.api_key);
+            if (object.apiKey != null)
+                message.apiKey = String(object.apiKey);
             if (object.player != null) {
                 if (typeof object.player !== "object")
                     throw TypeError(".auth.RegisterResponse.player: object expected");
@@ -7000,11 +7000,11 @@ export const auth = $root.auth = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.api_key = "";
+                object.apiKey = "";
                 object.player = null;
             }
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                object.api_key = message.api_key;
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                object.apiKey = message.apiKey;
             if (message.player != null && message.hasOwnProperty("player"))
                 object.player = $root.auth.PlayerInfoDto.toObject(message.player, options);
             return object;
@@ -7045,7 +7045,7 @@ export const auth = $root.auth = (() => {
          * Properties of a ValidateRequest.
          * @memberof auth
          * @interface IValidateRequest
-         * @property {string|null} [api_key] ValidateRequest api_key
+         * @property {string|null} [apiKey] ValidateRequest apiKey
          */
 
         /**
@@ -7064,12 +7064,12 @@ export const auth = $root.auth = (() => {
         }
 
         /**
-         * ValidateRequest api_key.
-         * @member {string} api_key
+         * ValidateRequest apiKey.
+         * @member {string} apiKey
          * @memberof auth.ValidateRequest
          * @instance
          */
-        ValidateRequest.prototype.api_key = "";
+        ValidateRequest.prototype.apiKey = "";
 
         /**
          * Creates a new ValidateRequest instance using the specified properties.
@@ -7095,8 +7095,8 @@ export const auth = $root.auth = (() => {
         ValidateRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.api_key != null && Object.hasOwnProperty.call(message, "api_key"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.api_key);
+            if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.apiKey);
             return writer;
         };
 
@@ -7132,7 +7132,7 @@ export const auth = $root.auth = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.api_key = reader.string();
+                        message.apiKey = reader.string();
                         break;
                     }
                 default:
@@ -7170,9 +7170,9 @@ export const auth = $root.auth = (() => {
         ValidateRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                if (!$util.isString(message.api_key))
-                    return "api_key: string expected";
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                if (!$util.isString(message.apiKey))
+                    return "apiKey: string expected";
             return null;
         };
 
@@ -7188,8 +7188,8 @@ export const auth = $root.auth = (() => {
             if (object instanceof $root.auth.ValidateRequest)
                 return object;
             let message = new $root.auth.ValidateRequest();
-            if (object.api_key != null)
-                message.api_key = String(object.api_key);
+            if (object.apiKey != null)
+                message.apiKey = String(object.apiKey);
             return message;
         };
 
@@ -7207,9 +7207,9 @@ export const auth = $root.auth = (() => {
                 options = {};
             let object = {};
             if (options.defaults)
-                object.api_key = "";
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                object.api_key = message.api_key;
+                object.apiKey = "";
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                object.apiKey = message.apiKey;
             return object;
         };
 
@@ -7694,7 +7694,7 @@ export const auth = $root.auth = (() => {
          * Properties of a PlayerInfoDto.
          * @memberof auth
          * @interface IPlayerInfoDto
-         * @property {number|null} [user_id] PlayerInfoDto user_id
+         * @property {number|null} [userId] PlayerInfoDto userId
          * @property {string|null} [nickname] PlayerInfoDto nickname
          */
 
@@ -7714,12 +7714,12 @@ export const auth = $root.auth = (() => {
         }
 
         /**
-         * PlayerInfoDto user_id.
-         * @member {number} user_id
+         * PlayerInfoDto userId.
+         * @member {number} userId
          * @memberof auth.PlayerInfoDto
          * @instance
          */
-        PlayerInfoDto.prototype.user_id = 0;
+        PlayerInfoDto.prototype.userId = 0;
 
         /**
          * PlayerInfoDto nickname.
@@ -7753,8 +7753,8 @@ export const auth = $root.auth = (() => {
         PlayerInfoDto.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             if (message.nickname != null && Object.hasOwnProperty.call(message, "nickname"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.nickname);
             return writer;
@@ -7792,7 +7792,7 @@ export const auth = $root.auth = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -7834,9 +7834,9 @@ export const auth = $root.auth = (() => {
         PlayerInfoDto.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             if (message.nickname != null && message.hasOwnProperty("nickname"))
                 if (!$util.isString(message.nickname))
                     return "nickname: string expected";
@@ -7855,8 +7855,8 @@ export const auth = $root.auth = (() => {
             if (object instanceof $root.auth.PlayerInfoDto)
                 return object;
             let message = new $root.auth.PlayerInfoDto();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             if (object.nickname != null)
                 message.nickname = String(object.nickname);
             return message;
@@ -7876,11 +7876,11 @@ export const auth = $root.auth = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.user_id = 0;
+                object.userId = 0;
                 object.nickname = "";
             }
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             if (message.nickname != null && message.hasOwnProperty("nickname"))
                 object.nickname = message.nickname;
             return object;
@@ -8067,7 +8067,7 @@ export const matchmaking = $root.matchmaking = (() => {
          * Properties of a MatchmakingRequest.
          * @memberof matchmaking
          * @interface IMatchmakingRequest
-         * @property {number|null} [user_id] MatchmakingRequest user_id
+         * @property {number|null} [userId] MatchmakingRequest userId
          */
 
         /**
@@ -8086,12 +8086,12 @@ export const matchmaking = $root.matchmaking = (() => {
         }
 
         /**
-         * MatchmakingRequest user_id.
-         * @member {number} user_id
+         * MatchmakingRequest userId.
+         * @member {number} userId
          * @memberof matchmaking.MatchmakingRequest
          * @instance
          */
-        MatchmakingRequest.prototype.user_id = 0;
+        MatchmakingRequest.prototype.userId = 0;
 
         /**
          * Creates a new MatchmakingRequest instance using the specified properties.
@@ -8117,8 +8117,8 @@ export const matchmaking = $root.matchmaking = (() => {
         MatchmakingRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.user_id);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
             return writer;
         };
 
@@ -8154,7 +8154,7 @@ export const matchmaking = $root.matchmaking = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 default:
@@ -8192,9 +8192,9 @@ export const matchmaking = $root.matchmaking = (() => {
         MatchmakingRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             return null;
         };
 
@@ -8210,8 +8210,8 @@ export const matchmaking = $root.matchmaking = (() => {
             if (object instanceof $root.matchmaking.MatchmakingRequest)
                 return object;
             let message = new $root.matchmaking.MatchmakingRequest();
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             return message;
         };
 
@@ -8229,9 +8229,9 @@ export const matchmaking = $root.matchmaking = (() => {
                 options = {};
             let object = {};
             if (options.defaults)
-                object.user_id = 0;
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+                object.userId = 0;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             return object;
         };
 
@@ -8648,7 +8648,7 @@ export const game = $root.game = (() => {
          * Properties of a NewGameRequest.
          * @memberof game
          * @interface INewGameRequest
-         * @property {number|null} [game_id] NewGameRequest game_id
+         * @property {number|null} [gameId] NewGameRequest gameId
          * @property {Array.<number>|null} [players] NewGameRequest players
          */
 
@@ -8669,12 +8669,12 @@ export const game = $root.game = (() => {
         }
 
         /**
-         * NewGameRequest game_id.
-         * @member {number} game_id
+         * NewGameRequest gameId.
+         * @member {number} gameId
          * @memberof game.NewGameRequest
          * @instance
          */
-        NewGameRequest.prototype.game_id = 0;
+        NewGameRequest.prototype.gameId = 0;
 
         /**
          * NewGameRequest players.
@@ -8708,8 +8708,8 @@ export const game = $root.game = (() => {
         NewGameRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.game_id != null && Object.hasOwnProperty.call(message, "game_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.game_id);
+            if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameId);
             if (message.players != null && message.players.length) {
                 writer.uint32(/* id 2, wireType 2 =*/18).fork();
                 for (let i = 0; i < message.players.length; ++i)
@@ -8751,7 +8751,7 @@ export const game = $root.game = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.game_id = reader.int32();
+                        message.gameId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -8800,9 +8800,9 @@ export const game = $root.game = (() => {
         NewGameRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                if (!$util.isInteger(message.game_id))
-                    return "game_id: integer expected";
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                if (!$util.isInteger(message.gameId))
+                    return "gameId: integer expected";
             if (message.players != null && message.hasOwnProperty("players")) {
                 if (!Array.isArray(message.players))
                     return "players: array expected";
@@ -8825,8 +8825,8 @@ export const game = $root.game = (() => {
             if (object instanceof $root.game.NewGameRequest)
                 return object;
             let message = new $root.game.NewGameRequest();
-            if (object.game_id != null)
-                message.game_id = object.game_id | 0;
+            if (object.gameId != null)
+                message.gameId = object.gameId | 0;
             if (object.players) {
                 if (!Array.isArray(object.players))
                     throw TypeError(".game.NewGameRequest.players: array expected");
@@ -8853,9 +8853,9 @@ export const game = $root.game = (() => {
             if (options.arrays || options.defaults)
                 object.players = [];
             if (options.defaults)
-                object.game_id = 0;
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                object.game_id = message.game_id;
+                object.gameId = 0;
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                object.gameId = message.gameId;
             if (message.players && message.players.length) {
                 object.players = [];
                 for (let j = 0; j < message.players.length; ++j)
@@ -8899,7 +8899,7 @@ export const game = $root.game = (() => {
          * Properties of a GetGameInfoRequest.
          * @memberof game
          * @interface IGetGameInfoRequest
-         * @property {number|null} [game_id] GetGameInfoRequest game_id
+         * @property {number|null} [gameId] GetGameInfoRequest gameId
          */
 
         /**
@@ -8918,12 +8918,12 @@ export const game = $root.game = (() => {
         }
 
         /**
-         * GetGameInfoRequest game_id.
-         * @member {number} game_id
+         * GetGameInfoRequest gameId.
+         * @member {number} gameId
          * @memberof game.GetGameInfoRequest
          * @instance
          */
-        GetGameInfoRequest.prototype.game_id = 0;
+        GetGameInfoRequest.prototype.gameId = 0;
 
         /**
          * Creates a new GetGameInfoRequest instance using the specified properties.
@@ -8949,8 +8949,8 @@ export const game = $root.game = (() => {
         GetGameInfoRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.game_id != null && Object.hasOwnProperty.call(message, "game_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.game_id);
+            if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameId);
             return writer;
         };
 
@@ -8986,7 +8986,7 @@ export const game = $root.game = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.game_id = reader.int32();
+                        message.gameId = reader.int32();
                         break;
                     }
                 default:
@@ -9024,9 +9024,9 @@ export const game = $root.game = (() => {
         GetGameInfoRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                if (!$util.isInteger(message.game_id))
-                    return "game_id: integer expected";
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                if (!$util.isInteger(message.gameId))
+                    return "gameId: integer expected";
             return null;
         };
 
@@ -9042,8 +9042,8 @@ export const game = $root.game = (() => {
             if (object instanceof $root.game.GetGameInfoRequest)
                 return object;
             let message = new $root.game.GetGameInfoRequest();
-            if (object.game_id != null)
-                message.game_id = object.game_id | 0;
+            if (object.gameId != null)
+                message.gameId = object.gameId | 0;
             return message;
         };
 
@@ -9061,9 +9061,9 @@ export const game = $root.game = (() => {
                 options = {};
             let object = {};
             if (options.defaults)
-                object.game_id = 0;
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                object.game_id = message.game_id;
+                object.gameId = 0;
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                object.gameId = message.gameId;
             return object;
         };
 
@@ -9102,11 +9102,11 @@ export const game = $root.game = (() => {
          * Properties of a GetGameInfoResponse.
          * @memberof game
          * @interface IGetGameInfoResponse
-         * @property {number|null} [game_id] GetGameInfoResponse game_id
+         * @property {number|null} [gameId] GetGameInfoResponse gameId
          * @property {common.GameState|null} [state] GetGameInfoResponse state
          * @property {Array.<common.IPlayerPropertyDto>|null} [players] GetGameInfoResponse players
-         * @property {number|null} [map_width] GetGameInfoResponse map_width
-         * @property {number|null} [map_height] GetGameInfoResponse map_height
+         * @property {number|null} [mapWidth] GetGameInfoResponse mapWidth
+         * @property {number|null} [mapHeight] GetGameInfoResponse mapHeight
          * @property {Array.<common.ITileDto>|null} [tiles] GetGameInfoResponse tiles
          */
 
@@ -9128,12 +9128,12 @@ export const game = $root.game = (() => {
         }
 
         /**
-         * GetGameInfoResponse game_id.
-         * @member {number} game_id
+         * GetGameInfoResponse gameId.
+         * @member {number} gameId
          * @memberof game.GetGameInfoResponse
          * @instance
          */
-        GetGameInfoResponse.prototype.game_id = 0;
+        GetGameInfoResponse.prototype.gameId = 0;
 
         /**
          * GetGameInfoResponse state.
@@ -9152,20 +9152,20 @@ export const game = $root.game = (() => {
         GetGameInfoResponse.prototype.players = $util.emptyArray;
 
         /**
-         * GetGameInfoResponse map_width.
-         * @member {number} map_width
+         * GetGameInfoResponse mapWidth.
+         * @member {number} mapWidth
          * @memberof game.GetGameInfoResponse
          * @instance
          */
-        GetGameInfoResponse.prototype.map_width = 0;
+        GetGameInfoResponse.prototype.mapWidth = 0;
 
         /**
-         * GetGameInfoResponse map_height.
-         * @member {number} map_height
+         * GetGameInfoResponse mapHeight.
+         * @member {number} mapHeight
          * @memberof game.GetGameInfoResponse
          * @instance
          */
-        GetGameInfoResponse.prototype.map_height = 0;
+        GetGameInfoResponse.prototype.mapHeight = 0;
 
         /**
          * GetGameInfoResponse tiles.
@@ -9199,17 +9199,17 @@ export const game = $root.game = (() => {
         GetGameInfoResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.game_id != null && Object.hasOwnProperty.call(message, "game_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.game_id);
+            if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameId);
             if (message.state != null && Object.hasOwnProperty.call(message, "state"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.state);
             if (message.players != null && message.players.length)
                 for (let i = 0; i < message.players.length; ++i)
                     $root.common.PlayerPropertyDto.encode(message.players[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-            if (message.map_width != null && Object.hasOwnProperty.call(message, "map_width"))
-                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.map_width);
-            if (message.map_height != null && Object.hasOwnProperty.call(message, "map_height"))
-                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.map_height);
+            if (message.mapWidth != null && Object.hasOwnProperty.call(message, "mapWidth"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.mapWidth);
+            if (message.mapHeight != null && Object.hasOwnProperty.call(message, "mapHeight"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.mapHeight);
             if (message.tiles != null && message.tiles.length)
                 for (let i = 0; i < message.tiles.length; ++i)
                     $root.common.TileDto.encode(message.tiles[i], writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
@@ -9248,7 +9248,7 @@ export const game = $root.game = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.game_id = reader.int32();
+                        message.gameId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -9262,11 +9262,11 @@ export const game = $root.game = (() => {
                         break;
                     }
                 case 4: {
-                        message.map_width = reader.int32();
+                        message.mapWidth = reader.int32();
                         break;
                     }
                 case 5: {
-                        message.map_height = reader.int32();
+                        message.mapHeight = reader.int32();
                         break;
                     }
                 case 6: {
@@ -9310,9 +9310,9 @@ export const game = $root.game = (() => {
         GetGameInfoResponse.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                if (!$util.isInteger(message.game_id))
-                    return "game_id: integer expected";
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                if (!$util.isInteger(message.gameId))
+                    return "gameId: integer expected";
             if (message.state != null && message.hasOwnProperty("state"))
                 switch (message.state) {
                 default:
@@ -9336,12 +9336,12 @@ export const game = $root.game = (() => {
                         return "players." + error;
                 }
             }
-            if (message.map_width != null && message.hasOwnProperty("map_width"))
-                if (!$util.isInteger(message.map_width))
-                    return "map_width: integer expected";
-            if (message.map_height != null && message.hasOwnProperty("map_height"))
-                if (!$util.isInteger(message.map_height))
-                    return "map_height: integer expected";
+            if (message.mapWidth != null && message.hasOwnProperty("mapWidth"))
+                if (!$util.isInteger(message.mapWidth))
+                    return "mapWidth: integer expected";
+            if (message.mapHeight != null && message.hasOwnProperty("mapHeight"))
+                if (!$util.isInteger(message.mapHeight))
+                    return "mapHeight: integer expected";
             if (message.tiles != null && message.hasOwnProperty("tiles")) {
                 if (!Array.isArray(message.tiles))
                     return "tiles: array expected";
@@ -9366,8 +9366,8 @@ export const game = $root.game = (() => {
             if (object instanceof $root.game.GetGameInfoResponse)
                 return object;
             let message = new $root.game.GetGameInfoResponse();
-            if (object.game_id != null)
-                message.game_id = object.game_id | 0;
+            if (object.gameId != null)
+                message.gameId = object.gameId | 0;
             switch (object.state) {
             default:
                 if (typeof object.state === "number") {
@@ -9418,10 +9418,10 @@ export const game = $root.game = (() => {
                     message.players[i] = $root.common.PlayerPropertyDto.fromObject(object.players[i]);
                 }
             }
-            if (object.map_width != null)
-                message.map_width = object.map_width | 0;
-            if (object.map_height != null)
-                message.map_height = object.map_height | 0;
+            if (object.mapWidth != null)
+                message.mapWidth = object.mapWidth | 0;
+            if (object.mapHeight != null)
+                message.mapHeight = object.mapHeight | 0;
             if (object.tiles) {
                 if (!Array.isArray(object.tiles))
                     throw TypeError(".game.GetGameInfoResponse.tiles: array expected");
@@ -9453,13 +9453,13 @@ export const game = $root.game = (() => {
                 object.tiles = [];
             }
             if (options.defaults) {
-                object.game_id = 0;
+                object.gameId = 0;
                 object.state = options.enums === String ? "Init" : 0;
-                object.map_width = 0;
-                object.map_height = 0;
+                object.mapWidth = 0;
+                object.mapHeight = 0;
             }
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                object.game_id = message.game_id;
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                object.gameId = message.gameId;
             if (message.state != null && message.hasOwnProperty("state"))
                 object.state = options.enums === String ? $root.common.GameState[message.state] === undefined ? message.state : $root.common.GameState[message.state] : message.state;
             if (message.players && message.players.length) {
@@ -9467,10 +9467,10 @@ export const game = $root.game = (() => {
                 for (let j = 0; j < message.players.length; ++j)
                     object.players[j] = $root.common.PlayerPropertyDto.toObject(message.players[j], options);
             }
-            if (message.map_width != null && message.hasOwnProperty("map_width"))
-                object.map_width = message.map_width;
-            if (message.map_height != null && message.hasOwnProperty("map_height"))
-                object.map_height = message.map_height;
+            if (message.mapWidth != null && message.hasOwnProperty("mapWidth"))
+                object.mapWidth = message.mapWidth;
+            if (message.mapHeight != null && message.hasOwnProperty("mapHeight"))
+                object.mapHeight = message.mapHeight;
             if (message.tiles && message.tiles.length) {
                 object.tiles = [];
                 for (let j = 0; j < message.tiles.length; ++j)
@@ -9514,7 +9514,7 @@ export const game = $root.game = (() => {
          * Properties of a SubscribeRequest.
          * @memberof game
          * @interface ISubscribeRequest
-         * @property {number|null} [game_id] SubscribeRequest game_id
+         * @property {number|null} [gameId] SubscribeRequest gameId
          * @property {Array.<common.EventType>|null} [types] SubscribeRequest types
          */
 
@@ -9535,12 +9535,12 @@ export const game = $root.game = (() => {
         }
 
         /**
-         * SubscribeRequest game_id.
-         * @member {number} game_id
+         * SubscribeRequest gameId.
+         * @member {number} gameId
          * @memberof game.SubscribeRequest
          * @instance
          */
-        SubscribeRequest.prototype.game_id = 0;
+        SubscribeRequest.prototype.gameId = 0;
 
         /**
          * SubscribeRequest types.
@@ -9574,8 +9574,8 @@ export const game = $root.game = (() => {
         SubscribeRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.game_id != null && Object.hasOwnProperty.call(message, "game_id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.game_id);
+            if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.gameId);
             if (message.types != null && message.types.length) {
                 writer.uint32(/* id 2, wireType 2 =*/18).fork();
                 for (let i = 0; i < message.types.length; ++i)
@@ -9617,7 +9617,7 @@ export const game = $root.game = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.game_id = reader.int32();
+                        message.gameId = reader.int32();
                         break;
                     }
                 case 2: {
@@ -9666,9 +9666,9 @@ export const game = $root.game = (() => {
         SubscribeRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                if (!$util.isInteger(message.game_id))
-                    return "game_id: integer expected";
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                if (!$util.isInteger(message.gameId))
+                    return "gameId: integer expected";
             if (message.types != null && message.hasOwnProperty("types")) {
                 if (!Array.isArray(message.types))
                     return "types: array expected";
@@ -9717,8 +9717,8 @@ export const game = $root.game = (() => {
             if (object instanceof $root.game.SubscribeRequest)
                 return object;
             let message = new $root.game.SubscribeRequest();
-            if (object.game_id != null)
-                message.game_id = object.game_id | 0;
+            if (object.gameId != null)
+                message.gameId = object.gameId | 0;
             if (object.types) {
                 if (!Array.isArray(object.types))
                     throw TypeError(".game.SubscribeRequest.types: array expected");
@@ -9843,9 +9843,9 @@ export const game = $root.game = (() => {
             if (options.arrays || options.defaults)
                 object.types = [];
             if (options.defaults)
-                object.game_id = 0;
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                object.game_id = message.game_id;
+                object.gameId = 0;
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                object.gameId = message.gameId;
             if (message.types && message.types.length) {
                 object.types = [];
                 for (let j = 0; j < message.types.length; ++j)
@@ -10104,8 +10104,8 @@ export const http_api = $root.http_api = (() => {
          * Properties of a HttpApiRegisterResponse.
          * @memberof http_api
          * @interface IHttpApiRegisterResponse
-         * @property {string|null} [api_key] HttpApiRegisterResponse api_key
-         * @property {number|null} [user_id] HttpApiRegisterResponse user_id
+         * @property {string|null} [apiKey] HttpApiRegisterResponse apiKey
+         * @property {number|null} [userId] HttpApiRegisterResponse userId
          */
 
         /**
@@ -10124,20 +10124,20 @@ export const http_api = $root.http_api = (() => {
         }
 
         /**
-         * HttpApiRegisterResponse api_key.
-         * @member {string} api_key
+         * HttpApiRegisterResponse apiKey.
+         * @member {string} apiKey
          * @memberof http_api.HttpApiRegisterResponse
          * @instance
          */
-        HttpApiRegisterResponse.prototype.api_key = "";
+        HttpApiRegisterResponse.prototype.apiKey = "";
 
         /**
-         * HttpApiRegisterResponse user_id.
-         * @member {number} user_id
+         * HttpApiRegisterResponse userId.
+         * @member {number} userId
          * @memberof http_api.HttpApiRegisterResponse
          * @instance
          */
-        HttpApiRegisterResponse.prototype.user_id = 0;
+        HttpApiRegisterResponse.prototype.userId = 0;
 
         /**
          * Creates a new HttpApiRegisterResponse instance using the specified properties.
@@ -10163,10 +10163,10 @@ export const http_api = $root.http_api = (() => {
         HttpApiRegisterResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.api_key != null && Object.hasOwnProperty.call(message, "api_key"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.api_key);
-            if (message.user_id != null && Object.hasOwnProperty.call(message, "user_id"))
-                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.user_id);
+            if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.apiKey);
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.userId);
             return writer;
         };
 
@@ -10202,11 +10202,11 @@ export const http_api = $root.http_api = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.api_key = reader.string();
+                        message.apiKey = reader.string();
                         break;
                     }
                 case 2: {
-                        message.user_id = reader.int32();
+                        message.userId = reader.int32();
                         break;
                     }
                 default:
@@ -10244,12 +10244,12 @@ export const http_api = $root.http_api = (() => {
         HttpApiRegisterResponse.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                if (!$util.isString(message.api_key))
-                    return "api_key: string expected";
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                if (!$util.isInteger(message.user_id))
-                    return "user_id: integer expected";
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                if (!$util.isString(message.apiKey))
+                    return "apiKey: string expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
             return null;
         };
 
@@ -10265,10 +10265,10 @@ export const http_api = $root.http_api = (() => {
             if (object instanceof $root.http_api.HttpApiRegisterResponse)
                 return object;
             let message = new $root.http_api.HttpApiRegisterResponse();
-            if (object.api_key != null)
-                message.api_key = String(object.api_key);
-            if (object.user_id != null)
-                message.user_id = object.user_id | 0;
+            if (object.apiKey != null)
+                message.apiKey = String(object.apiKey);
+            if (object.userId != null)
+                message.userId = object.userId | 0;
             return message;
         };
 
@@ -10286,13 +10286,13 @@ export const http_api = $root.http_api = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.api_key = "";
-                object.user_id = 0;
+                object.apiKey = "";
+                object.userId = 0;
             }
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                object.api_key = message.api_key;
-            if (message.user_id != null && message.hasOwnProperty("user_id"))
-                object.user_id = message.user_id;
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                object.apiKey = message.apiKey;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
             return object;
         };
 
@@ -10331,7 +10331,7 @@ export const http_api = $root.http_api = (() => {
          * Properties of a HttpApiValidateRequest.
          * @memberof http_api
          * @interface IHttpApiValidateRequest
-         * @property {string|null} [api_key] HttpApiValidateRequest api_key
+         * @property {string|null} [apiKey] HttpApiValidateRequest apiKey
          */
 
         /**
@@ -10350,12 +10350,12 @@ export const http_api = $root.http_api = (() => {
         }
 
         /**
-         * HttpApiValidateRequest api_key.
-         * @member {string} api_key
+         * HttpApiValidateRequest apiKey.
+         * @member {string} apiKey
          * @memberof http_api.HttpApiValidateRequest
          * @instance
          */
-        HttpApiValidateRequest.prototype.api_key = "";
+        HttpApiValidateRequest.prototype.apiKey = "";
 
         /**
          * Creates a new HttpApiValidateRequest instance using the specified properties.
@@ -10381,8 +10381,8 @@ export const http_api = $root.http_api = (() => {
         HttpApiValidateRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.api_key != null && Object.hasOwnProperty.call(message, "api_key"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.api_key);
+            if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.apiKey);
             return writer;
         };
 
@@ -10418,7 +10418,7 @@ export const http_api = $root.http_api = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.api_key = reader.string();
+                        message.apiKey = reader.string();
                         break;
                     }
                 default:
@@ -10456,9 +10456,9 @@ export const http_api = $root.http_api = (() => {
         HttpApiValidateRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                if (!$util.isString(message.api_key))
-                    return "api_key: string expected";
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                if (!$util.isString(message.apiKey))
+                    return "apiKey: string expected";
             return null;
         };
 
@@ -10474,8 +10474,8 @@ export const http_api = $root.http_api = (() => {
             if (object instanceof $root.http_api.HttpApiValidateRequest)
                 return object;
             let message = new $root.http_api.HttpApiValidateRequest();
-            if (object.api_key != null)
-                message.api_key = String(object.api_key);
+            if (object.apiKey != null)
+                message.apiKey = String(object.apiKey);
             return message;
         };
 
@@ -10493,9 +10493,9 @@ export const http_api = $root.http_api = (() => {
                 options = {};
             let object = {};
             if (options.defaults)
-                object.api_key = "";
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                object.api_key = message.api_key;
+                object.apiKey = "";
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                object.apiKey = message.apiKey;
             return object;
         };
 
@@ -10742,8 +10742,8 @@ export const http_api = $root.http_api = (() => {
          * Properties of a HttpApiGetGameInfoRequest.
          * @memberof http_api
          * @interface IHttpApiGetGameInfoRequest
-         * @property {string|null} [api_key] HttpApiGetGameInfoRequest api_key
-         * @property {number|null} [game_id] HttpApiGetGameInfoRequest game_id
+         * @property {string|null} [apiKey] HttpApiGetGameInfoRequest apiKey
+         * @property {number|null} [gameId] HttpApiGetGameInfoRequest gameId
          */
 
         /**
@@ -10762,20 +10762,20 @@ export const http_api = $root.http_api = (() => {
         }
 
         /**
-         * HttpApiGetGameInfoRequest api_key.
-         * @member {string} api_key
+         * HttpApiGetGameInfoRequest apiKey.
+         * @member {string} apiKey
          * @memberof http_api.HttpApiGetGameInfoRequest
          * @instance
          */
-        HttpApiGetGameInfoRequest.prototype.api_key = "";
+        HttpApiGetGameInfoRequest.prototype.apiKey = "";
 
         /**
-         * HttpApiGetGameInfoRequest game_id.
-         * @member {number} game_id
+         * HttpApiGetGameInfoRequest gameId.
+         * @member {number} gameId
          * @memberof http_api.HttpApiGetGameInfoRequest
          * @instance
          */
-        HttpApiGetGameInfoRequest.prototype.game_id = 0;
+        HttpApiGetGameInfoRequest.prototype.gameId = 0;
 
         /**
          * Creates a new HttpApiGetGameInfoRequest instance using the specified properties.
@@ -10801,10 +10801,10 @@ export const http_api = $root.http_api = (() => {
         HttpApiGetGameInfoRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.api_key != null && Object.hasOwnProperty.call(message, "api_key"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.api_key);
-            if (message.game_id != null && Object.hasOwnProperty.call(message, "game_id"))
-                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.game_id);
+            if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.apiKey);
+            if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.gameId);
             return writer;
         };
 
@@ -10840,11 +10840,11 @@ export const http_api = $root.http_api = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.api_key = reader.string();
+                        message.apiKey = reader.string();
                         break;
                     }
                 case 2: {
-                        message.game_id = reader.int32();
+                        message.gameId = reader.int32();
                         break;
                     }
                 default:
@@ -10882,12 +10882,12 @@ export const http_api = $root.http_api = (() => {
         HttpApiGetGameInfoRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                if (!$util.isString(message.api_key))
-                    return "api_key: string expected";
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                if (!$util.isInteger(message.game_id))
-                    return "game_id: integer expected";
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                if (!$util.isString(message.apiKey))
+                    return "apiKey: string expected";
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                if (!$util.isInteger(message.gameId))
+                    return "gameId: integer expected";
             return null;
         };
 
@@ -10903,10 +10903,10 @@ export const http_api = $root.http_api = (() => {
             if (object instanceof $root.http_api.HttpApiGetGameInfoRequest)
                 return object;
             let message = new $root.http_api.HttpApiGetGameInfoRequest();
-            if (object.api_key != null)
-                message.api_key = String(object.api_key);
-            if (object.game_id != null)
-                message.game_id = object.game_id | 0;
+            if (object.apiKey != null)
+                message.apiKey = String(object.apiKey);
+            if (object.gameId != null)
+                message.gameId = object.gameId | 0;
             return message;
         };
 
@@ -10924,13 +10924,13 @@ export const http_api = $root.http_api = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.api_key = "";
-                object.game_id = 0;
+                object.apiKey = "";
+                object.gameId = 0;
             }
-            if (message.api_key != null && message.hasOwnProperty("api_key"))
-                object.api_key = message.api_key;
-            if (message.game_id != null && message.hasOwnProperty("game_id"))
-                object.game_id = message.game_id;
+            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
+                object.apiKey = message.apiKey;
+            if (message.gameId != null && message.hasOwnProperty("gameId"))
+                object.gameId = message.gameId;
             return object;
         };
 

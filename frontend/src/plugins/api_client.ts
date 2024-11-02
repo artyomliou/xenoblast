@@ -15,15 +15,15 @@ export class ApiClient extends Plugins.BasePlugin {
 
   async matchmakingEnroll(apiKey: string) {
     const req = http_api.HttpApiValidateRequest.create();
-    req.api_key = apiKey;
+    req.apiKey = apiKey;
     const resp = await this.sendRequest("POST", "api/matchmaking/enroll", req);
     return resp.ok;
   }
 
   async gameInfo(apiKey: string, gameId: number) {
     const req = http_api.HttpApiGetGameInfoRequest.create();
-    req.api_key = apiKey;
-    req.game_id = gameId;
+    req.apiKey = apiKey;
+    req.gameId = gameId;
     const resp = await this.sendRequest("POST", "api/game/get_game_info", req);
     const buf = await resp.arrayBuffer();
     return game.GetGameInfoResponse.decode(new Uint8Array(buf));
