@@ -9,7 +9,7 @@ cd frontend && npm run proto-js && npm run proto-ts
 # Run
 
 ```
-cd deploy/docker-compose && docker compose up -d
+cd deploy/docker-compose && cp .env.example .env && docker compose up -d
 cd frontend && npm run dev
 ```
 

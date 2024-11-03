@@ -1,18 +1,10 @@
 FROM golang:1.22.8 AS build
 WORKDIR /src
 COPY ./go.mod ./go.sum /src
-RUN go mod download 
+RUN go mod download
 COPY ./ /src
-RUN go build -o /bin/auth_service ./cmd/auth_service && \ 
-  go build -o /bin/game_service ./cmd/game_service && \
-  go build -o /bin/http_service ./cmd/http_service && \
-  go build -o /bin/matchmaking_service ./cmd/matchmaking_service && \
-  go build -o /bin/websocket_service ./cmd/websocket_service
+RUN go build -o /bin/server ./cmd/main
 
 FROM ubuntu:22.04
-COPY --from=build /bin/auth_service /app/auth_service
-COPY --from=build /bin/game_service /app/game_service
-COPY --from=build /bin/http_service /app/http_service
-COPY --from=build /bin/matchmaking_service /app/matchmaking_service
-COPY --from=build /bin/websocket_service /app/websocket_service
+COPY --from=build /bin/server /app/server
 WORKDIR /app

@@ -7,37 +7,48 @@ services:
       - ../../api-gateway/ssl/:/etc/nginx/ssl/
     ports:
       - 80:80
+
   http_service:
+    env_file: .env
     build:
       context: ../../backend
-    command: /app/http_service
+      dockerfile: ${SERVER_DOCKER_FILE}
+    command: ${SERVER_CMD_BASE} -service http
     expose:
       - 8080
 
   websocket_service:
+    env_file: .env
     build:
       context: ../../backend
-    command: /app/websocket_service
+      dockerfile: ${SERVER_DOCKER_FILE}
+    command: ${SERVER_CMD_BASE} -service websocket
     expose:
       - 8080
 
   auth_service:
+    env_file: .env
     build:
       context: ../../backend
-    command: /app/auth_service
+      dockerfile: ${SERVER_DOCKER_FILE}
+    command: ${SERVER_CMD_BASE} -service auth
     expose:
       - 50051
 
   matchmaking_service:
+    env_file: .env
     build:
       context: ../../backend
-    command: /app/matchmaking_service
+      dockerfile: ${SERVER_DOCKER_FILE}
+    command: ${SERVER_CMD_BASE} -service matchmaking
     expose:
       - 50051
 
   game_service:
+    env_file: .env
     build:
       context: ../../backend
-    command: /app/game_service
+      dockerfile: ${SERVER_DOCKER_FILE}
+    command: ${SERVER_CMD_BASE} -service game
     expose:
       - 50051
