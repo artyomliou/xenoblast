@@ -62,3 +62,7 @@ services:
     command: ${SERVER_CMD_BASE} -service game
     expose:
       - 50051
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr

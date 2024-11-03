@@ -90,7 +90,9 @@ message CrashData {
 }
 
 message NewMatchData {
-  repeated int32 players = 1;
+  // This should be carefully handled. All services should receive non-empty value but client should receive empty value
+  string gameServerAddr = 1;
+  repeated int32 players = 2;
 }
 
 message PlayerReadyData {

@@ -10,6 +10,7 @@ service MatchmakingService {
   rpc Cancel (MatchmakingRequest) returns (google.protobuf.Empty);
   rpc GetWaitingPlayerCount(google.protobuf.Empty) returns (GetWaitingPlayerCountResponse);
   rpc SubscribeMatch (MatchmakingRequest) returns (stream common.Event);
+  rpc GetGameServerAddr (GetGameServerAddrRequest) returns (GetGameServerAddrResponse);
 }
 
 message MatchmakingRequest {
@@ -18,4 +19,12 @@ message MatchmakingRequest {
 
 message GetWaitingPlayerCountResponse {
   int32 count = 1;
+}
+
+message GetGameServerAddrRequest {
+  int32 userId = 1;
+}
+
+message GetGameServerAddrResponse {
+  string gameServerAddr = 2;
 }

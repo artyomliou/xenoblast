@@ -140,7 +140,7 @@ func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
 }
 
 func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {
-	wsUrl := fmt.Sprintf("ws://%s/%s?%s=%s", websocket_service.HttpServerAddr, "ws/", http_service.ApiKeyHeader, player.apiKey)
+	wsUrl := fmt.Sprintf("ws://%s:%d/%s?%s=%s", websocket_service.HttpServerHost, websocket_service.HttpServerPort, "ws/", http_service.ApiKeyHeader, player.apiKey)
 	conn, _, err := websocket.DefaultDialer.DialContext(player.ctx, wsUrl, nil)
 	assert.NoError(t, err)
 	assert.NotNil(t, conn)
@@ -185,6 +185,7 @@ func (player *frontendPlayer) receiveNewMatchFromWebsocket(t *testing.T) {
 	data := event.GetNewMatch()
 	assert.NotNil(t, data)
 	assert.Contains(t, data.Players, player.userId)
+	assert.Empty(t, data.GameServerAddr)
 
 	player.gameId = event.GameId
 }
@@ -305,7 +306,7 @@ func (player *frontendPlayer) receivePlayerMovedFromWebsocket(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendHttpRequest(method string, path string, newQueries *map[string]string, body any, apiKey *string) ([]byte, error) {
-	apiUrl, err := url.Parse(fmt.Sprintf("http://%s/%s", http_service.HttpServerAddr, path))
+	apiUrl, err := url.Parse(fmt.Sprintf("http://%s:%d/%s", http_service.HttpServerHost, http_service.HttpServerPort, path))
 	if err != nil {
 		return nil, err
 	}

@@ -562,6 +562,9 @@ export namespace common {
     /** Properties of a NewMatchData. */
     interface INewMatchData {
 
+        /** NewMatchData gameServerAddr */
+        gameServerAddr?: (string|null);
+
         /** NewMatchData players */
         players?: (number[]|null);
     }
@@ -574,6 +577,9 @@ export namespace common {
          * @param [properties] Properties to set
          */
         constructor(properties?: common.INewMatchData);
+
+        /** NewMatchData gameServerAddr. */
+        public gameServerAddr: string;
 
         /** NewMatchData players. */
         public players: number[];
@@ -3292,6 +3298,20 @@ export namespace matchmaking {
          * @returns Promise
          */
         public subscribeMatch(request: matchmaking.IMatchmakingRequest): Promise<common.Event>;
+
+        /**
+         * Calls GetGameServerAddr.
+         * @param request GetGameServerAddrRequest message or plain object
+         * @param callback Node-style callback called with the error, if any, and GetGameServerAddrResponse
+         */
+        public getGameServerAddr(request: matchmaking.IGetGameServerAddrRequest, callback: matchmaking.MatchmakingService.GetGameServerAddrCallback): void;
+
+        /**
+         * Calls GetGameServerAddr.
+         * @param request GetGameServerAddrRequest message or plain object
+         * @returns Promise
+         */
+        public getGameServerAddr(request: matchmaking.IGetGameServerAddrRequest): Promise<matchmaking.GetGameServerAddrResponse>;
     }
 
     namespace MatchmakingService {
@@ -3323,6 +3343,13 @@ export namespace matchmaking {
          * @param [response] Event
          */
         type SubscribeMatchCallback = (error: (Error|null), response?: common.Event) => void;
+
+        /**
+         * Callback as used by {@link matchmaking.MatchmakingService#getGameServerAddr}.
+         * @param error Error, if any
+         * @param [response] GetGameServerAddrResponse
+         */
+        type GetGameServerAddrCallback = (error: (Error|null), response?: matchmaking.GetGameServerAddrResponse) => void;
     }
 
     /** Properties of a MatchmakingRequest. */
@@ -3513,6 +3540,200 @@ export namespace matchmaking {
 
         /**
          * Gets the default type url for GetWaitingPlayerCountResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GetGameServerAddrRequest. */
+    interface IGetGameServerAddrRequest {
+
+        /** GetGameServerAddrRequest userId */
+        userId?: (number|null);
+    }
+
+    /** Represents a GetGameServerAddrRequest. */
+    class GetGameServerAddrRequest implements IGetGameServerAddrRequest {
+
+        /**
+         * Constructs a new GetGameServerAddrRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: matchmaking.IGetGameServerAddrRequest);
+
+        /** GetGameServerAddrRequest userId. */
+        public userId: number;
+
+        /**
+         * Creates a new GetGameServerAddrRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetGameServerAddrRequest instance
+         */
+        public static create(properties?: matchmaking.IGetGameServerAddrRequest): matchmaking.GetGameServerAddrRequest;
+
+        /**
+         * Encodes the specified GetGameServerAddrRequest message. Does not implicitly {@link matchmaking.GetGameServerAddrRequest.verify|verify} messages.
+         * @param message GetGameServerAddrRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: matchmaking.IGetGameServerAddrRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetGameServerAddrRequest message, length delimited. Does not implicitly {@link matchmaking.GetGameServerAddrRequest.verify|verify} messages.
+         * @param message GetGameServerAddrRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: matchmaking.IGetGameServerAddrRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetGameServerAddrRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetGameServerAddrRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): matchmaking.GetGameServerAddrRequest;
+
+        /**
+         * Decodes a GetGameServerAddrRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetGameServerAddrRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): matchmaking.GetGameServerAddrRequest;
+
+        /**
+         * Verifies a GetGameServerAddrRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetGameServerAddrRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetGameServerAddrRequest
+         */
+        public static fromObject(object: { [k: string]: any }): matchmaking.GetGameServerAddrRequest;
+
+        /**
+         * Creates a plain object from a GetGameServerAddrRequest message. Also converts values to other types if specified.
+         * @param message GetGameServerAddrRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: matchmaking.GetGameServerAddrRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetGameServerAddrRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetGameServerAddrRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GetGameServerAddrResponse. */
+    interface IGetGameServerAddrResponse {
+
+        /** GetGameServerAddrResponse gameServerAddr */
+        gameServerAddr?: (string|null);
+    }
+
+    /** Represents a GetGameServerAddrResponse. */
+    class GetGameServerAddrResponse implements IGetGameServerAddrResponse {
+
+        /**
+         * Constructs a new GetGameServerAddrResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: matchmaking.IGetGameServerAddrResponse);
+
+        /** GetGameServerAddrResponse gameServerAddr. */
+        public gameServerAddr: string;
+
+        /**
+         * Creates a new GetGameServerAddrResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetGameServerAddrResponse instance
+         */
+        public static create(properties?: matchmaking.IGetGameServerAddrResponse): matchmaking.GetGameServerAddrResponse;
+
+        /**
+         * Encodes the specified GetGameServerAddrResponse message. Does not implicitly {@link matchmaking.GetGameServerAddrResponse.verify|verify} messages.
+         * @param message GetGameServerAddrResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: matchmaking.IGetGameServerAddrResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetGameServerAddrResponse message, length delimited. Does not implicitly {@link matchmaking.GetGameServerAddrResponse.verify|verify} messages.
+         * @param message GetGameServerAddrResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: matchmaking.IGetGameServerAddrResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetGameServerAddrResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetGameServerAddrResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): matchmaking.GetGameServerAddrResponse;
+
+        /**
+         * Decodes a GetGameServerAddrResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetGameServerAddrResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): matchmaking.GetGameServerAddrResponse;
+
+        /**
+         * Verifies a GetGameServerAddrResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetGameServerAddrResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetGameServerAddrResponse
+         */
+        public static fromObject(object: { [k: string]: any }): matchmaking.GetGameServerAddrResponse;
+
+        /**
+         * Creates a plain object from a GetGameServerAddrResponse message. Also converts values to other types if specified.
+         * @param message GetGameServerAddrResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: matchmaking.GetGameServerAddrResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetGameServerAddrResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetGameServerAddrResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */

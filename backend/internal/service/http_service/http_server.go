@@ -1,4 +1,4 @@
 package http_service
 
-var HttpServerAddr = "http_service:8080"
-var HttpServerListenAddr = ":8080"
+var HttpServerHost = "http_service"
+var HttpServerPort = 8080

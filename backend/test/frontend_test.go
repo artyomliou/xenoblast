@@ -9,6 +9,8 @@ import (
 	"artyomliou/xenoblast-backend/internal/service/websocket_service"
 	"artyomliou/xenoblast-backend/pkg/utils"
 	"context"
+	"fmt"
+	"os"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -16,45 +18,51 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func init() {
-	http_service.HttpServerAddr = "localhost:8081"
-	http_service.HttpServerListenAddr = "localhost:8081"
+func TestMain(m *testing.M) {
+	setup()
+	code := m.Run()
+	os.Exit(code)
+}
 
-	websocket_service.HttpServerAddr = "localhost:8082"
-	websocket_service.HttpServerListenAddr = "localhost:8082"
+func setup() {
+	http_service.HttpServerHost = "localhost"
+	http_service.HttpServerPort = 8081
 
-	auth_service.GrpcServerAddr = "localhost:50051"
-	auth_service.GrpcServerListenAddr = "localhost:50051"
+	websocket_service.HttpServerHost = "localhost"
+	websocket_service.HttpServerPort = 8082
 
-	matchmaking_service.GrpcServerAddr = "localhost:50052"
-	matchmaking_service.GrpcServerListenAddr = "localhost:50052"
+	auth_service.GrpcServerHost = "localhost"
+	auth_service.GrpcServerPort = 50051
 
-	game_service.GrpcServerAddr = "localhost:50053"
-	game_service.GrpcServerListenAddr = "localhost:50053"
+	matchmaking_service.GrpcServerHost = "localhost"
+	matchmaking_service.GrpcServerPort = 50052
+
+	game_service.GrpcServerHost = "localhost"
+	game_service.GrpcServerPort = 50053
 }
 
 func setupBackend() error {
-	authServerListener, authServer, err1 := service.BuildAuthServer(auth_service.GrpcServerListenAddr)
+	authServerListener, authServer, err1 := service.BuildAuthServer(fmt.Sprintf(":%d", auth_service.GrpcServerPort))
 	if err1 != nil {
 		return err1
 	}
 	go authServer.Serve(authServerListener)
 
-	matchmakingServerListener, matchmakingService, matchmakingServer, err2 := service.BuildMatchmakingServer(matchmaking_service.GrpcServerListenAddr)
+	matchmakingServerListener, matchmakingService, matchmakingServer, err2 := service.BuildMatchmakingServer(fmt.Sprintf(":%d", matchmaking_service.GrpcServerPort))
 	if err2 != nil {
 		return err2
 	}
 	go matchmakingService.StartMatchmaking(context.Background())
 	go matchmakingServer.Serve(matchmakingServerListener)
 
-	gameServerListener, gameServer, err3 := service.BuildGameServer(game_service.GrpcServerListenAddr)
+	gameServerListener, gameServer, err3 := service.BuildGameServer(fmt.Sprintf(":%d", game_service.GrpcServerPort))
 	if err3 != nil {
 		return err3
 	}
 	go gameServer.Serve(gameServerListener)
 
-	go utils.StartHttpServer(context.Background(), nil, http_service.HttpServerListenAddr, http_service.InitRoutes())
-	go utils.StartHttpServer(context.Background(), nil, websocket_service.HttpServerListenAddr, websocket_service.InitRoutes(context.Background()))
+	go utils.StartHttpServer(context.Background(), nil, fmt.Sprintf(":%d", http_service.HttpServerPort), http_service.InitRoutes())
+	go utils.StartHttpServer(context.Background(), nil, fmt.Sprintf(":%d", websocket_service.HttpServerPort), websocket_service.InitRoutes(context.Background()))
 
 	return nil
 }

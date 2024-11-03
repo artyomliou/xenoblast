@@ -1783,6 +1783,7 @@ export const common = $root.common = (() => {
          * Properties of a NewMatchData.
          * @memberof common
          * @interface INewMatchData
+         * @property {string|null} [gameServerAddr] NewMatchData gameServerAddr
          * @property {Array.<number>|null} [players] NewMatchData players
          */
 
@@ -1801,6 +1802,14 @@ export const common = $root.common = (() => {
                     if (properties[keys[i]] != null)
                         this[keys[i]] = properties[keys[i]];
         }
+
+        /**
+         * NewMatchData gameServerAddr.
+         * @member {string} gameServerAddr
+         * @memberof common.NewMatchData
+         * @instance
+         */
+        NewMatchData.prototype.gameServerAddr = "";
 
         /**
          * NewMatchData players.
@@ -1834,8 +1843,10 @@ export const common = $root.common = (() => {
         NewMatchData.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
+            if (message.gameServerAddr != null && Object.hasOwnProperty.call(message, "gameServerAddr"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.gameServerAddr);
             if (message.players != null && message.players.length) {
-                writer.uint32(/* id 1, wireType 2 =*/10).fork();
+                writer.uint32(/* id 2, wireType 2 =*/18).fork();
                 for (let i = 0; i < message.players.length; ++i)
                     writer.int32(message.players[i]);
                 writer.ldelim();
@@ -1875,6 +1886,10 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
+                        message.gameServerAddr = reader.string();
+                        break;
+                    }
+                case 2: {
                         if (!(message.players && message.players.length))
                             message.players = [];
                         if ((tag & 7) === 2) {
@@ -1920,6 +1935,9 @@ export const common = $root.common = (() => {
         NewMatchData.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
+            if (message.gameServerAddr != null && message.hasOwnProperty("gameServerAddr"))
+                if (!$util.isString(message.gameServerAddr))
+                    return "gameServerAddr: string expected";
             if (message.players != null && message.hasOwnProperty("players")) {
                 if (!Array.isArray(message.players))
                     return "players: array expected";
@@ -1942,6 +1960,8 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.NewMatchData)
                 return object;
             let message = new $root.common.NewMatchData();
+            if (object.gameServerAddr != null)
+                message.gameServerAddr = String(object.gameServerAddr);
             if (object.players) {
                 if (!Array.isArray(object.players))
                     throw TypeError(".common.NewMatchData.players: array expected");
@@ -1967,6 +1987,10 @@ export const common = $root.common = (() => {
             let object = {};
             if (options.arrays || options.defaults)
                 object.players = [];
+            if (options.defaults)
+                object.gameServerAddr = "";
+            if (message.gameServerAddr != null && message.hasOwnProperty("gameServerAddr"))
+                object.gameServerAddr = message.gameServerAddr;
             if (message.players && message.players.length) {
                 object.players = [];
                 for (let j = 0; j < message.players.length; ++j)
@@ -8077,6 +8101,39 @@ export const matchmaking = $root.matchmaking = (() => {
          * @variation 2
          */
 
+        /**
+         * Callback as used by {@link matchmaking.MatchmakingService#getGameServerAddr}.
+         * @memberof matchmaking.MatchmakingService
+         * @typedef GetGameServerAddrCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {matchmaking.GetGameServerAddrResponse} [response] GetGameServerAddrResponse
+         */
+
+        /**
+         * Calls GetGameServerAddr.
+         * @function getGameServerAddr
+         * @memberof matchmaking.MatchmakingService
+         * @instance
+         * @param {matchmaking.IGetGameServerAddrRequest} request GetGameServerAddrRequest message or plain object
+         * @param {matchmaking.MatchmakingService.GetGameServerAddrCallback} callback Node-style callback called with the error, if any, and GetGameServerAddrResponse
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(MatchmakingService.prototype.getGameServerAddr = function getGameServerAddr(request, callback) {
+            return this.rpcCall(getGameServerAddr, $root.matchmaking.GetGameServerAddrRequest, $root.matchmaking.GetGameServerAddrResponse, request, callback);
+        }, "name", { value: "GetGameServerAddr" });
+
+        /**
+         * Calls GetGameServerAddr.
+         * @function getGameServerAddr
+         * @memberof matchmaking.MatchmakingService
+         * @instance
+         * @param {matchmaking.IGetGameServerAddrRequest} request GetGameServerAddrRequest message or plain object
+         * @returns {Promise<matchmaking.GetGameServerAddrResponse>} Promise
+         * @variation 2
+         */
+
         return MatchmakingService;
     })();
 
@@ -8484,6 +8541,412 @@ export const matchmaking = $root.matchmaking = (() => {
         };
 
         return GetWaitingPlayerCountResponse;
+    })();
+
+    matchmaking.GetGameServerAddrRequest = (function() {
+
+        /**
+         * Properties of a GetGameServerAddrRequest.
+         * @memberof matchmaking
+         * @interface IGetGameServerAddrRequest
+         * @property {number|null} [userId] GetGameServerAddrRequest userId
+         */
+
+        /**
+         * Constructs a new GetGameServerAddrRequest.
+         * @memberof matchmaking
+         * @classdesc Represents a GetGameServerAddrRequest.
+         * @implements IGetGameServerAddrRequest
+         * @constructor
+         * @param {matchmaking.IGetGameServerAddrRequest=} [properties] Properties to set
+         */
+        function GetGameServerAddrRequest(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GetGameServerAddrRequest userId.
+         * @member {number} userId
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @instance
+         */
+        GetGameServerAddrRequest.prototype.userId = 0;
+
+        /**
+         * Creates a new GetGameServerAddrRequest instance using the specified properties.
+         * @function create
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @static
+         * @param {matchmaking.IGetGameServerAddrRequest=} [properties] Properties to set
+         * @returns {matchmaking.GetGameServerAddrRequest} GetGameServerAddrRequest instance
+         */
+        GetGameServerAddrRequest.create = function create(properties) {
+            return new GetGameServerAddrRequest(properties);
+        };
+
+        /**
+         * Encodes the specified GetGameServerAddrRequest message. Does not implicitly {@link matchmaking.GetGameServerAddrRequest.verify|verify} messages.
+         * @function encode
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @static
+         * @param {matchmaking.IGetGameServerAddrRequest} message GetGameServerAddrRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetGameServerAddrRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.userId != null && Object.hasOwnProperty.call(message, "userId"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.userId);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GetGameServerAddrRequest message, length delimited. Does not implicitly {@link matchmaking.GetGameServerAddrRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @static
+         * @param {matchmaking.IGetGameServerAddrRequest} message GetGameServerAddrRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetGameServerAddrRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GetGameServerAddrRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {matchmaking.GetGameServerAddrRequest} GetGameServerAddrRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetGameServerAddrRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.matchmaking.GetGameServerAddrRequest();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1: {
+                        message.userId = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GetGameServerAddrRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {matchmaking.GetGameServerAddrRequest} GetGameServerAddrRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetGameServerAddrRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GetGameServerAddrRequest message.
+         * @function verify
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GetGameServerAddrRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                if (!$util.isInteger(message.userId))
+                    return "userId: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a GetGameServerAddrRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {matchmaking.GetGameServerAddrRequest} GetGameServerAddrRequest
+         */
+        GetGameServerAddrRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.matchmaking.GetGameServerAddrRequest)
+                return object;
+            let message = new $root.matchmaking.GetGameServerAddrRequest();
+            if (object.userId != null)
+                message.userId = object.userId | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GetGameServerAddrRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @static
+         * @param {matchmaking.GetGameServerAddrRequest} message GetGameServerAddrRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GetGameServerAddrRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.defaults)
+                object.userId = 0;
+            if (message.userId != null && message.hasOwnProperty("userId"))
+                object.userId = message.userId;
+            return object;
+        };
+
+        /**
+         * Converts this GetGameServerAddrRequest to JSON.
+         * @function toJSON
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GetGameServerAddrRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for GetGameServerAddrRequest
+         * @function getTypeUrl
+         * @memberof matchmaking.GetGameServerAddrRequest
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        GetGameServerAddrRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/matchmaking.GetGameServerAddrRequest";
+        };
+
+        return GetGameServerAddrRequest;
+    })();
+
+    matchmaking.GetGameServerAddrResponse = (function() {
+
+        /**
+         * Properties of a GetGameServerAddrResponse.
+         * @memberof matchmaking
+         * @interface IGetGameServerAddrResponse
+         * @property {string|null} [gameServerAddr] GetGameServerAddrResponse gameServerAddr
+         */
+
+        /**
+         * Constructs a new GetGameServerAddrResponse.
+         * @memberof matchmaking
+         * @classdesc Represents a GetGameServerAddrResponse.
+         * @implements IGetGameServerAddrResponse
+         * @constructor
+         * @param {matchmaking.IGetGameServerAddrResponse=} [properties] Properties to set
+         */
+        function GetGameServerAddrResponse(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GetGameServerAddrResponse gameServerAddr.
+         * @member {string} gameServerAddr
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @instance
+         */
+        GetGameServerAddrResponse.prototype.gameServerAddr = "";
+
+        /**
+         * Creates a new GetGameServerAddrResponse instance using the specified properties.
+         * @function create
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @static
+         * @param {matchmaking.IGetGameServerAddrResponse=} [properties] Properties to set
+         * @returns {matchmaking.GetGameServerAddrResponse} GetGameServerAddrResponse instance
+         */
+        GetGameServerAddrResponse.create = function create(properties) {
+            return new GetGameServerAddrResponse(properties);
+        };
+
+        /**
+         * Encodes the specified GetGameServerAddrResponse message. Does not implicitly {@link matchmaking.GetGameServerAddrResponse.verify|verify} messages.
+         * @function encode
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @static
+         * @param {matchmaking.IGetGameServerAddrResponse} message GetGameServerAddrResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetGameServerAddrResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.gameServerAddr != null && Object.hasOwnProperty.call(message, "gameServerAddr"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.gameServerAddr);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GetGameServerAddrResponse message, length delimited. Does not implicitly {@link matchmaking.GetGameServerAddrResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @static
+         * @param {matchmaking.IGetGameServerAddrResponse} message GetGameServerAddrResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetGameServerAddrResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GetGameServerAddrResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {matchmaking.GetGameServerAddrResponse} GetGameServerAddrResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetGameServerAddrResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.matchmaking.GetGameServerAddrResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 2: {
+                        message.gameServerAddr = reader.string();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GetGameServerAddrResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {matchmaking.GetGameServerAddrResponse} GetGameServerAddrResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetGameServerAddrResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GetGameServerAddrResponse message.
+         * @function verify
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GetGameServerAddrResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.gameServerAddr != null && message.hasOwnProperty("gameServerAddr"))
+                if (!$util.isString(message.gameServerAddr))
+                    return "gameServerAddr: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a GetGameServerAddrResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {matchmaking.GetGameServerAddrResponse} GetGameServerAddrResponse
+         */
+        GetGameServerAddrResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.matchmaking.GetGameServerAddrResponse)
+                return object;
+            let message = new $root.matchmaking.GetGameServerAddrResponse();
+            if (object.gameServerAddr != null)
+                message.gameServerAddr = String(object.gameServerAddr);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GetGameServerAddrResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @static
+         * @param {matchmaking.GetGameServerAddrResponse} message GetGameServerAddrResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GetGameServerAddrResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.defaults)
+                object.gameServerAddr = "";
+            if (message.gameServerAddr != null && message.hasOwnProperty("gameServerAddr"))
+                object.gameServerAddr = message.gameServerAddr;
+            return object;
+        };
+
+        /**
+         * Converts this GetGameServerAddrResponse to JSON.
+         * @function toJSON
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GetGameServerAddrResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for GetGameServerAddrResponse
+         * @function getTypeUrl
+         * @memberof matchmaking.GetGameServerAddrResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        GetGameServerAddrResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/matchmaking.GetGameServerAddrResponse";
+        };
+
+        return GetGameServerAddrResponse;
     })();
 
     return matchmaking;

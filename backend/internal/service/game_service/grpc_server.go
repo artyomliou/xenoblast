@@ -14,8 +14,8 @@ import (
 	"google.golang.org/grpc"
 )
 
-var GrpcServerAddr = "game_service:50051"
-var GrpcServerListenAddr = ":50051"
+var GrpcServerHost = "game_service"
+var GrpcServerPort = 50051
 
 type gameServer struct {
 	game.UnimplementedGameServiceServer

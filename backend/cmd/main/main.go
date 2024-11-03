@@ -9,6 +9,7 @@ import (
 	"artyomliou/xenoblast-backend/internal/service/websocket_service"
 	"artyomliou/xenoblast-backend/pkg/utils"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 )
@@ -30,15 +31,18 @@ func main() {
 
 	switch *serviceName {
 	case "http":
-		go utils.StartHttpServer(ctx, nil, http_service.HttpServerListenAddr, http_service.InitRoutes())
+		addr := fmt.Sprintf(":%d", websocket_service.HttpServerPort)
+		go utils.StartHttpServer(ctx, nil, addr, http_service.InitRoutes())
 		<-ctx.Done()
 
 	case "websocket":
-		go utils.StartHttpServer(ctx, nil, websocket_service.HttpServerListenAddr, websocket_service.InitRoutes(ctx))
+		addr := fmt.Sprintf(":%d", websocket_service.HttpServerPort)
+		go utils.StartHttpServer(ctx, nil, addr, websocket_service.InitRoutes(ctx))
 		<-ctx.Done()
 
 	case "auth":
-		authServerListener, authServer, err := service.BuildAuthServer(auth_service.GrpcServerListenAddr)
+		addr := fmt.Sprintf(":%d", auth_service.GrpcServerPort)
+		authServerListener, authServer, err := service.BuildAuthServer(addr)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
@@ -48,7 +52,8 @@ func main() {
 		authServer.GracefulStop()
 
 	case "matchmaking":
-		matchmakingServerListener, matchmakingService, matchmakingServer, err := service.BuildMatchmakingServer(matchmaking_service.GrpcServerListenAddr)
+		addr := fmt.Sprintf(":%d", matchmaking_service.GrpcServerPort)
+		matchmakingServerListener, matchmakingService, matchmakingServer, err := service.BuildMatchmakingServer(addr)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -59,7 +64,8 @@ func main() {
 		matchmakingServer.GracefulStop()
 
 	case "game":
-		gameServerListener, gameServer, err := service.BuildGameServer(game_service.GrpcServerListenAddr)
+		addr := fmt.Sprintf(":%d", game_service.GrpcServerPort)
+		gameServerListener, gameServer, err := service.BuildGameServer(addr)
 		if err != nil {
 			log.Fatal(err)
 		}

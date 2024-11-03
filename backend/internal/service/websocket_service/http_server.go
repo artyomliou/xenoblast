@@ -1,4 +1,4 @@
 package websocket_service
 
-var HttpServerAddr = "websocket_service:8080"
-var HttpServerListenAddr = ":8080"
+var HttpServerHost = "websocket_service"
+var HttpServerPort = 8080

@@ -3,6 +3,7 @@ package matchmaking_service_test
 import (
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"artyomliou/xenoblast-backend/internal/storage/inmemory"
 	"context"
@@ -14,6 +15,9 @@ import (
 )
 
 func TestMatchmakingService(t *testing.T) {
+	// otherwise, test will fail
+	game_service.GrpcServerHost = "localhost"
+
 	t.Run("Enroll", func(t *testing.T) {
 		ctx := context.Background()
 		service := matchmaking_service.NewMatchmakingService(inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
@@ -86,5 +90,19 @@ func TestMatchmakingService(t *testing.T) {
 				}
 			})
 		}
+	})
+
+	t.Run("Save GameServerAddr", func(t *testing.T) {
+		ctx := context.Background()
+		service := matchmaking_service.NewMatchmakingService(inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
+
+		playerId := int32(1)
+		gameId := int32(2)
+		gameServerAddr := "127.0.0.1:12345"
+		assert.NoError(t, service.SetGameIdForPlayer(ctx, gameId, playerId))
+		assert.NoError(t, service.SetGameServerAddrForGameId(ctx, gameServerAddr, gameId))
+		actualGameServerAddr, err := service.GetGameServerAddrForPlayer(ctx, playerId)
+		assert.NoError(t, err)
+		assert.Equal(t, gameServerAddr, actualGameServerAddr)
 	})
 }

@@ -25,6 +25,7 @@ const (
 	MatchmakingService_Cancel_FullMethodName                = "/matchmaking.MatchmakingService/Cancel"
 	MatchmakingService_GetWaitingPlayerCount_FullMethodName = "/matchmaking.MatchmakingService/GetWaitingPlayerCount"
 	MatchmakingService_SubscribeMatch_FullMethodName        = "/matchmaking.MatchmakingService/SubscribeMatch"
+	MatchmakingService_GetGameServerAddr_FullMethodName     = "/matchmaking.MatchmakingService/GetGameServerAddr"
 )
 
 // MatchmakingServiceClient is the client API for MatchmakingService service.
@@ -35,6 +36,7 @@ type MatchmakingServiceClient interface {
 	Cancel(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	GetWaitingPlayerCount(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetWaitingPlayerCountResponse, error)
 	SubscribeMatch(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[pkg_proto.Event], error)
+	GetGameServerAddr(ctx context.Context, in *GetGameServerAddrRequest, opts ...grpc.CallOption) (*GetGameServerAddrResponse, error)
 }
 
 type matchmakingServiceClient struct {
@@ -94,6 +96,16 @@ func (c *matchmakingServiceClient) SubscribeMatch(ctx context.Context, in *Match
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type MatchmakingService_SubscribeMatchClient = grpc.ServerStreamingClient[pkg_proto.Event]
 
+func (c *matchmakingServiceClient) GetGameServerAddr(ctx context.Context, in *GetGameServerAddrRequest, opts ...grpc.CallOption) (*GetGameServerAddrResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetGameServerAddrResponse)
+	err := c.cc.Invoke(ctx, MatchmakingService_GetGameServerAddr_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MatchmakingServiceServer is the server API for MatchmakingService service.
 // All implementations must embed UnimplementedMatchmakingServiceServer
 // for forward compatibility.
@@ -102,6 +114,7 @@ type MatchmakingServiceServer interface {
 	Cancel(context.Context, *MatchmakingRequest) (*empty.Empty, error)
 	GetWaitingPlayerCount(context.Context, *empty.Empty) (*GetWaitingPlayerCountResponse, error)
 	SubscribeMatch(*MatchmakingRequest, grpc.ServerStreamingServer[pkg_proto.Event]) error
+	GetGameServerAddr(context.Context, *GetGameServerAddrRequest) (*GetGameServerAddrResponse, error)
 	mustEmbedUnimplementedMatchmakingServiceServer()
 }
 
@@ -123,6 +136,9 @@ func (UnimplementedMatchmakingServiceServer) GetWaitingPlayerCount(context.Conte
 }
 func (UnimplementedMatchmakingServiceServer) SubscribeMatch(*MatchmakingRequest, grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeMatch not implemented")
+}
+func (UnimplementedMatchmakingServiceServer) GetGameServerAddr(context.Context, *GetGameServerAddrRequest) (*GetGameServerAddrResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGameServerAddr not implemented")
 }
 func (UnimplementedMatchmakingServiceServer) mustEmbedUnimplementedMatchmakingServiceServer() {}
 func (UnimplementedMatchmakingServiceServer) testEmbeddedByValue()                            {}
@@ -210,6 +226,24 @@ func _MatchmakingService_SubscribeMatch_Handler(srv interface{}, stream grpc.Ser
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type MatchmakingService_SubscribeMatchServer = grpc.ServerStreamingServer[pkg_proto.Event]
 
+func _MatchmakingService_GetGameServerAddr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGameServerAddrRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MatchmakingServiceServer).GetGameServerAddr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MatchmakingService_GetGameServerAddr_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MatchmakingServiceServer).GetGameServerAddr(ctx, req.(*GetGameServerAddrRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MatchmakingService_ServiceDesc is the grpc.ServiceDesc for MatchmakingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var MatchmakingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetWaitingPlayerCount",
 			Handler:    _MatchmakingService_GetWaitingPlayerCount_Handler,
+		},
+		{
+			MethodName: "GetGameServerAddr",
+			Handler:    _MatchmakingService_GetGameServerAddr_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

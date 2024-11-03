@@ -7,8 +7,8 @@ import (
 	"os"
 )
 
-var GrpcServerAddr = "auth_service:50051"
-var GrpcServerListenAddr = ":50051"
+var GrpcServerHost = "auth_service"
+var GrpcServerPort = 50051
 
 type authServer struct {
 	auth.UnimplementedAuthServiceServer

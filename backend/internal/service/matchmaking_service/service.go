@@ -3,10 +3,13 @@ package matchmaking_service
 import (
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/storage"
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
+	"net"
 	"os"
 	"strconv"
 	"sync"
@@ -19,7 +22,7 @@ const maximumPlayer = 4
 const MatchmakingInterval = time.Second
 
 type MatchmakingService struct {
-	storage            storage.SortedSetStorage
+	storage            storage.Storage
 	eventBus           *eventbus.EventBus
 	logger             *log.Logger
 	waitingPlayerCount int
@@ -27,7 +30,7 @@ type MatchmakingService struct {
 	mutex              sync.Mutex
 }
 
-func NewMatchmakingService(storage storage.SortedSetStorage, eventBus *eventbus.EventBus) *MatchmakingService {
+func NewMatchmakingService(storage storage.Storage, eventBus *eventbus.EventBus) *MatchmakingService {
 	return &MatchmakingService{
 		storage:       storage,
 		eventBus:      eventBus,
@@ -99,6 +102,14 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 
 	gameId := rand.Int31() // TODO definitely introduce some bug here
 
+	// Get a specfic game server IP for this game
+	gameServerIp, err := net.ResolveIPAddr("ip", game_service.GrpcServerHost)
+	if err != nil {
+		service.logger.Println("cannot resolve ip of game service: ", err)
+		return
+	}
+	gameServerAddr := fmt.Sprintf("%s:%d", gameServerIp.String(), game_service.GrpcServerPort)
+
 	service.logger.Printf("new match gameId=%d players=%+v", gameId, playerIds)
 	go service.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_NewMatch,
@@ -106,11 +117,11 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 		GameId:    gameId,
 		Data: &pkg_proto.Event_NewMatch{
 			NewMatch: &pkg_proto.NewMatchData{
-				Players: playerIds,
+				GameServerAddr: gameServerAddr,
+				Players:        playerIds,
 			},
 		},
 	})
-	// TODO may need to associate a instance IP to this game
 }
 
 func (service *MatchmakingService) clearNextTickQueue(ctx context.Context) {
@@ -124,4 +135,31 @@ func (service *MatchmakingService) clearNextTickQueue(ctx context.Context) {
 		}
 	}
 	service.nextTickQueue = []int32{}
+}
+
+func (service *MatchmakingService) SetGameIdForPlayer(ctx context.Context, gameId int32, playerId int32) error {
+	key := fmt.Sprintf("player#%d#gameId", playerId)
+	value := strconv.Itoa(int(gameId))
+	return service.storage.Set(ctx, key, value)
+}
+
+func (service *MatchmakingService) SetGameServerAddrForGameId(ctx context.Context, gameServerAddr string, gameId int32) error {
+	key := fmt.Sprintf("game#%d#game_server_addr", gameId)
+	value := gameServerAddr
+	return service.storage.Set(ctx, key, value)
+}
+
+func (service *MatchmakingService) GetGameServerAddrForPlayer(ctx context.Context, playerId int32) (string, error) {
+	key1 := fmt.Sprintf("player#%d#gameId", playerId)
+	value1, err := service.storage.Get(ctx, key1)
+	if err != nil {
+		return "", err
+	}
+	gameId, err := strconv.Atoi(value1)
+	if err != nil {
+		return "", err
+	}
+
+	key2 := fmt.Sprintf("game#%d#game_server_addr", gameId)
+	return service.storage.Get(ctx, key2)
 }
