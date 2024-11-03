@@ -357,7 +357,7 @@ export namespace common {
     interface IGameOverData {
 
         /** GameOverData reason */
-        reason?: (string|null);
+        reason?: (common.GameOverReason|null);
 
         /** GameOverData winnerUserId */
         winnerUserId?: (number|null);
@@ -373,7 +373,7 @@ export namespace common {
         constructor(properties?: common.IGameOverData);
 
         /** GameOverData reason. */
-        public reason: string;
+        public reason: common.GameOverReason;
 
         /** GameOverData winnerUserId. */
         public winnerUserId: number;
@@ -454,6 +454,12 @@ export namespace common {
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** GameOverReason enum. */
+    enum GameOverReason {
+        Reason_WinConditionSatisfied = 0,
+        Reason_TimesUp = 1
     }
 
     /** Properties of a CrashData. */
@@ -1993,6 +1999,9 @@ export namespace common {
 
         /** PlayerPropertyDto bombcount */
         bombcount?: (number|null);
+
+        /** PlayerPropertyDto nickname */
+        nickname?: (string|null);
     }
 
     /** Represents a PlayerPropertyDto. */
@@ -2018,6 +2027,9 @@ export namespace common {
 
         /** PlayerPropertyDto bombcount. */
         public bombcount: number;
+
+        /** PlayerPropertyDto nickname. */
+        public nickname: string;
 
         /**
          * Creates a new PlayerPropertyDto instance using the specified properties.
@@ -3005,7 +3017,7 @@ export namespace auth {
     interface IGetNicknameResponse {
 
         /** GetNicknameResponse nicknames */
-        nicknames?: (string[]|null);
+        nicknames?: ({ [k: string]: string }|null);
     }
 
     /** Represents a GetNicknameResponse. */
@@ -3018,7 +3030,7 @@ export namespace auth {
         constructor(properties?: auth.IGetNicknameResponse);
 
         /** GetNicknameResponse nicknames. */
-        public nicknames: string[];
+        public nicknames: { [k: string]: string };
 
         /**
          * Creates a new GetNicknameResponse instance using the specified properties.

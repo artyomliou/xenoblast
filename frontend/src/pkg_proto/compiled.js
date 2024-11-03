@@ -1320,7 +1320,7 @@ export const common = $root.common = (() => {
          * Properties of a GameOverData.
          * @memberof common
          * @interface IGameOverData
-         * @property {string|null} [reason] GameOverData reason
+         * @property {common.GameOverReason|null} [reason] GameOverData reason
          * @property {number|null} [winnerUserId] GameOverData winnerUserId
          */
 
@@ -1341,11 +1341,11 @@ export const common = $root.common = (() => {
 
         /**
          * GameOverData reason.
-         * @member {string} reason
+         * @member {common.GameOverReason} reason
          * @memberof common.GameOverData
          * @instance
          */
-        GameOverData.prototype.reason = "";
+        GameOverData.prototype.reason = 0;
 
         /**
          * GameOverData winnerUserId.
@@ -1380,7 +1380,7 @@ export const common = $root.common = (() => {
             if (!writer)
                 writer = $Writer.create();
             if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.reason);
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.reason);
             if (message.winnerUserId != null && Object.hasOwnProperty.call(message, "winnerUserId"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.winnerUserId);
             return writer;
@@ -1418,7 +1418,7 @@ export const common = $root.common = (() => {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.reason = reader.string();
+                        message.reason = reader.int32();
                         break;
                     }
                 case 2: {
@@ -1461,8 +1461,13 @@ export const common = $root.common = (() => {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.reason != null && message.hasOwnProperty("reason"))
-                if (!$util.isString(message.reason))
-                    return "reason: string expected";
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             if (message.winnerUserId != null && message.hasOwnProperty("winnerUserId"))
                 if (!$util.isInteger(message.winnerUserId))
                     return "winnerUserId: integer expected";
@@ -1481,8 +1486,22 @@ export const common = $root.common = (() => {
             if (object instanceof $root.common.GameOverData)
                 return object;
             let message = new $root.common.GameOverData();
-            if (object.reason != null)
-                message.reason = String(object.reason);
+            switch (object.reason) {
+            default:
+                if (typeof object.reason === "number") {
+                    message.reason = object.reason;
+                    break;
+                }
+                break;
+            case "Reason_WinConditionSatisfied":
+            case 0:
+                message.reason = 0;
+                break;
+            case "Reason_TimesUp":
+            case 1:
+                message.reason = 1;
+                break;
+            }
             if (object.winnerUserId != null)
                 message.winnerUserId = object.winnerUserId | 0;
             return message;
@@ -1502,11 +1521,11 @@ export const common = $root.common = (() => {
                 options = {};
             let object = {};
             if (options.defaults) {
-                object.reason = "";
+                object.reason = options.enums === String ? "Reason_WinConditionSatisfied" : 0;
                 object.winnerUserId = 0;
             }
             if (message.reason != null && message.hasOwnProperty("reason"))
-                object.reason = message.reason;
+                object.reason = options.enums === String ? $root.common.GameOverReason[message.reason] === undefined ? message.reason : $root.common.GameOverReason[message.reason] : message.reason;
             if (message.winnerUserId != null && message.hasOwnProperty("winnerUserId"))
                 object.winnerUserId = message.winnerUserId;
             return object;
@@ -1539,6 +1558,20 @@ export const common = $root.common = (() => {
         };
 
         return GameOverData;
+    })();
+
+    /**
+     * GameOverReason enum.
+     * @name common.GameOverReason
+     * @enum {number}
+     * @property {number} Reason_WinConditionSatisfied=0 Reason_WinConditionSatisfied value
+     * @property {number} Reason_TimesUp=1 Reason_TimesUp value
+     */
+    common.GameOverReason = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "Reason_WinConditionSatisfied"] = 0;
+        values[valuesById[1] = "Reason_TimesUp"] = 1;
+        return values;
     })();
 
     common.CrashData = (function() {
@@ -5101,6 +5134,7 @@ export const common = $root.common = (() => {
          * @property {number|null} [y] PlayerPropertyDto y
          * @property {number|null} [firepower] PlayerPropertyDto firepower
          * @property {number|null} [bombcount] PlayerPropertyDto bombcount
+         * @property {string|null} [nickname] PlayerPropertyDto nickname
          */
 
         /**
@@ -5159,6 +5193,14 @@ export const common = $root.common = (() => {
         PlayerPropertyDto.prototype.bombcount = 0;
 
         /**
+         * PlayerPropertyDto nickname.
+         * @member {string} nickname
+         * @memberof common.PlayerPropertyDto
+         * @instance
+         */
+        PlayerPropertyDto.prototype.nickname = "";
+
+        /**
          * Creates a new PlayerPropertyDto instance using the specified properties.
          * @function create
          * @memberof common.PlayerPropertyDto
@@ -5192,6 +5234,8 @@ export const common = $root.common = (() => {
                 writer.uint32(/* id 4, wireType 0 =*/32).int32(message.firepower);
             if (message.bombcount != null && Object.hasOwnProperty.call(message, "bombcount"))
                 writer.uint32(/* id 5, wireType 0 =*/40).int32(message.bombcount);
+            if (message.nickname != null && Object.hasOwnProperty.call(message, "nickname"))
+                writer.uint32(/* id 6, wireType 2 =*/50).string(message.nickname);
             return writer;
         };
 
@@ -5246,6 +5290,10 @@ export const common = $root.common = (() => {
                         message.bombcount = reader.int32();
                         break;
                     }
+                case 6: {
+                        message.nickname = reader.string();
+                        break;
+                    }
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -5296,6 +5344,9 @@ export const common = $root.common = (() => {
             if (message.bombcount != null && message.hasOwnProperty("bombcount"))
                 if (!$util.isInteger(message.bombcount))
                     return "bombcount: integer expected";
+            if (message.nickname != null && message.hasOwnProperty("nickname"))
+                if (!$util.isString(message.nickname))
+                    return "nickname: string expected";
             return null;
         };
 
@@ -5321,6 +5372,8 @@ export const common = $root.common = (() => {
                 message.firepower = object.firepower | 0;
             if (object.bombcount != null)
                 message.bombcount = object.bombcount | 0;
+            if (object.nickname != null)
+                message.nickname = String(object.nickname);
             return message;
         };
 
@@ -5343,6 +5396,7 @@ export const common = $root.common = (() => {
                 object.y = 0;
                 object.firepower = 0;
                 object.bombcount = 0;
+                object.nickname = "";
             }
             if (message.userId != null && message.hasOwnProperty("userId"))
                 object.userId = message.userId;
@@ -5354,6 +5408,8 @@ export const common = $root.common = (() => {
                 object.firepower = message.firepower;
             if (message.bombcount != null && message.hasOwnProperty("bombcount"))
                 object.bombcount = message.bombcount;
+            if (message.nickname != null && message.hasOwnProperty("nickname"))
+                object.nickname = message.nickname;
             return object;
         };
 
@@ -7383,7 +7439,7 @@ export const auth = $root.auth = (() => {
          * Properties of a GetNicknameResponse.
          * @memberof auth
          * @interface IGetNicknameResponse
-         * @property {Array.<string>|null} [nicknames] GetNicknameResponse nicknames
+         * @property {Object.<string,string>|null} [nicknames] GetNicknameResponse nicknames
          */
 
         /**
@@ -7395,7 +7451,7 @@ export const auth = $root.auth = (() => {
          * @param {auth.IGetNicknameResponse=} [properties] Properties to set
          */
         function GetNicknameResponse(properties) {
-            this.nicknames = [];
+            this.nicknames = {};
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -7404,11 +7460,11 @@ export const auth = $root.auth = (() => {
 
         /**
          * GetNicknameResponse nicknames.
-         * @member {Array.<string>} nicknames
+         * @member {Object.<string,string>} nicknames
          * @memberof auth.GetNicknameResponse
          * @instance
          */
-        GetNicknameResponse.prototype.nicknames = $util.emptyArray;
+        GetNicknameResponse.prototype.nicknames = $util.emptyObject;
 
         /**
          * Creates a new GetNicknameResponse instance using the specified properties.
@@ -7434,9 +7490,9 @@ export const auth = $root.auth = (() => {
         GetNicknameResponse.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.nicknames != null && message.nicknames.length)
-                for (let i = 0; i < message.nicknames.length; ++i)
-                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.nicknames[i]);
+            if (message.nicknames != null && Object.hasOwnProperty.call(message, "nicknames"))
+                for (let keys = Object.keys(message.nicknames), i = 0; i < keys.length; ++i)
+                    writer.uint32(/* id 1, wireType 2 =*/10).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]).uint32(/* id 2, wireType 2 =*/18).string(message.nicknames[keys[i]]).ldelim();
             return writer;
         };
 
@@ -7467,14 +7523,31 @@ export const auth = $root.auth = (() => {
         GetNicknameResponse.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.auth.GetNicknameResponse();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.auth.GetNicknameResponse(), key, value;
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        if (!(message.nicknames && message.nicknames.length))
-                            message.nicknames = [];
-                        message.nicknames.push(reader.string());
+                        if (message.nicknames === $util.emptyObject)
+                            message.nicknames = {};
+                        let end2 = reader.uint32() + reader.pos;
+                        key = 0;
+                        value = "";
+                        while (reader.pos < end2) {
+                            let tag2 = reader.uint32();
+                            switch (tag2 >>> 3) {
+                            case 1:
+                                key = reader.int32();
+                                break;
+                            case 2:
+                                value = reader.string();
+                                break;
+                            default:
+                                reader.skipType(tag2 & 7);
+                                break;
+                            }
+                        }
+                        message.nicknames[key] = value;
                         break;
                     }
                 default:
@@ -7513,11 +7586,15 @@ export const auth = $root.auth = (() => {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.nicknames != null && message.hasOwnProperty("nicknames")) {
-                if (!Array.isArray(message.nicknames))
-                    return "nicknames: array expected";
-                for (let i = 0; i < message.nicknames.length; ++i)
-                    if (!$util.isString(message.nicknames[i]))
-                        return "nicknames: string[] expected";
+                if (!$util.isObject(message.nicknames))
+                    return "nicknames: object expected";
+                let key = Object.keys(message.nicknames);
+                for (let i = 0; i < key.length; ++i) {
+                    if (!$util.key32Re.test(key[i]))
+                        return "nicknames: integer key{k:int32} expected";
+                    if (!$util.isString(message.nicknames[key[i]]))
+                        return "nicknames: string{k:int32} expected";
+                }
             }
             return null;
         };
@@ -7535,11 +7612,11 @@ export const auth = $root.auth = (() => {
                 return object;
             let message = new $root.auth.GetNicknameResponse();
             if (object.nicknames) {
-                if (!Array.isArray(object.nicknames))
-                    throw TypeError(".auth.GetNicknameResponse.nicknames: array expected");
-                message.nicknames = [];
-                for (let i = 0; i < object.nicknames.length; ++i)
-                    message.nicknames[i] = String(object.nicknames[i]);
+                if (typeof object.nicknames !== "object")
+                    throw TypeError(".auth.GetNicknameResponse.nicknames: object expected");
+                message.nicknames = {};
+                for (let keys = Object.keys(object.nicknames), i = 0; i < keys.length; ++i)
+                    message.nicknames[keys[i]] = String(object.nicknames[keys[i]]);
             }
             return message;
         };
@@ -7557,12 +7634,13 @@ export const auth = $root.auth = (() => {
             if (!options)
                 options = {};
             let object = {};
-            if (options.arrays || options.defaults)
-                object.nicknames = [];
-            if (message.nicknames && message.nicknames.length) {
-                object.nicknames = [];
-                for (let j = 0; j < message.nicknames.length; ++j)
-                    object.nicknames[j] = message.nicknames[j];
+            if (options.objects || options.defaults)
+                object.nicknames = {};
+            let keys2;
+            if (message.nicknames && (keys2 = Object.keys(message.nicknames)).length) {
+                object.nicknames = {};
+                for (let j = 0; j < keys2.length; ++j)
+                    object.nicknames[keys2[j]] = message.nicknames[keys2[j]];
             }
             return object;
         };

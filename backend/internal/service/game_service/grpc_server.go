@@ -2,7 +2,9 @@ package game_service
 
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
+	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"context"
 	"log"
 	"os"
@@ -33,14 +35,26 @@ func NewGameServer(service *GameService) *gameServer {
 func (server *gameServer) NewGame(ctx context.Context, req *game.NewGameRequest) (*empty.Empty, error) {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
-
 	server.logger.Printf("NewGame(): %d", req.GameId)
+
+	authClient, close, err := auth_service.NewGrpcClient()
+	if err != nil {
+		return nil, err
+	}
+	defer close()
+	resp, err := authClient.GetNickname(ctx, &auth.GetNicknameRequest{
+		Players: req.GetPlayers(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	idNicknameMap := resp.Nicknames
 
 	if _, ok := server.service.sessions[req.GameId]; ok {
 		server.logger.Println("skiped duplicated NewGame() request")
 		return nil, nil
 	}
-	if err := server.service.NewGame(context.TODO(), req.GameId, req.Players); err != nil {
+	if err := server.service.NewGame(context.TODO(), req.GameId, idNicknameMap); err != nil {
 		return nil, err
 	}
 	if err := server.service.MakeGameRun(context.TODO(), req.GameId); err != nil {

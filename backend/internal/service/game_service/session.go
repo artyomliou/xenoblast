@@ -353,7 +353,7 @@ func (g *gameSession) HandlePlaying(ev *pkg_proto.Event) {
 		g.logger.Print(err)
 		return
 	}
-	g.publishGameoverEvent("times_up", 0)
+	g.publishGameoverEvent(pkg_proto.GameOverReason_Reason_TimesUp, 0)
 }
 
 func (g *gameSession) HandlePlayerMove(ev *pkg_proto.Event) {
@@ -688,10 +688,10 @@ func (g *gameSession) HandleWinConditionSatisfied(ev *pkg_proto.Event) {
 		return
 	}
 
-	g.publishGameoverEvent("win_condition_satisfied", g.winCondition.GetWinner())
+	g.publishGameoverEvent(pkg_proto.GameOverReason_Reason_WinConditionSatisfied, g.winCondition.GetWinner())
 }
 
-func (g *gameSession) publishGameoverEvent(reason string, winnerUserId int32) {
+func (g *gameSession) publishGameoverEvent(reason pkg_proto.GameOverReason, winnerUserId int32) {
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_StateGameover,
 		Timestamp: time.Now().Unix(),

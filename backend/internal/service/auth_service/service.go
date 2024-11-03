@@ -111,16 +111,16 @@ func (service *AuthService) Validate(ctx context.Context, apiKey string) (valida
 	return
 }
 
-func (service *AuthService) GetNicknames(ctx context.Context, playerIds []int32) ([]string, error) {
-	nicknames := []string{}
+func (service *AuthService) GetNicknames(ctx context.Context, playerIds []int32) (map[int32]string, error) {
+	idNicknameMap := map[int32]string{}
 	for _, playerId := range playerIds {
 		nickname, err := service.storage.Get(ctx, strconv.Itoa(int(playerId)))
 		if err != nil {
 			log.Printf("cannot get nickname with player id %d", playerId)
 			nickname = "ERR"
 		}
-		nicknames = append(nicknames, nickname)
+		idNicknameMap[playerId] = nickname
 	}
 
-	return nicknames, nil
+	return idNicknameMap, nil
 }

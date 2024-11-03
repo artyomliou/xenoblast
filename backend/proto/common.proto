@@ -76,8 +76,13 @@ message CountdownData {
 }
 
 message GameOverData {
-  string reason = 1;
+  GameOverReason reason = 1;
   int32 winnerUserId = 2;
+}
+
+enum GameOverReason {
+  Reason_WinConditionSatisfied = 0;
+  Reason_TimesUp = 1;
 }
 
 message CrashData {
@@ -169,6 +174,7 @@ message PlayerPropertyDto {
   int32 y = 3;
   int32 firepower = 4;
   int32 bombcount = 5;
+  string nickname = 6;
 }
 
 message TileDto {

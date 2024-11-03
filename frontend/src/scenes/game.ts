@@ -14,8 +14,6 @@ import {
 const STATE_UNKNOWN = 0;
 const STATE_COUNTDOWN = 7;
 const STATE_PLAYING = 8;
-const STATE_GAMEOVER = 9;
-const STATE_CRASH = 10;
 
 const NEW_STATE_QUEUE_HANDLE_INTERVAL = 100; //ms
 const BOMB_FIRE_BEFORE_REMOVE_DURATION = 350; //ms
@@ -27,7 +25,6 @@ export class Game extends BaseScene {
   newStateQueue!: number[];
   handlePlayingOnce!: boolean;
   player!: Player;
-  text!: Phaser.GameObjects.Text;
   obstaclesGroup!: Phaser.Physics.Arcade.StaticGroup;
   bushGroup!: Phaser.Physics.Arcade.Group;
   powerupGroup!: Phaser.Physics.Arcade.Group;
@@ -97,13 +94,6 @@ export class Game extends BaseScene {
     this.newStateQueue = [];
     this.handlePlayingOnce = false;
     this.player = new Player({});
-    this.text = this.add
-      .text(400, 300, "", {
-        fontSize: "32px",
-        color: "black",
-      })
-      .setOrigin(0.5, 0.5)
-      .setActive(false);
     this.obstaclesGroup = this.physics.add.staticGroup();
     this.bushGroup = this.physics.add.group();
     this.powerupGroup = this.physics.add.group();
@@ -308,14 +298,6 @@ export class Game extends BaseScene {
 
           case STATE_PLAYING:
             this.handlePlaying();
-            break;
-
-          case STATE_GAMEOVER:
-            this.handleGameover();
-            break;
-
-          case STATE_CRASH:
-            this.handleCrash();
             break;
 
           default:
@@ -618,21 +600,33 @@ export class Game extends BaseScene {
   }
 
   handleGameoverEvent(ev: common.Event) {
-    this.newStateQueue.push(STATE_GAMEOVER);
-  }
+    if (!ev.gameOver) {
+      return
+    }
+    if (ev.gameOver.reason == null || ev.gameOver.reason == undefined) {
+      ev.gameOver.reason = common.GameOverReason.Reason_WinConditionSatisfied // workaround zero-value marshaling
+    }
+    console.debug(`Gameover, reason=${common.GameOverReason[ev.gameOver.reason]}, winnerUserId=${ev.gameOver.winnerUserId}`);
 
-  handleCrashEvent(ev: common.Event) {
-    this.newStateQueue.push(STATE_CRASH);
-  }
+    switch (ev.gameOver.reason) {
+      case common.GameOverReason.Reason_WinConditionSatisfied:
+        for (const player of this.gameInfo.players) {
+          if (player.userId == ev.gameOver.winnerUserId) {
+            this.scene.start("GameOver", { reason: `Winner is ${player.nickname}` });
+            return;
+          }
+        }
+        break;
 
-  handleGameover() {
-    console.warn("gameover");
+      case common.GameOverReason.Reason_TimesUp:
+        this.scene.start("GameOver", { reason: 'Times up' });
+        return;
+    }
     this.scene.start("GameOver");
   }
 
-  handleCrash() {
-    console.warn("crash");
-    this.text.setText("Game crash...").setActive(true);
+  handleCrashEvent(ev: common.Event) {
+    this.scene.start("GameOver", { reason: `Game crash\nReason: ${ev.crash?.reason}` });
   }
 
   update() {

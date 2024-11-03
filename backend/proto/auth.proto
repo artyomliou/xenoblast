@@ -27,7 +27,7 @@ message GetNicknameRequest {
 }
 
 message GetNicknameResponse {
-  repeated string nicknames = 1;
+  map<int32, string> nicknames = 1;
 }
 
 message PlayerInfoDto {

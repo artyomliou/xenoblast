@@ -13,7 +13,12 @@ import (
 )
 
 func TestGameLogicService(t *testing.T) {
-	players := []int32{1, 2, 3, 4}
+	players := map[int32]string{
+		1: "1",
+		2: "2",
+		3: "3",
+		4: "4",
+	}
 
 	service := gamelogic.NewGameService(inmemory.CreateInmemoryStorage())
 	assert.NoError(t, service.NewGame(context.Background(), 1, players))

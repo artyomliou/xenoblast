@@ -10,6 +10,7 @@ const DefaultBombCount = int32(1)
 
 type Player struct {
 	userId    int32
+	nickname  string
 	tile      *maploader.Tile
 	X         int32
 	Y         int32
@@ -17,9 +18,10 @@ type Player struct {
 	BombCount int32
 }
 
-func NewPlayer(userId int32, tile *maploader.Tile) *Player {
+func NewPlayer(userId int32, nickname string, tile *maploader.Tile) *Player {
 	player := &Player{
 		userId:    userId,
+		nickname:  nickname,
 		tile:      tile,
 		Firepower: DefaultFirepower,
 		BombCount: DefaultBombCount,
@@ -42,5 +44,6 @@ func (player *Player) ToPlayerPropertyDto() *pkg_proto.PlayerPropertyDto {
 		Y:         player.Y,
 		Firepower: player.Firepower,
 		Bombcount: player.BombCount,
+		Nickname:  player.nickname,
 	}
 }

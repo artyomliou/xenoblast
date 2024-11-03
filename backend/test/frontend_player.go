@@ -214,11 +214,14 @@ func (player *frontendPlayer) sendGetGameInfoOverHttp(t *testing.T) {
 	assert.EqualValues(t, maploader.MapWidth, resp.MapWidth)
 	assert.EqualValues(t, maploader.MapHeight, resp.MapHeight)
 
-	respPlayerIds := []int32{}
-	for _, player := range resp.Players {
-		respPlayerIds = append(respPlayerIds, player.UserId)
+	hasCurrentUser := false
+	for _, respPlayer := range resp.Players {
+		if respPlayer.UserId == player.userId {
+			assert.Equal(t, player.nickname, respPlayer.Nickname)
+			hasCurrentUser = true
+		}
 	}
-	assert.Contains(t, respPlayerIds, player.userId)
+	assert.Equal(t, true, hasCurrentUser)
 
 	assert.EqualValues(t, maploader.MapWidth*maploader.MapHeight, len(resp.Tiles))
 	assert.EqualValues(t, pkg_proto.GameState_WaitingReady, resp.State)

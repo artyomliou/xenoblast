@@ -24,10 +24,10 @@ func TestAuthService(t *testing.T) {
 		assert.Equal(t, "nickname_1", player.Nickname)
 
 		userIds := []int32{int32(userId)}
-		nicknames, err := service.GetNicknames(context.Background(), userIds)
+		idNicknameMap, err := service.GetNicknames(context.Background(), userIds)
 		assert.NoError(t, err)
-		assert.Equal(t, len(userIds), len(nicknames))
-		assert.Equal(t, "nickname_1", nicknames[0])
+		assert.Equal(t, len(userIds), len(idNicknameMap))
+		assert.Equal(t, "nickname_1", idNicknameMap[userId])
 	})
 
 	t.Run("validate - failed", func(t *testing.T) {

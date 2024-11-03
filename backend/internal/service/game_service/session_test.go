@@ -8,6 +8,7 @@ import (
 	"artyomliou/xenoblast-backend/internal/service/game_service/state"
 	"context"
 	"os"
+	"strconv"
 	"testing"
 	"time"
 
@@ -26,7 +27,7 @@ func basicArgumentHelper(mapInfo *maploader.MapInfo) (*state.StateManager, *even
 
 func fillPlayerHelper(players *map[int32]*gamelogic.Player, count int) {
 	for i := 1; i <= count; i++ {
-		(*players)[int32(i)] = gamelogic.NewPlayer(int32(i), nil)
+		(*players)[int32(i)] = gamelogic.NewPlayer(int32(i), strconv.Itoa(int(i)), nil)
 	}
 }
 

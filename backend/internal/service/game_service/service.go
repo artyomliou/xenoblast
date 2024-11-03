@@ -29,7 +29,7 @@ func NewGameService(storage storage.Storage) *GameService {
 	}
 }
 
-func (service *GameService) NewGame(ctx context.Context, gameId int32, userIds []int32) error {
+func (service *GameService) NewGame(ctx context.Context, gameId int32, idNicknameMap map[int32]string) error {
 	if _, ok := service.sessions[gameId]; ok {
 		return nil
 	}
@@ -43,8 +43,8 @@ func (service *GameService) NewGame(ctx context.Context, gameId int32, userIds [
 	gameMap := maploader.NewGameMap(mapInfo)
 
 	players := map[int32]*Player{}
-	for _, userId := range userIds {
-		players[userId] = NewPlayer(userId, nil)
+	for userId, nickname := range idNicknameMap {
+		players[userId] = NewPlayer(userId, nickname, nil)
 	}
 
 	sess, err := NewGameSession(gameId, state, eventBus, gameMap, players)
@@ -76,15 +76,16 @@ func (service *GameService) GetGameInfo(ctx context.Context, gameId int32) (*gam
 		return nil, &InvalidGameIdError{GameId: gameId}
 	}
 
-	playerDtos := []*pkg_proto.PlayerPropertyDto{}
+	// TODO cache
+	players := []*pkg_proto.PlayerPropertyDto{}
 	for _, player := range sess.players {
-		playerDtos = append(playerDtos, player.ToPlayerPropertyDto())
+		players = append(players, player.ToPlayerPropertyDto())
 	}
 
 	response := &game.GetGameInfoResponse{
 		GameId:    gameId,
 		State:     sess.state.CurrentState(),
-		Players:   playerDtos,
+		Players:   players,
 		MapWidth:  maploader.MapWidth,
 		MapHeight: maploader.MapHeight,           // TODO this should be stored in sess
 		Tiles:     sess.gameMap.ToTileDtoArray(), // TODO cache
