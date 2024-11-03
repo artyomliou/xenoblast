@@ -2183,8 +2183,6 @@ export const common = $root.common = (() => {
          * @property {number|null} [userId] PlayerMoveData userId
          * @property {number|null} [x] PlayerMoveData x
          * @property {number|null} [y] PlayerMoveData y
-         * @property {number|null} [pixelX] PlayerMoveData pixelX
-         * @property {number|null} [pixelY] PlayerMoveData pixelY
          */
 
         /**
@@ -2227,22 +2225,6 @@ export const common = $root.common = (() => {
         PlayerMoveData.prototype.y = 0;
 
         /**
-         * PlayerMoveData pixelX.
-         * @member {number} pixelX
-         * @memberof common.PlayerMoveData
-         * @instance
-         */
-        PlayerMoveData.prototype.pixelX = 0;
-
-        /**
-         * PlayerMoveData pixelY.
-         * @member {number} pixelY
-         * @memberof common.PlayerMoveData
-         * @instance
-         */
-        PlayerMoveData.prototype.pixelY = 0;
-
-        /**
          * Creates a new PlayerMoveData instance using the specified properties.
          * @function create
          * @memberof common.PlayerMoveData
@@ -2272,10 +2254,6 @@ export const common = $root.common = (() => {
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
                 writer.uint32(/* id 3, wireType 0 =*/24).int32(message.y);
-            if (message.pixelX != null && Object.hasOwnProperty.call(message, "pixelX"))
-                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.pixelX);
-            if (message.pixelY != null && Object.hasOwnProperty.call(message, "pixelY"))
-                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.pixelY);
             return writer;
         };
 
@@ -2322,14 +2300,6 @@ export const common = $root.common = (() => {
                         message.y = reader.int32();
                         break;
                     }
-                case 4: {
-                        message.pixelX = reader.int32();
-                        break;
-                    }
-                case 5: {
-                        message.pixelY = reader.int32();
-                        break;
-                    }
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -2374,12 +2344,6 @@ export const common = $root.common = (() => {
             if (message.y != null && message.hasOwnProperty("y"))
                 if (!$util.isInteger(message.y))
                     return "y: integer expected";
-            if (message.pixelX != null && message.hasOwnProperty("pixelX"))
-                if (!$util.isInteger(message.pixelX))
-                    return "pixelX: integer expected";
-            if (message.pixelY != null && message.hasOwnProperty("pixelY"))
-                if (!$util.isInteger(message.pixelY))
-                    return "pixelY: integer expected";
             return null;
         };
 
@@ -2401,10 +2365,6 @@ export const common = $root.common = (() => {
                 message.x = object.x | 0;
             if (object.y != null)
                 message.y = object.y | 0;
-            if (object.pixelX != null)
-                message.pixelX = object.pixelX | 0;
-            if (object.pixelY != null)
-                message.pixelY = object.pixelY | 0;
             return message;
         };
 
@@ -2425,8 +2385,6 @@ export const common = $root.common = (() => {
                 object.userId = 0;
                 object.x = 0;
                 object.y = 0;
-                object.pixelX = 0;
-                object.pixelY = 0;
             }
             if (message.userId != null && message.hasOwnProperty("userId"))
                 object.userId = message.userId;
@@ -2434,10 +2392,6 @@ export const common = $root.common = (() => {
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
                 object.y = message.y;
-            if (message.pixelX != null && message.hasOwnProperty("pixelX"))
-                object.pixelX = message.pixelX;
-            if (message.pixelY != null && message.hasOwnProperty("pixelY"))
-                object.pixelY = message.pixelY;
             return object;
         };
 
@@ -2979,8 +2933,6 @@ export const common = $root.common = (() => {
          * @property {number|null} [userId] PlayerMovedData userId
          * @property {number|null} [x] PlayerMovedData x
          * @property {number|null} [y] PlayerMovedData y
-         * @property {number|null} [pixelX] PlayerMovedData pixelX
-         * @property {number|null} [pixelY] PlayerMovedData pixelY
          */
 
         /**
@@ -3023,22 +2975,6 @@ export const common = $root.common = (() => {
         PlayerMovedData.prototype.y = 0;
 
         /**
-         * PlayerMovedData pixelX.
-         * @member {number} pixelX
-         * @memberof common.PlayerMovedData
-         * @instance
-         */
-        PlayerMovedData.prototype.pixelX = 0;
-
-        /**
-         * PlayerMovedData pixelY.
-         * @member {number} pixelY
-         * @memberof common.PlayerMovedData
-         * @instance
-         */
-        PlayerMovedData.prototype.pixelY = 0;
-
-        /**
          * Creates a new PlayerMovedData instance using the specified properties.
          * @function create
          * @memberof common.PlayerMovedData
@@ -3068,10 +3004,6 @@ export const common = $root.common = (() => {
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.x);
             if (message.y != null && Object.hasOwnProperty.call(message, "y"))
                 writer.uint32(/* id 3, wireType 0 =*/24).int32(message.y);
-            if (message.pixelX != null && Object.hasOwnProperty.call(message, "pixelX"))
-                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.pixelX);
-            if (message.pixelY != null && Object.hasOwnProperty.call(message, "pixelY"))
-                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.pixelY);
             return writer;
         };
 
@@ -3118,14 +3050,6 @@ export const common = $root.common = (() => {
                         message.y = reader.int32();
                         break;
                     }
-                case 4: {
-                        message.pixelX = reader.int32();
-                        break;
-                    }
-                case 5: {
-                        message.pixelY = reader.int32();
-                        break;
-                    }
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -3170,12 +3094,6 @@ export const common = $root.common = (() => {
             if (message.y != null && message.hasOwnProperty("y"))
                 if (!$util.isInteger(message.y))
                     return "y: integer expected";
-            if (message.pixelX != null && message.hasOwnProperty("pixelX"))
-                if (!$util.isInteger(message.pixelX))
-                    return "pixelX: integer expected";
-            if (message.pixelY != null && message.hasOwnProperty("pixelY"))
-                if (!$util.isInteger(message.pixelY))
-                    return "pixelY: integer expected";
             return null;
         };
 
@@ -3197,10 +3115,6 @@ export const common = $root.common = (() => {
                 message.x = object.x | 0;
             if (object.y != null)
                 message.y = object.y | 0;
-            if (object.pixelX != null)
-                message.pixelX = object.pixelX | 0;
-            if (object.pixelY != null)
-                message.pixelY = object.pixelY | 0;
             return message;
         };
 
@@ -3221,8 +3135,6 @@ export const common = $root.common = (() => {
                 object.userId = 0;
                 object.x = 0;
                 object.y = 0;
-                object.pixelX = 0;
-                object.pixelY = 0;
             }
             if (message.userId != null && message.hasOwnProperty("userId"))
                 object.userId = message.userId;
@@ -3230,10 +3142,6 @@ export const common = $root.common = (() => {
                 object.x = message.x;
             if (message.y != null && message.hasOwnProperty("y"))
                 object.y = message.y;
-            if (message.pixelX != null && message.hasOwnProperty("pixelX"))
-                object.pixelX = message.pixelX;
-            if (message.pixelY != null && message.hasOwnProperty("pixelY"))
-                object.pixelY = message.pixelY;
             return object;
         };
 

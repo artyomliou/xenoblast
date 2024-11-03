@@ -268,8 +268,6 @@ func (player *frontendPlayer) sendPlayerMoveOverWebsocket(t *testing.T) {
 				UserId: player.userId,
 				X:      1,
 				Y:      1,
-				PixelX: 1,
-				PixelY: 1,
 			},
 		},
 	}
@@ -291,8 +289,6 @@ func (player *frontendPlayer) receivePlayerMovedFromWebsocket(t *testing.T) {
 	data := event.GetPlayerMoved()
 	assert.Equal(t, 1, int(data.X))
 	assert.Equal(t, 1, int(data.Y))
-	assert.Equal(t, 1, int(data.PixelX))
-	assert.Equal(t, 1, int(data.PixelY))
 }
 
 func (player *frontendPlayer) sendHttpRequest(method string, path string, body any) ([]byte, error) {

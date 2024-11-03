@@ -719,8 +719,6 @@ export class Game extends BaseScene {
           userId: this.session.uid,
           x: tileX,
           y: tileY,
-          pixelX: curX,
-          pixelY: curY,
         },
       });
       console.debug("send " + common.EventType[event.type]);

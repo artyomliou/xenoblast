@@ -758,12 +758,6 @@ export namespace common {
 
         /** PlayerMoveData y */
         y?: (number|null);
-
-        /** PlayerMoveData pixelX */
-        pixelX?: (number|null);
-
-        /** PlayerMoveData pixelY */
-        pixelY?: (number|null);
     }
 
     /** Represents a PlayerMoveData. */
@@ -783,12 +777,6 @@ export namespace common {
 
         /** PlayerMoveData y. */
         public y: number;
-
-        /** PlayerMoveData pixelX. */
-        public pixelX: number;
-
-        /** PlayerMoveData pixelY. */
-        public pixelY: number;
 
         /**
          * Creates a new PlayerMoveData instance using the specified properties.
@@ -1097,12 +1085,6 @@ export namespace common {
 
         /** PlayerMovedData y */
         y?: (number|null);
-
-        /** PlayerMovedData pixelX */
-        pixelX?: (number|null);
-
-        /** PlayerMovedData pixelY */
-        pixelY?: (number|null);
     }
 
     /** Represents a PlayerMovedData. */
@@ -1122,12 +1104,6 @@ export namespace common {
 
         /** PlayerMovedData y. */
         public y: number;
-
-        /** PlayerMovedData pixelX. */
-        public pixelX: number;
-
-        /** PlayerMovedData pixelY. */
-        public pixelY: number;
 
         /**
          * Creates a new PlayerMovedData instance using the specified properties.
