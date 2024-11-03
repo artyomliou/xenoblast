@@ -47,54 +47,54 @@ export const common = $root.common = (() => {
      * @name common.EventType
      * @enum {number}
      * @property {number} SessionRun=0 SessionRun value
-     * @property {number} SubscribeNewMatch=1 SubscribeNewMatch value
-     * @property {number} NewMatch=2 NewMatch value
-     * @property {number} StatePreparing=3 StatePreparing value
-     * @property {number} StatePrepared=4 StatePrepared value
-     * @property {number} StateWaitingReady=5 StateWaitingReady value
-     * @property {number} StateCountdown=6 StateCountdown value
-     * @property {number} StatePlaying=7 StatePlaying value
-     * @property {number} StateGameover=8 StateGameover value
-     * @property {number} StateCrash=9 StateCrash value
-     * @property {number} WinConditionSatisfied=10 WinConditionSatisfied value
-     * @property {number} PlayerReady=21 PlayerReady value
-     * @property {number} PlayerMove=22 PlayerMove value
-     * @property {number} PlayerGetPowerup=23 PlayerGetPowerup value
-     * @property {number} PlayerPlantBomb=24 PlayerPlantBomb value
-     * @property {number} PlayerMoved=31 PlayerMoved value
-     * @property {number} PlayerDead=32 PlayerDead value
-     * @property {number} BombPlanted=33 BombPlanted value
-     * @property {number} BombWillExplode=34 BombWillExplode value
-     * @property {number} BombExploded=35 BombExploded value
-     * @property {number} BoxRemoved=36 BoxRemoved value
-     * @property {number} PowerupDropped=37 PowerupDropped value
-     * @property {number} PowerupConsumed=38 PowerupConsumed value
+     * @property {number} NewMatch=1 NewMatch value
+     * @property {number} StatePreparing=2 StatePreparing value
+     * @property {number} StatePrepared=3 StatePrepared value
+     * @property {number} StateWaitingReady=4 StateWaitingReady value
+     * @property {number} StateCountdown=5 StateCountdown value
+     * @property {number} StatePlaying=6 StatePlaying value
+     * @property {number} StateGameover=7 StateGameover value
+     * @property {number} StateCrash=8 StateCrash value
+     * @property {number} WinConditionSatisfied=9 WinConditionSatisfied value
+     * @property {number} PlayerMoved=11 PlayerMoved value
+     * @property {number} PlayerDead=12 PlayerDead value
+     * @property {number} BombPlanted=13 BombPlanted value
+     * @property {number} BombWillExplode=14 BombWillExplode value
+     * @property {number} BombExploded=15 BombExploded value
+     * @property {number} BoxRemoved=16 BoxRemoved value
+     * @property {number} PowerupDropped=17 PowerupDropped value
+     * @property {number} PowerupConsumed=18 PowerupConsumed value
+     * @property {number} SubscribeNewMatch=21 SubscribeNewMatch value
+     * @property {number} PlayerReady=22 PlayerReady value
+     * @property {number} PlayerMove=23 PlayerMove value
+     * @property {number} PlayerGetPowerup=24 PlayerGetPowerup value
+     * @property {number} PlayerPlantBomb=25 PlayerPlantBomb value
      */
     common.EventType = (function() {
         const valuesById = {}, values = Object.create(valuesById);
         values[valuesById[0] = "SessionRun"] = 0;
-        values[valuesById[1] = "SubscribeNewMatch"] = 1;
-        values[valuesById[2] = "NewMatch"] = 2;
-        values[valuesById[3] = "StatePreparing"] = 3;
-        values[valuesById[4] = "StatePrepared"] = 4;
-        values[valuesById[5] = "StateWaitingReady"] = 5;
-        values[valuesById[6] = "StateCountdown"] = 6;
-        values[valuesById[7] = "StatePlaying"] = 7;
-        values[valuesById[8] = "StateGameover"] = 8;
-        values[valuesById[9] = "StateCrash"] = 9;
-        values[valuesById[10] = "WinConditionSatisfied"] = 10;
-        values[valuesById[21] = "PlayerReady"] = 21;
-        values[valuesById[22] = "PlayerMove"] = 22;
-        values[valuesById[23] = "PlayerGetPowerup"] = 23;
-        values[valuesById[24] = "PlayerPlantBomb"] = 24;
-        values[valuesById[31] = "PlayerMoved"] = 31;
-        values[valuesById[32] = "PlayerDead"] = 32;
-        values[valuesById[33] = "BombPlanted"] = 33;
-        values[valuesById[34] = "BombWillExplode"] = 34;
-        values[valuesById[35] = "BombExploded"] = 35;
-        values[valuesById[36] = "BoxRemoved"] = 36;
-        values[valuesById[37] = "PowerupDropped"] = 37;
-        values[valuesById[38] = "PowerupConsumed"] = 38;
+        values[valuesById[1] = "NewMatch"] = 1;
+        values[valuesById[2] = "StatePreparing"] = 2;
+        values[valuesById[3] = "StatePrepared"] = 3;
+        values[valuesById[4] = "StateWaitingReady"] = 4;
+        values[valuesById[5] = "StateCountdown"] = 5;
+        values[valuesById[6] = "StatePlaying"] = 6;
+        values[valuesById[7] = "StateGameover"] = 7;
+        values[valuesById[8] = "StateCrash"] = 8;
+        values[valuesById[9] = "WinConditionSatisfied"] = 9;
+        values[valuesById[11] = "PlayerMoved"] = 11;
+        values[valuesById[12] = "PlayerDead"] = 12;
+        values[valuesById[13] = "BombPlanted"] = 13;
+        values[valuesById[14] = "BombWillExplode"] = 14;
+        values[valuesById[15] = "BombExploded"] = 15;
+        values[valuesById[16] = "BoxRemoved"] = 16;
+        values[valuesById[17] = "PowerupDropped"] = 17;
+        values[valuesById[18] = "PowerupConsumed"] = 18;
+        values[valuesById[21] = "SubscribeNewMatch"] = 21;
+        values[valuesById[22] = "PlayerReady"] = 22;
+        values[valuesById[23] = "PlayerMove"] = 23;
+        values[valuesById[24] = "PlayerGetPowerup"] = 24;
+        values[valuesById[25] = "PlayerPlantBomb"] = 25;
         return values;
     })();
 
@@ -528,19 +528,19 @@ export const common = $root.common = (() => {
                 case 7:
                 case 8:
                 case 9:
-                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 15:
+                case 16:
+                case 17:
+                case 18:
                 case 21:
                 case 22:
                 case 23:
                 case 24:
-                case 31:
-                case 32:
-                case 33:
-                case 34:
-                case 35:
-                case 36:
-                case 37:
-                case 38:
+                case 25:
                     break;
                 }
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
@@ -733,93 +733,93 @@ export const common = $root.common = (() => {
             case 0:
                 message.type = 0;
                 break;
-            case "SubscribeNewMatch":
+            case "NewMatch":
             case 1:
                 message.type = 1;
                 break;
-            case "NewMatch":
+            case "StatePreparing":
             case 2:
                 message.type = 2;
                 break;
-            case "StatePreparing":
+            case "StatePrepared":
             case 3:
                 message.type = 3;
                 break;
-            case "StatePrepared":
+            case "StateWaitingReady":
             case 4:
                 message.type = 4;
                 break;
-            case "StateWaitingReady":
+            case "StateCountdown":
             case 5:
                 message.type = 5;
                 break;
-            case "StateCountdown":
+            case "StatePlaying":
             case 6:
                 message.type = 6;
                 break;
-            case "StatePlaying":
+            case "StateGameover":
             case 7:
                 message.type = 7;
                 break;
-            case "StateGameover":
+            case "StateCrash":
             case 8:
                 message.type = 8;
                 break;
-            case "StateCrash":
+            case "WinConditionSatisfied":
             case 9:
                 message.type = 9;
                 break;
-            case "WinConditionSatisfied":
-            case 10:
-                message.type = 10;
+            case "PlayerMoved":
+            case 11:
+                message.type = 11;
                 break;
-            case "PlayerReady":
+            case "PlayerDead":
+            case 12:
+                message.type = 12;
+                break;
+            case "BombPlanted":
+            case 13:
+                message.type = 13;
+                break;
+            case "BombWillExplode":
+            case 14:
+                message.type = 14;
+                break;
+            case "BombExploded":
+            case 15:
+                message.type = 15;
+                break;
+            case "BoxRemoved":
+            case 16:
+                message.type = 16;
+                break;
+            case "PowerupDropped":
+            case 17:
+                message.type = 17;
+                break;
+            case "PowerupConsumed":
+            case 18:
+                message.type = 18;
+                break;
+            case "SubscribeNewMatch":
             case 21:
                 message.type = 21;
                 break;
-            case "PlayerMove":
+            case "PlayerReady":
             case 22:
                 message.type = 22;
                 break;
-            case "PlayerGetPowerup":
+            case "PlayerMove":
             case 23:
                 message.type = 23;
                 break;
-            case "PlayerPlantBomb":
+            case "PlayerGetPowerup":
             case 24:
                 message.type = 24;
                 break;
-            case "PlayerMoved":
-            case 31:
-                message.type = 31;
-                break;
-            case "PlayerDead":
-            case 32:
-                message.type = 32;
-                break;
-            case "BombPlanted":
-            case 33:
-                message.type = 33;
-                break;
-            case "BombWillExplode":
-            case 34:
-                message.type = 34;
-                break;
-            case "BombExploded":
-            case 35:
-                message.type = 35;
-                break;
-            case "BoxRemoved":
-            case 36:
-                message.type = 36;
-                break;
-            case "PowerupDropped":
-            case 37:
-                message.type = 37;
-                break;
-            case "PowerupConsumed":
-            case 38:
-                message.type = 38;
+            case "PlayerPlantBomb":
+            case 25:
+                message.type = 25;
                 break;
             }
             if (object.timestamp != null)
@@ -9686,19 +9686,19 @@ export const game = $root.game = (() => {
                     case 7:
                     case 8:
                     case 9:
-                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
                     case 21:
                     case 22:
                     case 23:
                     case 24:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
+                    case 25:
                         break;
                     }
             }
@@ -9734,93 +9734,93 @@ export const game = $root.game = (() => {
                     case 0:
                         message.types[i] = 0;
                         break;
-                    case "SubscribeNewMatch":
+                    case "NewMatch":
                     case 1:
                         message.types[i] = 1;
                         break;
-                    case "NewMatch":
+                    case "StatePreparing":
                     case 2:
                         message.types[i] = 2;
                         break;
-                    case "StatePreparing":
+                    case "StatePrepared":
                     case 3:
                         message.types[i] = 3;
                         break;
-                    case "StatePrepared":
+                    case "StateWaitingReady":
                     case 4:
                         message.types[i] = 4;
                         break;
-                    case "StateWaitingReady":
+                    case "StateCountdown":
                     case 5:
                         message.types[i] = 5;
                         break;
-                    case "StateCountdown":
+                    case "StatePlaying":
                     case 6:
                         message.types[i] = 6;
                         break;
-                    case "StatePlaying":
+                    case "StateGameover":
                     case 7:
                         message.types[i] = 7;
                         break;
-                    case "StateGameover":
+                    case "StateCrash":
                     case 8:
                         message.types[i] = 8;
                         break;
-                    case "StateCrash":
+                    case "WinConditionSatisfied":
                     case 9:
                         message.types[i] = 9;
                         break;
-                    case "WinConditionSatisfied":
-                    case 10:
-                        message.types[i] = 10;
+                    case "PlayerMoved":
+                    case 11:
+                        message.types[i] = 11;
                         break;
-                    case "PlayerReady":
+                    case "PlayerDead":
+                    case 12:
+                        message.types[i] = 12;
+                        break;
+                    case "BombPlanted":
+                    case 13:
+                        message.types[i] = 13;
+                        break;
+                    case "BombWillExplode":
+                    case 14:
+                        message.types[i] = 14;
+                        break;
+                    case "BombExploded":
+                    case 15:
+                        message.types[i] = 15;
+                        break;
+                    case "BoxRemoved":
+                    case 16:
+                        message.types[i] = 16;
+                        break;
+                    case "PowerupDropped":
+                    case 17:
+                        message.types[i] = 17;
+                        break;
+                    case "PowerupConsumed":
+                    case 18:
+                        message.types[i] = 18;
+                        break;
+                    case "SubscribeNewMatch":
                     case 21:
                         message.types[i] = 21;
                         break;
-                    case "PlayerMove":
+                    case "PlayerReady":
                     case 22:
                         message.types[i] = 22;
                         break;
-                    case "PlayerGetPowerup":
+                    case "PlayerMove":
                     case 23:
                         message.types[i] = 23;
                         break;
-                    case "PlayerPlantBomb":
+                    case "PlayerGetPowerup":
                     case 24:
                         message.types[i] = 24;
                         break;
-                    case "PlayerMoved":
-                    case 31:
-                        message.types[i] = 31;
-                        break;
-                    case "PlayerDead":
-                    case 32:
-                        message.types[i] = 32;
-                        break;
-                    case "BombPlanted":
-                    case 33:
-                        message.types[i] = 33;
-                        break;
-                    case "BombWillExplode":
-                    case 34:
-                        message.types[i] = 34;
-                        break;
-                    case "BombExploded":
-                    case 35:
-                        message.types[i] = 35;
-                        break;
-                    case "BoxRemoved":
-                    case 36:
-                        message.types[i] = 36;
-                        break;
-                    case "PowerupDropped":
-                    case 37:
-                        message.types[i] = 37;
-                        break;
-                    case "PowerupConsumed":
-                    case 38:
-                        message.types[i] = 38;
+                    case "PlayerPlantBomb":
+                    case 25:
+                        message.types[i] = 25;
                         break;
                     }
             }

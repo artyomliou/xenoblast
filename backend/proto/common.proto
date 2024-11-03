@@ -15,31 +15,33 @@ enum GameState {
 }
 
 enum EventType {
+  // Server Event
   SessionRun = 0;
-  SubscribeNewMatch = 1;
-  NewMatch = 2;
-  StatePreparing = 3;
-  StatePrepared = 4;
-  StateWaitingReady = 5;
-  StateCountdown = 6;
-  StatePlaying = 7;
-  StateGameover = 8;
-  StateCrash = 9;
-  WinConditionSatisfied = 10;
+  NewMatch = 1;
+  StatePreparing = 2;
+  StatePrepared = 3;
+  StateWaitingReady = 4;
+  StateCountdown = 5;
+  StatePlaying = 6;
+  StateGameover = 7;
+  StateCrash = 8;
+  WinConditionSatisfied = 9;
 
-  PlayerReady = 21;
-  PlayerMove = 22;
-  PlayerGetPowerup = 23;
-  PlayerPlantBomb = 24;
-  
-  PlayerMoved = 31;
-  PlayerDead = 32;
-  BombPlanted = 33;
-  BombWillExplode = 34;
-  BombExploded = 35;
-  BoxRemoved = 36;
-  PowerupDropped = 37;
-  PowerupConsumed = 38;
+  PlayerMoved = 11;
+  PlayerDead = 12;
+  BombPlanted = 13;
+  BombWillExplode = 14;
+  BombExploded = 15;
+  BoxRemoved = 16;
+  PowerupDropped = 17;
+  PowerupConsumed = 18;
+
+  // Client event
+  SubscribeNewMatch = 21;
+  PlayerReady = 22;
+  PlayerMove = 23;
+  PlayerGetPowerup = 24;
+  PlayerPlantBomb = 25;
 }
 
 message Event {
