@@ -17,7 +17,6 @@ check-tools:
 	else \
 		echo "protoc-gen-go-grpc already installed."; \
 	fi
-# TODO node, npm, protobufjs-cli
 
 .PHONY: proto
 proto: check-tools
