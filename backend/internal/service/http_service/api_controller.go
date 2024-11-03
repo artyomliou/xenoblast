@@ -155,6 +155,44 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 	ctx.AbortWithStatus(http.StatusOK)
 }
 
+func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
+	var req http_api.ValidateRequest
+	if err := ctx.BindJSON(&req); err != nil {
+		ctx.String(http.StatusBadRequest, "Invalid request")
+		return
+	}
+
+	authClient, close, err := auth_service.NewGrpcClient()
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "Internal server error")
+		return
+	}
+	defer close()
+	_, err = authClient.Validate(ctx, &auth.ValidateRequest{
+		ApiKey: req.ApiKey,
+	})
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	matchmakingClient, matchmakingClientClose, err := matchmaking_service.NewGrpcClient()
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "Internal server error")
+		return
+	}
+	defer matchmakingClientClose()
+	resp, err := matchmakingClient.GetWaitingPlayerCount(ctx, nil)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	ctx.JSON(http.StatusOK, &http_api.GetWaitingPlayerCountResponse{
+		Count: resp.Count,
+	})
+}
+
 func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	var req http_api.GetGameInfoRequest
 	if err := ctx.BindJSON(&req); err != nil {

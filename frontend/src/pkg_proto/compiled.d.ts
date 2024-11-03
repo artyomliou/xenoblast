@@ -3254,6 +3254,20 @@ export namespace matchmaking {
         public cancel(request: matchmaking.IMatchmakingRequest): Promise<google.protobuf.Empty>;
 
         /**
+         * Calls GetWaitingPlayerCount.
+         * @param request Empty message or plain object
+         * @param callback Node-style callback called with the error, if any, and GetWaitingPlayerCountResponse
+         */
+        public getWaitingPlayerCount(request: google.protobuf.IEmpty, callback: matchmaking.MatchmakingService.GetWaitingPlayerCountCallback): void;
+
+        /**
+         * Calls GetWaitingPlayerCount.
+         * @param request Empty message or plain object
+         * @returns Promise
+         */
+        public getWaitingPlayerCount(request: google.protobuf.IEmpty): Promise<matchmaking.GetWaitingPlayerCountResponse>;
+
+        /**
          * Calls SubscribeMatch.
          * @param request MatchmakingRequest message or plain object
          * @param callback Node-style callback called with the error, if any, and Event
@@ -3283,6 +3297,13 @@ export namespace matchmaking {
          * @param [response] Empty
          */
         type CancelCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+        /**
+         * Callback as used by {@link matchmaking.MatchmakingService#getWaitingPlayerCount}.
+         * @param error Error, if any
+         * @param [response] GetWaitingPlayerCountResponse
+         */
+        type GetWaitingPlayerCountCallback = (error: (Error|null), response?: matchmaking.GetWaitingPlayerCountResponse) => void;
 
         /**
          * Callback as used by {@link matchmaking.MatchmakingService#subscribeMatch}.
@@ -3383,6 +3404,103 @@ export namespace matchmaking {
 
         /**
          * Gets the default type url for MatchmakingRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GetWaitingPlayerCountResponse. */
+    interface IGetWaitingPlayerCountResponse {
+
+        /** GetWaitingPlayerCountResponse count */
+        count?: (number|null);
+    }
+
+    /** Represents a GetWaitingPlayerCountResponse. */
+    class GetWaitingPlayerCountResponse implements IGetWaitingPlayerCountResponse {
+
+        /**
+         * Constructs a new GetWaitingPlayerCountResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: matchmaking.IGetWaitingPlayerCountResponse);
+
+        /** GetWaitingPlayerCountResponse count. */
+        public count: number;
+
+        /**
+         * Creates a new GetWaitingPlayerCountResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetWaitingPlayerCountResponse instance
+         */
+        public static create(properties?: matchmaking.IGetWaitingPlayerCountResponse): matchmaking.GetWaitingPlayerCountResponse;
+
+        /**
+         * Encodes the specified GetWaitingPlayerCountResponse message. Does not implicitly {@link matchmaking.GetWaitingPlayerCountResponse.verify|verify} messages.
+         * @param message GetWaitingPlayerCountResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: matchmaking.IGetWaitingPlayerCountResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetWaitingPlayerCountResponse message, length delimited. Does not implicitly {@link matchmaking.GetWaitingPlayerCountResponse.verify|verify} messages.
+         * @param message GetWaitingPlayerCountResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: matchmaking.IGetWaitingPlayerCountResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetWaitingPlayerCountResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetWaitingPlayerCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): matchmaking.GetWaitingPlayerCountResponse;
+
+        /**
+         * Decodes a GetWaitingPlayerCountResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetWaitingPlayerCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): matchmaking.GetWaitingPlayerCountResponse;
+
+        /**
+         * Verifies a GetWaitingPlayerCountResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetWaitingPlayerCountResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetWaitingPlayerCountResponse
+         */
+        public static fromObject(object: { [k: string]: any }): matchmaking.GetWaitingPlayerCountResponse;
+
+        /**
+         * Creates a plain object from a GetWaitingPlayerCountResponse message. Also converts values to other types if specified.
+         * @param message GetWaitingPlayerCountResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: matchmaking.GetWaitingPlayerCountResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetWaitingPlayerCountResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetWaitingPlayerCountResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -4422,6 +4540,103 @@ export namespace http_api {
 
         /**
          * Gets the default type url for ValidateResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a GetWaitingPlayerCountResponse. */
+    interface IGetWaitingPlayerCountResponse {
+
+        /** GetWaitingPlayerCountResponse count */
+        count?: (number|null);
+    }
+
+    /** Represents a GetWaitingPlayerCountResponse. */
+    class GetWaitingPlayerCountResponse implements IGetWaitingPlayerCountResponse {
+
+        /**
+         * Constructs a new GetWaitingPlayerCountResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: http_api.IGetWaitingPlayerCountResponse);
+
+        /** GetWaitingPlayerCountResponse count. */
+        public count: number;
+
+        /**
+         * Creates a new GetWaitingPlayerCountResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GetWaitingPlayerCountResponse instance
+         */
+        public static create(properties?: http_api.IGetWaitingPlayerCountResponse): http_api.GetWaitingPlayerCountResponse;
+
+        /**
+         * Encodes the specified GetWaitingPlayerCountResponse message. Does not implicitly {@link http_api.GetWaitingPlayerCountResponse.verify|verify} messages.
+         * @param message GetWaitingPlayerCountResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: http_api.IGetWaitingPlayerCountResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GetWaitingPlayerCountResponse message, length delimited. Does not implicitly {@link http_api.GetWaitingPlayerCountResponse.verify|verify} messages.
+         * @param message GetWaitingPlayerCountResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: http_api.IGetWaitingPlayerCountResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GetWaitingPlayerCountResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GetWaitingPlayerCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.GetWaitingPlayerCountResponse;
+
+        /**
+         * Decodes a GetWaitingPlayerCountResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetWaitingPlayerCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.GetWaitingPlayerCountResponse;
+
+        /**
+         * Verifies a GetWaitingPlayerCountResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GetWaitingPlayerCountResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GetWaitingPlayerCountResponse
+         */
+        public static fromObject(object: { [k: string]: any }): http_api.GetWaitingPlayerCountResponse;
+
+        /**
+         * Creates a plain object from a GetWaitingPlayerCountResponse message. Also converts values to other types if specified.
+         * @param message GetWaitingPlayerCountResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: http_api.GetWaitingPlayerCountResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GetWaitingPlayerCountResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetWaitingPlayerCountResponse
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */

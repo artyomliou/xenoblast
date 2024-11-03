@@ -21,6 +21,10 @@ message ValidateResponse {
   auth.PlayerInfoDto player = 1;
 }
 
+message GetWaitingPlayerCountResponse {
+  int32 count = 1;
+}
+
 message GetGameInfoRequest {
   string apiKey = 1;
   int32 gameId = 2;

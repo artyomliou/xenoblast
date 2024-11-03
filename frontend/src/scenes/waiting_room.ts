@@ -14,6 +14,7 @@ export class WaitingRoom extends BaseScene {
   state!: number;
   newStateQueue!: number[];
   text!: Phaser.GameObjects.Text;
+  waitingPlayerCount: number = 0;
 
   constructor() {
     super({ key: "WaitingRoom" });
@@ -47,13 +48,19 @@ export class WaitingRoom extends BaseScene {
           case STATE_INIT:
             this.text.setText(`Welcome ${this.session.nickname}`);
             await this.startWebsocketConnection();
-            if (await this.sendEnrollMatchmakingOverHttp()) {
+            const enrolled = await this.sendEnrollMatchmakingOverHttp();
+            this.waitingPlayerCount = await this.sendGetWaitingPlayerCountOverHttp();
+            if (enrolled) {
               this.newStateQueue.push(STATE_ENROLLED);
             }
             break;
 
           case STATE_ENROLLED:
-            this.text.setText(`Waiting matchmaking...`);
+            if (this.waitingPlayerCount > 0) {
+              this.text.setText(`Waiting matchmaking...\nWaiting players: ${this.waitingPlayerCount}`);
+            } else {
+              this.text.setText(`Waiting matchmaking...`);
+            }
             await this.sendStartSubscribeOverWebsocket();
             await this.receiveNewMatchFromWebsocket();
             this.newStateQueue.push(STATE_NEW_MATCH);
@@ -100,6 +107,10 @@ export class WaitingRoom extends BaseScene {
 
   async sendEnrollMatchmakingOverHttp() {
     return await this.apiClient.matchmakingEnroll(this.session.apiKey);
+  }
+
+  async sendGetWaitingPlayerCountOverHttp() {
+    return await this.apiClient.getWaitingPlayerCount(this.session.apiKey);
   }
 
   async sendStartSubscribeOverWebsocket() {

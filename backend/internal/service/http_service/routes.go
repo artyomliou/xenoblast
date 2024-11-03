@@ -18,6 +18,7 @@ func InitRoutes() http.Handler {
 		apiGroup.POST("/auth/validate", ctl.Validate)
 		apiGroup.POST("/matchmaking/enroll", ctl.Enroll)
 		apiGroup.POST("/matchmaking/cancel", ctl.Cancel)
+		apiGroup.POST("/matchmaking/get_waiting_player_count", ctl.GetWaitingPlayerCount)
 		apiGroup.POST("/game/get_game_info", ctl.GetGameInfo)
 	}
 

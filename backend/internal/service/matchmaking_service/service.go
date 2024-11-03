@@ -19,11 +19,12 @@ const maximumPlayer = 4
 const MatchmakingInterval = time.Second
 
 type MatchmakingService struct {
-	storage       storage.SortedSetStorage
-	eventBus      *eventbus.EventBus
-	logger        *log.Logger
-	nextTickQueue []int32
-	mutex         sync.Mutex
+	storage            storage.SortedSetStorage
+	eventBus           *eventbus.EventBus
+	logger             *log.Logger
+	waitingPlayerCount int
+	nextTickQueue      []int32
+	mutex              sync.Mutex
 }
 
 func NewMatchmakingService(storage storage.SortedSetStorage, eventBus *eventbus.EventBus) *MatchmakingService {
@@ -68,9 +69,12 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 		service.logger.Println("cannot get length of sorted set: ", err)
 		return
 	}
+	service.waitingPlayerCount = count
+	service.logger.Printf("waiting player count: %d", count)
 	if count < minimumPlayer {
 		return
 	}
+
 	userIds, err := service.storage.SortedSetGetN(ctx, sortedSetKey, maximumPlayer)
 	if err != nil {
 		service.logger.Println("cannot getN from sorted set: ", err)

@@ -46,6 +46,12 @@ func (server *matchmakingServer) Cancel(ctx context.Context, req *matchmaking.Ma
 	return nil, server.service.Cancel(ctx, req.UserId)
 }
 
+func (server *matchmakingServer) GetWaitingPlayerCount(ctx context.Context, req *empty.Empty) (*matchmaking.GetWaitingPlayerCountResponse, error) {
+	return &matchmaking.GetWaitingPlayerCountResponse{
+		Count: int32(server.service.waitingPlayerCount),
+	}, nil
+}
+
 func (server *matchmakingServer) SubscribeMatch(req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	server.logger.Printf("SubscribeMatch(): %d", req.UserId)
 	defer server.logger.Printf("SubscribeMatch(): %d, exit", req.UserId)

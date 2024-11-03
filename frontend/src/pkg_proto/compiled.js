@@ -7934,6 +7934,39 @@ export const matchmaking = $root.matchmaking = (() => {
          */
 
         /**
+         * Callback as used by {@link matchmaking.MatchmakingService#getWaitingPlayerCount}.
+         * @memberof matchmaking.MatchmakingService
+         * @typedef GetWaitingPlayerCountCallback
+         * @type {function}
+         * @param {Error|null} error Error, if any
+         * @param {matchmaking.GetWaitingPlayerCountResponse} [response] GetWaitingPlayerCountResponse
+         */
+
+        /**
+         * Calls GetWaitingPlayerCount.
+         * @function getWaitingPlayerCount
+         * @memberof matchmaking.MatchmakingService
+         * @instance
+         * @param {google.protobuf.IEmpty} request Empty message or plain object
+         * @param {matchmaking.MatchmakingService.GetWaitingPlayerCountCallback} callback Node-style callback called with the error, if any, and GetWaitingPlayerCountResponse
+         * @returns {undefined}
+         * @variation 1
+         */
+        Object.defineProperty(MatchmakingService.prototype.getWaitingPlayerCount = function getWaitingPlayerCount(request, callback) {
+            return this.rpcCall(getWaitingPlayerCount, $root.google.protobuf.Empty, $root.matchmaking.GetWaitingPlayerCountResponse, request, callback);
+        }, "name", { value: "GetWaitingPlayerCount" });
+
+        /**
+         * Calls GetWaitingPlayerCount.
+         * @function getWaitingPlayerCount
+         * @memberof matchmaking.MatchmakingService
+         * @instance
+         * @param {google.protobuf.IEmpty} request Empty message or plain object
+         * @returns {Promise<matchmaking.GetWaitingPlayerCountResponse>} Promise
+         * @variation 2
+         */
+
+        /**
          * Callback as used by {@link matchmaking.MatchmakingService#subscribeMatch}.
          * @memberof matchmaking.MatchmakingService
          * @typedef SubscribeMatchCallback
@@ -8170,6 +8203,209 @@ export const matchmaking = $root.matchmaking = (() => {
         };
 
         return MatchmakingRequest;
+    })();
+
+    matchmaking.GetWaitingPlayerCountResponse = (function() {
+
+        /**
+         * Properties of a GetWaitingPlayerCountResponse.
+         * @memberof matchmaking
+         * @interface IGetWaitingPlayerCountResponse
+         * @property {number|null} [count] GetWaitingPlayerCountResponse count
+         */
+
+        /**
+         * Constructs a new GetWaitingPlayerCountResponse.
+         * @memberof matchmaking
+         * @classdesc Represents a GetWaitingPlayerCountResponse.
+         * @implements IGetWaitingPlayerCountResponse
+         * @constructor
+         * @param {matchmaking.IGetWaitingPlayerCountResponse=} [properties] Properties to set
+         */
+        function GetWaitingPlayerCountResponse(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GetWaitingPlayerCountResponse count.
+         * @member {number} count
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @instance
+         */
+        GetWaitingPlayerCountResponse.prototype.count = 0;
+
+        /**
+         * Creates a new GetWaitingPlayerCountResponse instance using the specified properties.
+         * @function create
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @static
+         * @param {matchmaking.IGetWaitingPlayerCountResponse=} [properties] Properties to set
+         * @returns {matchmaking.GetWaitingPlayerCountResponse} GetWaitingPlayerCountResponse instance
+         */
+        GetWaitingPlayerCountResponse.create = function create(properties) {
+            return new GetWaitingPlayerCountResponse(properties);
+        };
+
+        /**
+         * Encodes the specified GetWaitingPlayerCountResponse message. Does not implicitly {@link matchmaking.GetWaitingPlayerCountResponse.verify|verify} messages.
+         * @function encode
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @static
+         * @param {matchmaking.IGetWaitingPlayerCountResponse} message GetWaitingPlayerCountResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetWaitingPlayerCountResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.count != null && Object.hasOwnProperty.call(message, "count"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.count);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GetWaitingPlayerCountResponse message, length delimited. Does not implicitly {@link matchmaking.GetWaitingPlayerCountResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @static
+         * @param {matchmaking.IGetWaitingPlayerCountResponse} message GetWaitingPlayerCountResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetWaitingPlayerCountResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GetWaitingPlayerCountResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {matchmaking.GetWaitingPlayerCountResponse} GetWaitingPlayerCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetWaitingPlayerCountResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.matchmaking.GetWaitingPlayerCountResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1: {
+                        message.count = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GetWaitingPlayerCountResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {matchmaking.GetWaitingPlayerCountResponse} GetWaitingPlayerCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetWaitingPlayerCountResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GetWaitingPlayerCountResponse message.
+         * @function verify
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GetWaitingPlayerCountResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.count != null && message.hasOwnProperty("count"))
+                if (!$util.isInteger(message.count))
+                    return "count: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a GetWaitingPlayerCountResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {matchmaking.GetWaitingPlayerCountResponse} GetWaitingPlayerCountResponse
+         */
+        GetWaitingPlayerCountResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.matchmaking.GetWaitingPlayerCountResponse)
+                return object;
+            let message = new $root.matchmaking.GetWaitingPlayerCountResponse();
+            if (object.count != null)
+                message.count = object.count | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GetWaitingPlayerCountResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @static
+         * @param {matchmaking.GetWaitingPlayerCountResponse} message GetWaitingPlayerCountResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GetWaitingPlayerCountResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.defaults)
+                object.count = 0;
+            if (message.count != null && message.hasOwnProperty("count"))
+                object.count = message.count;
+            return object;
+        };
+
+        /**
+         * Converts this GetWaitingPlayerCountResponse to JSON.
+         * @function toJSON
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GetWaitingPlayerCountResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for GetWaitingPlayerCountResponse
+         * @function getTypeUrl
+         * @memberof matchmaking.GetWaitingPlayerCountResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        GetWaitingPlayerCountResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/matchmaking.GetWaitingPlayerCountResponse";
+        };
+
+        return GetWaitingPlayerCountResponse;
     })();
 
     return matchmaking;
@@ -10642,6 +10878,209 @@ export const http_api = $root.http_api = (() => {
         };
 
         return ValidateResponse;
+    })();
+
+    http_api.GetWaitingPlayerCountResponse = (function() {
+
+        /**
+         * Properties of a GetWaitingPlayerCountResponse.
+         * @memberof http_api
+         * @interface IGetWaitingPlayerCountResponse
+         * @property {number|null} [count] GetWaitingPlayerCountResponse count
+         */
+
+        /**
+         * Constructs a new GetWaitingPlayerCountResponse.
+         * @memberof http_api
+         * @classdesc Represents a GetWaitingPlayerCountResponse.
+         * @implements IGetWaitingPlayerCountResponse
+         * @constructor
+         * @param {http_api.IGetWaitingPlayerCountResponse=} [properties] Properties to set
+         */
+        function GetWaitingPlayerCountResponse(properties) {
+            if (properties)
+                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GetWaitingPlayerCountResponse count.
+         * @member {number} count
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @instance
+         */
+        GetWaitingPlayerCountResponse.prototype.count = 0;
+
+        /**
+         * Creates a new GetWaitingPlayerCountResponse instance using the specified properties.
+         * @function create
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @static
+         * @param {http_api.IGetWaitingPlayerCountResponse=} [properties] Properties to set
+         * @returns {http_api.GetWaitingPlayerCountResponse} GetWaitingPlayerCountResponse instance
+         */
+        GetWaitingPlayerCountResponse.create = function create(properties) {
+            return new GetWaitingPlayerCountResponse(properties);
+        };
+
+        /**
+         * Encodes the specified GetWaitingPlayerCountResponse message. Does not implicitly {@link http_api.GetWaitingPlayerCountResponse.verify|verify} messages.
+         * @function encode
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @static
+         * @param {http_api.IGetWaitingPlayerCountResponse} message GetWaitingPlayerCountResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetWaitingPlayerCountResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.count != null && Object.hasOwnProperty.call(message, "count"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.count);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GetWaitingPlayerCountResponse message, length delimited. Does not implicitly {@link http_api.GetWaitingPlayerCountResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @static
+         * @param {http_api.IGetWaitingPlayerCountResponse} message GetWaitingPlayerCountResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GetWaitingPlayerCountResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GetWaitingPlayerCountResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {http_api.GetWaitingPlayerCountResponse} GetWaitingPlayerCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetWaitingPlayerCountResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.GetWaitingPlayerCountResponse();
+            while (reader.pos < end) {
+                let tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1: {
+                        message.count = reader.int32();
+                        break;
+                    }
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GetWaitingPlayerCountResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {http_api.GetWaitingPlayerCountResponse} GetWaitingPlayerCountResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GetWaitingPlayerCountResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GetWaitingPlayerCountResponse message.
+         * @function verify
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GetWaitingPlayerCountResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.count != null && message.hasOwnProperty("count"))
+                if (!$util.isInteger(message.count))
+                    return "count: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a GetWaitingPlayerCountResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {http_api.GetWaitingPlayerCountResponse} GetWaitingPlayerCountResponse
+         */
+        GetWaitingPlayerCountResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.http_api.GetWaitingPlayerCountResponse)
+                return object;
+            let message = new $root.http_api.GetWaitingPlayerCountResponse();
+            if (object.count != null)
+                message.count = object.count | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GetWaitingPlayerCountResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @static
+         * @param {http_api.GetWaitingPlayerCountResponse} message GetWaitingPlayerCountResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GetWaitingPlayerCountResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            let object = {};
+            if (options.defaults)
+                object.count = 0;
+            if (message.count != null && message.hasOwnProperty("count"))
+                object.count = message.count;
+            return object;
+        };
+
+        /**
+         * Converts this GetWaitingPlayerCountResponse to JSON.
+         * @function toJSON
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GetWaitingPlayerCountResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for GetWaitingPlayerCountResponse
+         * @function getTypeUrl
+         * @memberof http_api.GetWaitingPlayerCountResponse
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        GetWaitingPlayerCountResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            if (typeUrlPrefix === undefined) {
+                typeUrlPrefix = "type.googleapis.com";
+            }
+            return typeUrlPrefix + "/http_api.GetWaitingPlayerCountResponse";
+        };
+
+        return GetWaitingPlayerCountResponse;
     })();
 
     http_api.GetGameInfoRequest = (function() {

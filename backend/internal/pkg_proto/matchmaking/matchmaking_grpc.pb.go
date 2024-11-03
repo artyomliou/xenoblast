@@ -21,9 +21,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MatchmakingService_Enroll_FullMethodName         = "/matchmaking.MatchmakingService/Enroll"
-	MatchmakingService_Cancel_FullMethodName         = "/matchmaking.MatchmakingService/Cancel"
-	MatchmakingService_SubscribeMatch_FullMethodName = "/matchmaking.MatchmakingService/SubscribeMatch"
+	MatchmakingService_Enroll_FullMethodName                = "/matchmaking.MatchmakingService/Enroll"
+	MatchmakingService_Cancel_FullMethodName                = "/matchmaking.MatchmakingService/Cancel"
+	MatchmakingService_GetWaitingPlayerCount_FullMethodName = "/matchmaking.MatchmakingService/GetWaitingPlayerCount"
+	MatchmakingService_SubscribeMatch_FullMethodName        = "/matchmaking.MatchmakingService/SubscribeMatch"
 )
 
 // MatchmakingServiceClient is the client API for MatchmakingService service.
@@ -32,6 +33,7 @@ const (
 type MatchmakingServiceClient interface {
 	Enroll(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	Cancel(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	GetWaitingPlayerCount(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetWaitingPlayerCountResponse, error)
 	SubscribeMatch(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[pkg_proto.Event], error)
 }
 
@@ -63,6 +65,16 @@ func (c *matchmakingServiceClient) Cancel(ctx context.Context, in *MatchmakingRe
 	return out, nil
 }
 
+func (c *matchmakingServiceClient) GetWaitingPlayerCount(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetWaitingPlayerCountResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWaitingPlayerCountResponse)
+	err := c.cc.Invoke(ctx, MatchmakingService_GetWaitingPlayerCount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *matchmakingServiceClient) SubscribeMatch(ctx context.Context, in *MatchmakingRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[pkg_proto.Event], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &MatchmakingService_ServiceDesc.Streams[0], MatchmakingService_SubscribeMatch_FullMethodName, cOpts...)
@@ -88,6 +100,7 @@ type MatchmakingService_SubscribeMatchClient = grpc.ServerStreamingClient[pkg_pr
 type MatchmakingServiceServer interface {
 	Enroll(context.Context, *MatchmakingRequest) (*empty.Empty, error)
 	Cancel(context.Context, *MatchmakingRequest) (*empty.Empty, error)
+	GetWaitingPlayerCount(context.Context, *empty.Empty) (*GetWaitingPlayerCountResponse, error)
 	SubscribeMatch(*MatchmakingRequest, grpc.ServerStreamingServer[pkg_proto.Event]) error
 	mustEmbedUnimplementedMatchmakingServiceServer()
 }
@@ -104,6 +117,9 @@ func (UnimplementedMatchmakingServiceServer) Enroll(context.Context, *Matchmakin
 }
 func (UnimplementedMatchmakingServiceServer) Cancel(context.Context, *MatchmakingRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Cancel not implemented")
+}
+func (UnimplementedMatchmakingServiceServer) GetWaitingPlayerCount(context.Context, *empty.Empty) (*GetWaitingPlayerCountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWaitingPlayerCount not implemented")
 }
 func (UnimplementedMatchmakingServiceServer) SubscribeMatch(*MatchmakingRequest, grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeMatch not implemented")
@@ -165,6 +181,24 @@ func _MatchmakingService_Cancel_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MatchmakingService_GetWaitingPlayerCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MatchmakingServiceServer).GetWaitingPlayerCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MatchmakingService_GetWaitingPlayerCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MatchmakingServiceServer).GetWaitingPlayerCount(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MatchmakingService_SubscribeMatch_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(MatchmakingRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -190,6 +224,10 @@ var MatchmakingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Cancel",
 			Handler:    _MatchmakingService_Cancel_Handler,
+		},
+		{
+			MethodName: "GetWaitingPlayerCount",
+			Handler:    _MatchmakingService_GetWaitingPlayerCount_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

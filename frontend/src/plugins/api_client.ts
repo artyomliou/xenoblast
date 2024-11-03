@@ -20,6 +20,15 @@ export class ApiClient extends Plugins.BasePlugin {
     return resp.ok;
   }
 
+  async getWaitingPlayerCount(apiKey: string) {
+    const req = http_api.ValidateRequest.create();
+    req.apiKey = apiKey;
+    const resp = await this.sendRequest("POST", "api/matchmaking/get_waiting_player_count", req);
+    const json = await resp.json();
+    const data = http_api.GetWaitingPlayerCountResponse.create(json);
+    return data.count;
+  }
+
   async gameInfo(apiKey: string, gameId: number) {
     const req = http_api.GetGameInfoRequest.create();
     req.apiKey = apiKey;
