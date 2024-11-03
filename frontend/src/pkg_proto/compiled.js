@@ -10469,209 +10469,6 @@ export const http_api = $root.http_api = (() => {
         return RegisterResponse;
     })();
 
-    http_api.ValidateRequest = (function() {
-
-        /**
-         * Properties of a ValidateRequest.
-         * @memberof http_api
-         * @interface IValidateRequest
-         * @property {string|null} [apiKey] ValidateRequest apiKey
-         */
-
-        /**
-         * Constructs a new ValidateRequest.
-         * @memberof http_api
-         * @classdesc Represents a ValidateRequest.
-         * @implements IValidateRequest
-         * @constructor
-         * @param {http_api.IValidateRequest=} [properties] Properties to set
-         */
-        function ValidateRequest(properties) {
-            if (properties)
-                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * ValidateRequest apiKey.
-         * @member {string} apiKey
-         * @memberof http_api.ValidateRequest
-         * @instance
-         */
-        ValidateRequest.prototype.apiKey = "";
-
-        /**
-         * Creates a new ValidateRequest instance using the specified properties.
-         * @function create
-         * @memberof http_api.ValidateRequest
-         * @static
-         * @param {http_api.IValidateRequest=} [properties] Properties to set
-         * @returns {http_api.ValidateRequest} ValidateRequest instance
-         */
-        ValidateRequest.create = function create(properties) {
-            return new ValidateRequest(properties);
-        };
-
-        /**
-         * Encodes the specified ValidateRequest message. Does not implicitly {@link http_api.ValidateRequest.verify|verify} messages.
-         * @function encode
-         * @memberof http_api.ValidateRequest
-         * @static
-         * @param {http_api.IValidateRequest} message ValidateRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        ValidateRequest.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.apiKey);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified ValidateRequest message, length delimited. Does not implicitly {@link http_api.ValidateRequest.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof http_api.ValidateRequest
-         * @static
-         * @param {http_api.IValidateRequest} message ValidateRequest message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        ValidateRequest.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a ValidateRequest message from the specified reader or buffer.
-         * @function decode
-         * @memberof http_api.ValidateRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {http_api.ValidateRequest} ValidateRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        ValidateRequest.decode = function decode(reader, length) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.http_api.ValidateRequest();
-            while (reader.pos < end) {
-                let tag = reader.uint32();
-                switch (tag >>> 3) {
-                case 1: {
-                        message.apiKey = reader.string();
-                        break;
-                    }
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a ValidateRequest message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof http_api.ValidateRequest
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {http_api.ValidateRequest} ValidateRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        ValidateRequest.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a ValidateRequest message.
-         * @function verify
-         * @memberof http_api.ValidateRequest
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        ValidateRequest.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
-                if (!$util.isString(message.apiKey))
-                    return "apiKey: string expected";
-            return null;
-        };
-
-        /**
-         * Creates a ValidateRequest message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof http_api.ValidateRequest
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {http_api.ValidateRequest} ValidateRequest
-         */
-        ValidateRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.http_api.ValidateRequest)
-                return object;
-            let message = new $root.http_api.ValidateRequest();
-            if (object.apiKey != null)
-                message.apiKey = String(object.apiKey);
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a ValidateRequest message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof http_api.ValidateRequest
-         * @static
-         * @param {http_api.ValidateRequest} message ValidateRequest
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        ValidateRequest.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            let object = {};
-            if (options.defaults)
-                object.apiKey = "";
-            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
-                object.apiKey = message.apiKey;
-            return object;
-        };
-
-        /**
-         * Converts this ValidateRequest to JSON.
-         * @function toJSON
-         * @memberof http_api.ValidateRequest
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        ValidateRequest.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        /**
-         * Gets the default type url for ValidateRequest
-         * @function getTypeUrl
-         * @memberof http_api.ValidateRequest
-         * @static
-         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns {string} The default type url
-         */
-        ValidateRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
-            if (typeUrlPrefix === undefined) {
-                typeUrlPrefix = "type.googleapis.com";
-            }
-            return typeUrlPrefix + "/http_api.ValidateRequest";
-        };
-
-        return ValidateRequest;
-    })();
-
     http_api.ValidateResponse = (function() {
 
         /**
@@ -11089,7 +10886,6 @@ export const http_api = $root.http_api = (() => {
          * Properties of a GetGameInfoRequest.
          * @memberof http_api
          * @interface IGetGameInfoRequest
-         * @property {string|null} [apiKey] GetGameInfoRequest apiKey
          * @property {number|null} [gameId] GetGameInfoRequest gameId
          */
 
@@ -11107,14 +10903,6 @@ export const http_api = $root.http_api = (() => {
                     if (properties[keys[i]] != null)
                         this[keys[i]] = properties[keys[i]];
         }
-
-        /**
-         * GetGameInfoRequest apiKey.
-         * @member {string} apiKey
-         * @memberof http_api.GetGameInfoRequest
-         * @instance
-         */
-        GetGameInfoRequest.prototype.apiKey = "";
 
         /**
          * GetGameInfoRequest gameId.
@@ -11148,8 +10936,6 @@ export const http_api = $root.http_api = (() => {
         GetGameInfoRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.apiKey != null && Object.hasOwnProperty.call(message, "apiKey"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.apiKey);
             if (message.gameId != null && Object.hasOwnProperty.call(message, "gameId"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.gameId);
             return writer;
@@ -11186,10 +10972,6 @@ export const http_api = $root.http_api = (() => {
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
-                case 1: {
-                        message.apiKey = reader.string();
-                        break;
-                    }
                 case 2: {
                         message.gameId = reader.int32();
                         break;
@@ -11229,9 +11011,6 @@ export const http_api = $root.http_api = (() => {
         GetGameInfoRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
-                if (!$util.isString(message.apiKey))
-                    return "apiKey: string expected";
             if (message.gameId != null && message.hasOwnProperty("gameId"))
                 if (!$util.isInteger(message.gameId))
                     return "gameId: integer expected";
@@ -11250,8 +11029,6 @@ export const http_api = $root.http_api = (() => {
             if (object instanceof $root.http_api.GetGameInfoRequest)
                 return object;
             let message = new $root.http_api.GetGameInfoRequest();
-            if (object.apiKey != null)
-                message.apiKey = String(object.apiKey);
             if (object.gameId != null)
                 message.gameId = object.gameId | 0;
             return message;
@@ -11270,12 +11047,8 @@ export const http_api = $root.http_api = (() => {
             if (!options)
                 options = {};
             let object = {};
-            if (options.defaults) {
-                object.apiKey = "";
+            if (options.defaults)
                 object.gameId = 0;
-            }
-            if (message.apiKey != null && message.hasOwnProperty("apiKey"))
-                object.apiKey = message.apiKey;
             if (message.gameId != null && message.hasOwnProperty("gameId"))
                 object.gameId = message.gameId;
             return object;

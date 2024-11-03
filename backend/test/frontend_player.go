@@ -14,7 +14,9 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"strconv"
 	"testing"
 	"time"
 
@@ -125,7 +127,7 @@ func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
 	body := &http_api.RegisterRequest{
 		Nickname: player.nickname,
 	}
-	respBytes, err := player.sendHttpRequest(http.MethodPost, "api/auth/register", body)
+	respBytes, err := player.sendHttpRequest(http.MethodPost, "api/auth/register", nil, body, nil)
 	assert.NoError(t, err)
 
 	resp := &http_api.RegisterResponse{}
@@ -138,7 +140,7 @@ func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
 }
 
 func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {
-	wsUrl := fmt.Sprintf("ws://%s/%s?apiKey=%s", websocket_service.HttpServerAddr, "ws/", player.apiKey)
+	wsUrl := fmt.Sprintf("ws://%s/%s?%s=%s", websocket_service.HttpServerAddr, "ws/", http_service.ApiKeyHeader, player.apiKey)
 	conn, _, err := websocket.DefaultDialer.DialContext(player.ctx, wsUrl, nil)
 	assert.NoError(t, err)
 	assert.NotNil(t, conn)
@@ -146,18 +148,12 @@ func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendEnrollMatchmakingOverHttp(t *testing.T) {
-	body := &http_api.ValidateRequest{
-		ApiKey: player.apiKey,
-	}
-	_, err := player.sendHttpRequest(http.MethodPost, "api/matchmaking/enroll", body)
+	_, err := player.sendHttpRequest(http.MethodPut, "api/matchmaking/enroll", nil, nil, &player.apiKey)
 	assert.NoError(t, err)
 }
 
 func (player *frontendPlayer) sendGetWaitingPlayerCountOverHttp(t *testing.T) {
-	body := &http_api.ValidateRequest{
-		ApiKey: player.apiKey,
-	}
-	httpResp, err := player.sendHttpRequest(http.MethodPost, "api/matchmaking/get_waiting_player_count", body)
+	httpResp, err := player.sendHttpRequest(http.MethodGet, "api/matchmaking/get_waiting_player_count", nil, nil, &player.apiKey)
 	assert.NoError(t, err)
 	assert.NotNil(t, httpResp)
 
@@ -204,11 +200,10 @@ func (player *frontendPlayer) receiveWaitingReadyFromWebsocket(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendGetGameInfoOverHttp(t *testing.T) {
-	body := &http_api.GetGameInfoRequest{
-		ApiKey: player.apiKey,
-		GameId: player.gameId,
+	queries := &map[string]string{
+		"GameId": strconv.Itoa(int(player.gameId)),
 	}
-	protobufBytes, err := player.sendHttpRequest(http.MethodPost, "api/game/get_game_info", body)
+	protobufBytes, err := player.sendHttpRequest(http.MethodGet, "api/game/get_game_info", queries, nil, &player.apiKey)
 	assert.NoError(t, err)
 
 	resp := &game.GetGameInfoResponse{}
@@ -306,14 +301,33 @@ func (player *frontendPlayer) receivePlayerMovedFromWebsocket(t *testing.T) {
 	assert.Equal(t, 1, int(data.Y))
 }
 
-func (player *frontendPlayer) sendHttpRequest(method string, path string, body any) ([]byte, error) {
-	jsonBody, err := json.Marshal(body)
+func (player *frontendPlayer) sendHttpRequest(method string, path string, newQueries *map[string]string, body any, apiKey *string) ([]byte, error) {
+	apiUrl, err := url.Parse(fmt.Sprintf("http://%s/%s", http_service.HttpServerAddr, path))
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequestWithContext(player.ctx, method, fmt.Sprintf("http://%s/%s", http_service.HttpServerAddr, path), bytes.NewBuffer(jsonBody))
+	if newQueries != nil {
+		queries := apiUrl.Query()
+		for k, v := range *newQueries {
+			queries.Set(k, v)
+		}
+		apiUrl.RawQuery = queries.Encode()
+	}
+
+	var jsonBody []byte
+	if body != nil {
+		jsonBody, err = json.Marshal(body)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	req, err := http.NewRequestWithContext(player.ctx, method, apiUrl.String(), bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return nil, err
+	}
+	if apiKey != nil {
+		req.Header.Set(http_service.ApiKeyHeader, *apiKey)
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

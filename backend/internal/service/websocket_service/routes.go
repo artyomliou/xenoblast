@@ -3,6 +3,7 @@ package websocket_service
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
+	"artyomliou/xenoblast-backend/internal/service/http_service"
 	"context"
 	"log"
 	"net/http"
@@ -25,9 +26,11 @@ func InitRoutes(ctx context.Context) http.Handler {
 }
 
 func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	// TODO use protobuf for query
-	if !r.URL.Query().Has("apiKey") {
+	// workaround: The WebSocket() API in JS does not accept custom headers
+	apiKey := r.URL.Query().Get(http_service.ApiKeyHeader)
+	if apiKey == "" {
 		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unauthorized"))
 		return
 	}
 
@@ -39,7 +42,6 @@ func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.
 	}
 	defer close()
 
-	apiKey := r.URL.Query().Get("apiKey")
 	player, err := authClient.Validate(r.Context(), &auth.ValidateRequest{ApiKey: apiKey})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

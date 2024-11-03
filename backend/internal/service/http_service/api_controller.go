@@ -54,12 +54,11 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 }
 
 func (ctl *apiController) Validate(ctx *gin.Context) {
-	var req http_api.ValidateRequest
-	if err := ctx.BindJSON(&req); err != nil {
-		ctx.String(http.StatusBadRequest, "Invalid request")
+	apiKey := ctx.Request.Header.Get(ApiKeyHeader)
+	if apiKey == "" {
+		ctx.String(http.StatusInternalServerError, "Unauthorized")
 		return
 	}
-
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -67,7 +66,7 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 	}
 	defer close()
 	player, err := authClient.Validate(ctx, &auth.ValidateRequest{
-		ApiKey: req.ApiKey,
+		ApiKey: apiKey,
 	})
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -80,12 +79,11 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 }
 
 func (ctl *apiController) Enroll(ctx *gin.Context) {
-	var req http_api.ValidateRequest
-	if err := ctx.BindJSON(&req); err != nil {
-		ctx.String(http.StatusBadRequest, "Invalid request")
+	apiKey := ctx.Request.Header.Get(ApiKeyHeader)
+	if apiKey == "" {
+		ctx.String(http.StatusInternalServerError, "Unauthorized")
 		return
 	}
-
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -93,7 +91,7 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 	}
 	defer close()
 	player, err := authClient.Validate(ctx, &auth.ValidateRequest{
-		ApiKey: req.ApiKey,
+		ApiKey: apiKey,
 	})
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -118,12 +116,11 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 }
 
 func (ctl *apiController) Cancel(ctx *gin.Context) {
-	var req http_api.ValidateRequest
-	if err := ctx.BindJSON(&req); err != nil {
-		ctx.String(http.StatusBadRequest, "Invalid request")
+	apiKey := ctx.Request.Header.Get(ApiKeyHeader)
+	if apiKey == "" {
+		ctx.String(http.StatusInternalServerError, "Unauthorized")
 		return
 	}
-
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -131,7 +128,7 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 	}
 	defer close()
 	player, err := authClient.Validate(ctx, &auth.ValidateRequest{
-		ApiKey: req.ApiKey,
+		ApiKey: apiKey,
 	})
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -156,12 +153,11 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 }
 
 func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
-	var req http_api.ValidateRequest
-	if err := ctx.BindJSON(&req); err != nil {
-		ctx.String(http.StatusBadRequest, "Invalid request")
+	apiKey := ctx.Request.Header.Get(ApiKeyHeader)
+	if apiKey == "" {
+		ctx.String(http.StatusInternalServerError, "Unauthorized")
 		return
 	}
-
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -169,7 +165,7 @@ func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
 	}
 	defer close()
 	_, err = authClient.Validate(ctx, &auth.ValidateRequest{
-		ApiKey: req.ApiKey,
+		ApiKey: apiKey,
 	})
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -194,13 +190,11 @@ func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
 }
 
 func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
-	var req http_api.GetGameInfoRequest
-	if err := ctx.BindJSON(&req); err != nil {
-		ctl.logger.Print("bind error: ", err)
-		ctx.String(http.StatusBadRequest, "Invalid request")
+	apiKey := ctx.Request.Header.Get(ApiKeyHeader)
+	if apiKey == "" {
+		ctx.String(http.StatusInternalServerError, "Unauthorized")
 		return
 	}
-
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -208,13 +202,19 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	}
 	defer close()
 	_, err = authClient.Validate(ctx, &auth.ValidateRequest{
-		ApiKey: req.ApiKey,
+		ApiKey: apiKey,
 	})
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
+	var req http_api.GetGameInfoRequest
+	if err := ctx.BindQuery(&req); err != nil {
+		ctl.logger.Print("bind error: ", err)
+		ctx.String(http.StatusBadRequest, "Invalid request")
+		return
+	}
 	gameClient, gameClientClose, err := game_service.NewGrpcClient()
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Internal server error")

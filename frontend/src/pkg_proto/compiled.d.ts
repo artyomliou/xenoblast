@@ -4352,103 +4352,6 @@ export namespace http_api {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** Properties of a ValidateRequest. */
-    interface IValidateRequest {
-
-        /** ValidateRequest apiKey */
-        apiKey?: (string|null);
-    }
-
-    /** Represents a ValidateRequest. */
-    class ValidateRequest implements IValidateRequest {
-
-        /**
-         * Constructs a new ValidateRequest.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: http_api.IValidateRequest);
-
-        /** ValidateRequest apiKey. */
-        public apiKey: string;
-
-        /**
-         * Creates a new ValidateRequest instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns ValidateRequest instance
-         */
-        public static create(properties?: http_api.IValidateRequest): http_api.ValidateRequest;
-
-        /**
-         * Encodes the specified ValidateRequest message. Does not implicitly {@link http_api.ValidateRequest.verify|verify} messages.
-         * @param message ValidateRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: http_api.IValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified ValidateRequest message, length delimited. Does not implicitly {@link http_api.ValidateRequest.verify|verify} messages.
-         * @param message ValidateRequest message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: http_api.IValidateRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes a ValidateRequest message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns ValidateRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): http_api.ValidateRequest;
-
-        /**
-         * Decodes a ValidateRequest message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns ValidateRequest
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): http_api.ValidateRequest;
-
-        /**
-         * Verifies a ValidateRequest message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a ValidateRequest message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ValidateRequest
-         */
-        public static fromObject(object: { [k: string]: any }): http_api.ValidateRequest;
-
-        /**
-         * Creates a plain object from a ValidateRequest message. Also converts values to other types if specified.
-         * @param message ValidateRequest
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: http_api.ValidateRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ValidateRequest to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for ValidateRequest
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
     /** Properties of a ValidateResponse. */
     interface IValidateResponse {
 
@@ -4646,9 +4549,6 @@ export namespace http_api {
     /** Properties of a GetGameInfoRequest. */
     interface IGetGameInfoRequest {
 
-        /** GetGameInfoRequest apiKey */
-        apiKey?: (string|null);
-
         /** GetGameInfoRequest gameId */
         gameId?: (number|null);
     }
@@ -4661,9 +4561,6 @@ export namespace http_api {
          * @param [properties] Properties to set
          */
         constructor(properties?: http_api.IGetGameInfoRequest);
-
-        /** GetGameInfoRequest apiKey. */
-        public apiKey: string;
 
         /** GetGameInfoRequest gameId. */
         public gameId: number;

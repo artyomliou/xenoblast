@@ -13,10 +13,6 @@ message RegisterResponse{
   int32 userId = 2;
 }
 
-message ValidateRequest {
-  string apiKey = 1;
-}
-
 message ValidateResponse {
   auth.PlayerInfoDto player = 1;
 }
@@ -26,6 +22,5 @@ message GetWaitingPlayerCountResponse {
 }
 
 message GetGameInfoRequest {
-  string apiKey = 1;
   int32 gameId = 2;
 }

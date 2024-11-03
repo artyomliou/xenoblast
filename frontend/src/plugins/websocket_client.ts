@@ -9,11 +9,7 @@ export class WebsocketClient extends Plugins.BasePlugin {
 
   url(path: string, apiKey: string) {
     const protocol = this.https ? "https" : "http";
-    const req = http_api.ValidateRequest.toObject(<http_api.ValidateRequest>{
-      apiKey: apiKey,
-    });
-    const query = new URLSearchParams(req as Record<string, string>).toString()
-    return `${protocol}://${this.base}/${path}?${query}`;
+    return `${protocol}://${this.base}/${path}?X-API-KEY=${apiKey}`;
   }
 
   open(apiKey: string, onMessageCallback: (ev: MessageEvent) => any) {
