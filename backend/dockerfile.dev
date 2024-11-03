@@ -2,5 +2,5 @@ FROM golang:1.22.8 AS build
 WORKDIR /src
 COPY ./go.mod ./go.sum /src
 RUN go mod download
-COPY ./ /src
+VOLUME /src
 CMD go run cmd/main/main.go

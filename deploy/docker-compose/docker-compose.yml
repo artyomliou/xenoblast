@@ -13,6 +13,8 @@ services:
     build:
       context: ../../backend
       dockerfile: ${SERVER_DOCKER_FILE}
+    volumes:
+      - ../../backend:/src
     command: ${SERVER_CMD_BASE} -service http
     expose:
       - 8080
@@ -22,6 +24,8 @@ services:
     build:
       context: ../../backend
       dockerfile: ${SERVER_DOCKER_FILE}
+    volumes:
+      - ../../backend:/src
     command: ${SERVER_CMD_BASE} -service websocket
     expose:
       - 8080
@@ -31,6 +35,8 @@ services:
     build:
       context: ../../backend
       dockerfile: ${SERVER_DOCKER_FILE}
+    volumes:
+      - ../../backend:/src
     command: ${SERVER_CMD_BASE} -service auth
     expose:
       - 50051
@@ -40,6 +46,8 @@ services:
     build:
       context: ../../backend
       dockerfile: ${SERVER_DOCKER_FILE}
+    volumes:
+      - ../../backend:/src
     command: ${SERVER_CMD_BASE} -service matchmaking
     expose:
       - 50051
@@ -49,6 +57,8 @@ services:
     build:
       context: ../../backend
       dockerfile: ${SERVER_DOCKER_FILE}
+    volumes:
+      - ../../backend:/src
     command: ${SERVER_CMD_BASE} -service game
     expose:
       - 50051
