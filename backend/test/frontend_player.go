@@ -31,7 +31,7 @@ const (
 	stateInit frontendState = iota
 	stateMainMenu
 	stateWaitingRoomInit
-	stateWaitingRoomEnrolled
+	stateWaitingRoomSubscribed
 	stateWaitingRoomNewMatch
 	stateWaitingRoomWaitingReady
 	stateWaitingRoomReady
@@ -87,10 +87,10 @@ func (player *frontendPlayer) Run(t *testing.T) {
 			case stateWaitingRoomInit:
 				player.startWebsocketConnection(t)
 				player.sendGetWaitingPlayerCountOverHttp(t)
-				player.newStateQueue <- stateWaitingRoomEnrolled
-
-			case stateWaitingRoomEnrolled:
 				player.sendStartSubscribeOverWebsocket(t)
+				player.newStateQueue <- stateWaitingRoomSubscribed
+
+			case stateWaitingRoomSubscribed:
 				player.receiveNewMatchFromWebsocket(t)
 				player.newStateQueue <- stateWaitingRoomNewMatch
 

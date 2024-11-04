@@ -3,7 +3,7 @@ import { common, matchmaking } from "../pkg_proto/compiled.js";
 
 const STATE_UNKNOWN = 0;
 const STATE_INIT = 1;
-const STATE_ENROLLED = 2;
+const STATE_SUBSCRIBED = 2;
 const STATE_NEW_MATCH = 3;
 const STATE_WAITING_READY = 4;
 const STATE_READY = 5;
@@ -48,17 +48,19 @@ export class WaitingRoom extends BaseScene {
           case STATE_INIT:
             this.text.setText(`Welcome ${this.session.nickname}`);
             await this.startWebsocketConnection();
-            this.waitingPlayerCount = await this.sendGetWaitingPlayerCountOverHttp();
-            this.newStateQueue.push(STATE_ENROLLED);
-            break;
 
-          case STATE_ENROLLED:
+            this.waitingPlayerCount = await this.sendGetWaitingPlayerCountOverHttp();
             if (this.waitingPlayerCount > 0) {
               this.text.setText(`Waiting matchmaking...\nWaiting players: ${this.waitingPlayerCount}`);
             } else {
               this.text.setText(`Waiting matchmaking...`);
             }
+
             await this.sendStartSubscribeOverWebsocket();
+            this.newStateQueue.push(STATE_SUBSCRIBED);
+            break;
+
+          case STATE_SUBSCRIBED:
             await this.receiveNewMatchFromWebsocket();
             this.newStateQueue.push(STATE_NEW_MATCH);
             break;
