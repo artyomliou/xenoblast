@@ -28,7 +28,7 @@ type matchmakingServer struct {
 func NewMatchmakingServer(service *MatchmakingService) *matchmakingServer {
 	return &matchmakingServer{
 		service:      service,
-		logger:       log.New(os.Stderr, "[matchmaking server] ", log.LstdFlags),
+		logger:       log.New(os.Stderr, "[MatchmakingServer] ", log.LstdFlags),
 		mutex:        sync.Mutex{},
 		createdGames: map[int32]bool{},
 	}
@@ -101,7 +101,7 @@ func (server *matchmakingServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *m
 	for _, playerId := range data.Players {
 		if playerId == req.UserId {
 			if err := stream.Send(ev); err != nil {
-				server.logger.Print(err)
+				server.logger.Print("HandleNewMatchEvent(): ", err)
 				return
 			}
 			server.logger.Printf("send new match to player %d", playerId)

@@ -4,6 +4,8 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	"errors"
 	"fmt"
+	"log"
+	"os"
 	"sync"
 )
 
@@ -11,6 +13,7 @@ type StateManager struct {
 	currentState pkg_proto.GameState
 	playerReady  map[int32]bool
 	mutex        sync.RWMutex
+	logger       *log.Logger
 }
 
 func NewStateManager() *StateManager {
@@ -18,6 +21,7 @@ func NewStateManager() *StateManager {
 		currentState: pkg_proto.GameState_Init,
 		playerReady:  map[int32]bool{},
 		mutex:        sync.RWMutex{},
+		logger:       log.New(os.Stdout, "[StateManager] ", log.LstdFlags),
 	}
 }
 
@@ -81,7 +85,7 @@ func (sm *StateManager) SetStateForTesting(newState pkg_proto.GameState) {
 
 func (sm *StateManager) saveAndPrintNewState(newState pkg_proto.GameState) {
 	sm.currentState = newState
-	fmt.Printf("Transitioned to %s state\n", newState)
+	sm.logger.Printf("Transitioned to %s state\n", newState)
 }
 
 func (sm *StateManager) newInvalidTransitionError(newState pkg_proto.GameState) error {

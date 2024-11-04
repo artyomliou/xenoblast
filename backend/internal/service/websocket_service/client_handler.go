@@ -31,7 +31,7 @@ func NewClientHandler(client *Client, player *auth.PlayerInfoDto) *ClientHandler
 		player:         player,
 		gameId:         0,
 		gameServerAddr: "",
-		logger:         log.New(os.Stdout, fmt.Sprintf("[client handler] player %d: ", player.UserId), log.LstdFlags),
+		logger:         log.New(os.Stdout, fmt.Sprintf("[ClientHandler][%d] ", player.UserId), log.LstdFlags),
 		msgCh:          make(chan *messageContainer, 100),
 	}
 }
@@ -59,7 +59,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 				return
 			}
 			if msg.err != nil {
-				h.logger.Print(msg.err)
+				h.logger.Print("Run(): ", msg.err)
 				return
 			}
 
@@ -107,7 +107,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 			} else if msg.fromGame {
 				h.logger.Printf("game event: %s", ev.Type.String())
 				if err := h.sendEvent(ev); err != nil {
-					h.logger.Print(err)
+					h.logger.Print("Run() fromGame: ", err)
 					continue
 				}
 			}
@@ -144,7 +144,7 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 
 	matchmakingClient, close, err := matchmaking_service.NewGrpcClient()
 	if err != nil {
-		h.logger.Print("recvMatchmakingEvent() err: ", err)
+		h.logger.Print("recvMatchmakingEvent(): ", err)
 		return
 	}
 	defer close()
@@ -153,26 +153,26 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 		UserId: h.player.UserId,
 	})
 	if err != nil {
-		h.logger.Print("recvMatchmakingEvent() err: ", err)
+		h.logger.Print("recvMatchmakingEvent(): ", err)
 		return
 	}
 	for {
 		ev, err := stream.Recv()
 		if err == io.EOF {
-			h.logger.Print("recvMatchmakingEvent() EOF")
+			h.logger.Print("recvMatchmakingEvent(): EOF")
 			return
 		}
 		if err != nil {
-			h.logger.Print("recvMatchmakingEvent() err: ", err)
+			h.logger.Print("recvMatchmakingEvent(): ", err)
 			return
 		}
 		if ev == nil {
-			h.logger.Print("recvMatchmakingEvent() err: unexpected ev nil")
+			h.logger.Print("recvMatchmakingEvent(): unexpected ev nil")
 			return
 		}
 		select {
 		case <-ctx.Done():
-			h.logger.Print("recvMatchmakingEvent() Done")
+			h.logger.Print("recvMatchmakingEvent(): Done")
 			return
 		case h.msgCh <- &messageContainer{event: ev, fromMatchmaking: true}:
 		}
@@ -189,12 +189,12 @@ func (h *ClientHandler) HandleNewMatch(ev *pkg_proto.Event) {
 }
 
 func (h *ClientHandler) recvGameEvent(ctx context.Context) {
-	defer h.logger.Print("recvGameEvent() exit")
+	defer h.logger.Print("recvGameEvent(): exit")
 
 	h.logger.Printf("opening game service client to %s", h.gameServerAddr)
 	gameClient, close, err := game_service.NewGrpcClient(h.gameServerAddr)
 	if err != nil {
-		h.logger.Print("recvGameEvent() err: ", err)
+		h.logger.Print("recvGameEvent(): ", err)
 		return
 	}
 	defer close()
@@ -218,26 +218,26 @@ func (h *ClientHandler) recvGameEvent(ctx context.Context) {
 		},
 	})
 	if err != nil {
-		h.logger.Print("recvGameEvent() err: ", err)
+		h.logger.Print("recvGameEvent(): ", err)
 		return
 	}
 	for {
 		ev, err := stream.Recv()
 		if err == io.EOF {
-			h.logger.Print("recvGameEvent() EOF")
+			h.logger.Print("recvGameEvent(): EOF")
 			return
 		}
 		if err != nil {
-			h.logger.Print("recvGameEvent() err: ", err)
+			h.logger.Print("recvGameEvent(): ", err)
 			return
 		}
 		if ev == nil {
-			h.logger.Print("recvGameEvent() err: unexpected ev nil")
+			h.logger.Print("recvGameEvent(): unexpected ev nil")
 			return
 		}
 		select {
 		case <-ctx.Done():
-			h.logger.Print("recvGameEvent() Done")
+			h.logger.Print("recvGameEvent(): Done")
 			return
 		case h.msgCh <- &messageContainer{event: ev, fromGame: true}:
 		}
@@ -259,15 +259,15 @@ func (h *ClientHandler) sendEvent(ev *pkg_proto.Event) error {
 func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 	data := msg.GetPlayerReady()
 	if data == nil {
-		h.logger.Print("data is nil")
+		h.logger.Print("HandlePlayerReadyEvent(): data is nil")
 		return
 	}
 	if data.UserId != h.player.UserId {
-		h.logger.Print("user_id unmatch")
+		h.logger.Print("HandlePlayerReadyEvent(): user_id unmatch")
 		return
 	}
 	if msg.GameId != h.gameId {
-		h.logger.Print("game_id unmatch")
+		h.logger.Print("HandlePlayerReadyEvent(): game_id unmatch")
 		return
 	}
 

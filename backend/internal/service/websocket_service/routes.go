@@ -51,7 +51,7 @@ func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("WebSocket upgrade failed:", err)
+		log.Println("handleWebsocketRequest(): ", err)
 		return
 	}
 

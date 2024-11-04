@@ -63,7 +63,7 @@ func newFrontendPlayer(ctx context.Context, nickname string) *frontendPlayer {
 		state:         stateInit,
 		errCh:         make(chan error),
 		completeCh:    make(chan bool),
-		logger:        log.New(os.Stdout, fmt.Sprintf("%s: ", nickname), log.LstdFlags),
+		logger:        log.New(os.Stdout, fmt.Sprintf("[FrontendPlayer][%s] ", nickname), log.LstdFlags),
 		nickname:      nickname,
 	}
 }

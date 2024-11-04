@@ -8,7 +8,7 @@ export class GameOver extends BaseScene {
   }
 
   init(data: Record<string, any>) {
-    console.debug(data["reason"]);
+    console.debug("GameOver", data["reason"]);
     if (data["reason"]) {
       this.reason = data["reason"];
     }

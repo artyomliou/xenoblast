@@ -22,7 +22,7 @@ type apiController struct {
 
 func NewApiController() *apiController {
 	return &apiController{
-		logger: log.New(os.Stdout, "[api controller] ", log.LstdFlags),
+		logger: log.New(os.Stdout, "[ApiController] ", log.LstdFlags),
 	}
 }
 
@@ -35,7 +35,7 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Register(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -44,7 +44,7 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 		Nickname: req.Nickname,
 	})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Register(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -63,7 +63,7 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 	}
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Validate(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -72,7 +72,7 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Validate(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -90,7 +90,7 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 	}
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Enroll(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -99,14 +99,14 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Enroll(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
 	matchmakingClient, matchmakingClientClose, err := matchmaking_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Enroll(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -115,7 +115,7 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 		UserId: player.UserId,
 	})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Enroll(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -131,7 +131,7 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 	}
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Cancel(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -140,14 +140,14 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Cancel(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
 	matchmakingClient, matchmakingClientClose, err := matchmaking_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Cancel(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -156,7 +156,7 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 		UserId: player.UserId,
 	})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("Cancel(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -172,7 +172,7 @@ func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
 	}
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetWaitingPlayerCount(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -181,21 +181,21 @@ func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetWaitingPlayerCount(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
 	matchmakingClient, matchmakingClientClose, err := matchmaking_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetWaitingPlayerCount(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 	defer matchmakingClientClose()
 	resp, err := matchmakingClient.GetWaitingPlayerCount(ctx, nil)
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetWaitingPlayerCount(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -214,7 +214,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	}
 	authClient, close, err := auth_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetGameInfo(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -223,7 +223,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetGameInfo(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -231,14 +231,14 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	// Get gameServerAddr by userId
 	matchmakingClient, close, err := matchmaking_service.NewGrpcClient()
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetGameInfo(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 	defer close()
 	resp1, err := matchmakingClient.GetGameServerAddr(ctx, &matchmaking.GetGameServerAddrRequest{UserId: player.UserId})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetGameInfo(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -247,14 +247,14 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	// Get gameInfo by gameId
 	var req http_api.GetGameInfoRequest
 	if err := ctx.BindQuery(&req); err != nil {
-		ctl.logger.Print("bind error: ", err)
+		ctl.logger.Print("GetGameInfo(): ", err)
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
 	}
 	ctl.logger.Printf("opening game service client to %s", gameServerAddr)
 	gameClient, gameClientClose, err := game_service.NewGrpcClient(gameServerAddr)
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetGameInfo(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -263,7 +263,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 		GameId: req.GameId,
 	})
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetGameInfo(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -271,7 +271,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	// Encode gameInfo into protobuf
 	protobufBytes, err := proto.Marshal(resp2)
 	if err != nil {
-		ctl.logger.Print(err)
+		ctl.logger.Print("GetGameInfo(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}

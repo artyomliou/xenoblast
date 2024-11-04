@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
 	"strconv"
 )
 
@@ -19,11 +20,13 @@ const accessPattern3 = "apiKey#%s#uid"
 
 type AuthService struct {
 	storage storage.Storage
+	logger  *log.Logger
 }
 
 func NewAuthService(storage storage.Storage) *AuthService {
 	return &AuthService{
 		storage: storage,
+		logger:  log.New(os.Stdout, "[AuthService] ", log.LstdFlags),
 	}
 }
 
@@ -119,7 +122,7 @@ func (service *AuthService) GetNicknames(ctx context.Context, playerIds []int32)
 	for _, playerId := range playerIds {
 		nickname, err := service.storage.Get(ctx, fmt.Sprintf(accessPattern2, int(playerId)))
 		if err != nil {
-			log.Printf("cannot get nickname with player id %d", playerId)
+			service.logger.Printf("invalid player id %d", playerId)
 			nickname = "ERR"
 		}
 		idNicknameMap[playerId] = nickname

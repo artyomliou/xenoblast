@@ -119,7 +119,7 @@ export class WaitingRoom extends BaseScene {
       timestamp: new Date().getTime() / 1000,
       gameId: this.session.gameId,
     });
-    console.debug("send " + common.EventType[event.type], event);
+    console.debug(`-> ${common.EventType[event.type]}`, event);
     const msg = common.Event.encode(event).finish();
     this.wsClient.send(msg);
   }
@@ -161,7 +161,7 @@ export class WaitingRoom extends BaseScene {
         userId: this.session.uid,
       },
     });
-    console.debug("send " + common.EventType[event.type]);
+    console.debug(`-> ${common.EventType[event.type]}`, event);
     const msg = common.Event.encode(event).finish();
     this.wsClient.send(msg);
   }

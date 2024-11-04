@@ -19,7 +19,7 @@ type authServer struct {
 func NewAuthServer(service *AuthService) *authServer {
 	return &authServer{
 		service: service,
-		logger:  log.New(os.Stderr, "[auth server] ", log.LstdFlags),
+		logger:  log.New(os.Stderr, "[AuthServer] ", log.LstdFlags),
 	}
 }
 

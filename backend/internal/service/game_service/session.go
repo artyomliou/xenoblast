@@ -50,7 +50,7 @@ func NewGameSession(id int32, state *state.StateManager, eventBus *eventbus.Even
 	}
 	game := &gameSession{
 		id:           id,
-		logger:       log.New(os.Stderr, fmt.Sprintf("[game %d]", id), log.LstdFlags),
+		logger:       log.New(os.Stderr, fmt.Sprintf("[GameSession][%d] ", id), log.LstdFlags),
 		state:        state,
 		eventBus:     eventBus,
 		eventCh:      make(chan *pkg_proto.Event, EventQueueLength),
@@ -73,7 +73,7 @@ func (g *gameSession) setupSerializeEventChannel() {
 		select {
 		case g.eventCh <- ev:
 		default:
-			g.logger.Println("event channel is full")
+			g.logger.Println("eventCh is full")
 		}
 	}
 	g.eventBus.Subscribe(pkg_proto.EventType_StatePreparing, redirectEventToChannel)
@@ -92,8 +92,8 @@ func (g *gameSession) setupSerializeEventChannel() {
 
 func (g *gameSession) Run(ctx context.Context) {
 	if g.debugMode {
-		g.logger.Printf("Run() start")
-		defer g.logger.Printf("Run() end")
+		g.logger.Print("Run(): start")
+		defer g.logger.Print("Run(): end")
 	}
 
 	ctx, cancel := context.WithCancel(ctx)
@@ -110,14 +110,14 @@ func (g *gameSession) Run(ctx context.Context) {
 		case <-ctx.Done():
 			g.logger.Printf("receive termination signal")
 			if err := g.state.Transition(pkg_proto.GameState_Crash); err != nil {
-				g.logger.Print(err)
+				g.logger.Print("Run(): ", err)
 			}
 			g.publishCrashEvent("server terminated")
 			return
 
 		case ev := <-g.eventCh:
 			if g.debugMode {
-				g.logger.Printf("event type: %s", ev.Type.String())
+				g.logger.Printf("eventCh %s", ev.Type.String())
 			}
 			startExecutionTime := time.Now()
 			trace := true
@@ -170,7 +170,7 @@ func (g *gameSession) Run(ctx context.Context) {
 
 func (g *gameSession) TriggerPreparing() {
 	if err := g.state.Transition(pkg_proto.GameState_Preparing); err != nil {
-		g.logger.Print(err)
+		g.logger.Print("TriggerPreparing(): ", err)
 		return
 	}
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -184,7 +184,7 @@ func (g *gameSession) HandlePreparing() {
 	g.prepare()
 
 	if err := g.state.Transition(pkg_proto.GameState_Prepared); err != nil {
-		g.logger.Print(err)
+		g.logger.Print("HandlePreparing(): ", err)
 		return
 	}
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -244,7 +244,7 @@ func (g *gameSession) setupPlayerReadyMap() {
 
 func (g *gameSession) HandlePrepared() {
 	if err := g.state.Transition(pkg_proto.GameState_WaitingReady); err != nil {
-		g.logger.Print(err)
+		g.logger.Print("HandlePrepared(): ", err)
 		return
 	}
 
@@ -294,7 +294,7 @@ func (g *gameSession) HandlePlayerReady(ev *pkg_proto.Event) {
 	}
 
 	if err := g.state.Transition(pkg_proto.GameState_Countdown); err != nil {
-		g.logger.Print(err)
+		g.logger.Print("HandlePlayerReady(): ", err)
 		return
 	}
 	startTimestamp := time.Now()
@@ -337,7 +337,7 @@ func (g *gameSession) HandleCountdown(ev *pkg_proto.Event) {
 	<-time.After(time.Until(endTimestamp))
 
 	if err := g.state.Transition(pkg_proto.GameState_Playing); err != nil {
-		g.logger.Print(err)
+		g.logger.Print("HandleCountdown(): ", err)
 		return
 	}
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -350,7 +350,7 @@ func (g *gameSession) HandleCountdown(ev *pkg_proto.Event) {
 func (g *gameSession) HandlePlaying(ev *pkg_proto.Event) {
 	<-time.After(GameMaxTime)
 	if err := g.state.Transition(pkg_proto.GameState_Gameover); err != nil {
-		g.logger.Print(err)
+		g.logger.Print("HandlePlaying(): ", err)
 		return
 	}
 	g.publishGameoverEvent(pkg_proto.GameOverReason_Reason_TimesUp, 0)
@@ -684,7 +684,7 @@ func (g *gameSession) HandlePlayerDead(ev *pkg_proto.Event) {
 
 func (g *gameSession) HandleWinConditionSatisfied(ev *pkg_proto.Event) {
 	if err := g.state.Transition(pkg_proto.GameState_Gameover); err != nil {
-		g.logger.Print(err)
+		g.logger.Print("HandleWinConditionSatisfied(): ", err)
 		return
 	}
 

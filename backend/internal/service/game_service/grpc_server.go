@@ -27,7 +27,7 @@ type gameServer struct {
 func NewGameServer(service *GameService) *gameServer {
 	return &gameServer{
 		service: service,
-		logger:  log.New(os.Stderr, "[game server] ", log.LstdFlags),
+		logger:  log.New(os.Stderr, "[GameServer] ", log.LstdFlags),
 		mutex:   sync.Mutex{},
 	}
 }
@@ -51,7 +51,7 @@ func (server *gameServer) NewGame(ctx context.Context, req *game.NewGameRequest)
 	idNicknameMap := resp.Nicknames
 
 	if _, ok := server.service.sessions[req.GameId]; ok {
-		server.logger.Println("skiped duplicated NewGame() request")
+		server.logger.Printf("skip created session %d", req.GameId)
 		return nil, nil
 	}
 	if err := server.service.NewGame(context.TODO(), req.GameId, idNicknameMap); err != nil {
@@ -79,8 +79,8 @@ func (server *gameServer) PlayerPublish(ctx context.Context, ev *pkg_proto.Event
 }
 
 func (server *gameServer) Subscribe(req *game.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
-	server.logger.Print("Subscribe()")
-	defer server.logger.Print("Subscribe() exit")
+	server.logger.Printf("Subscribe(): game %d", req.GameId)
+	defer server.logger.Printf("Subscribe(): game %d exit", req.GameId)
 
 	eventCh := make(chan *pkg_proto.Event, 10)
 	for _, eventType := range req.Types {
@@ -92,16 +92,16 @@ func (server *gameServer) Subscribe(req *game.SubscribeRequest, stream grpc.Serv
 			}
 		})
 		if err != nil {
-			server.logger.Printf("Subscribe() failed: %s", err)
+			server.logger.Printf("Subscribe(): %s", err)
 			return err
 		}
 	}
 
 	// TODO cancel subscription
 	for ev := range eventCh {
-		server.logger.Printf("Subscribe(): receive event %s", ev.Type.String())
+		server.logger.Printf("eventCh %s", ev.Type.String())
 		if err := stream.Send(ev); err != nil {
-			server.logger.Printf("Subscribe(): Send() failed: %s", err)
+			server.logger.Printf("Send(ev) failed: %s", err)
 			return err
 		}
 	}

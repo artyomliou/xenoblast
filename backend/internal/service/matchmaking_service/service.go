@@ -34,7 +34,7 @@ func NewMatchmakingService(storage storage.Storage, eventBus *eventbus.EventBus)
 	return &MatchmakingService{
 		storage:       storage,
 		eventBus:      eventBus,
-		logger:        log.New(os.Stdout, "[matchmaking service] ", log.LstdFlags),
+		logger:        log.New(os.Stdout, "[MatchmakingService] ", log.LstdFlags),
 		nextTickQueue: []int32{},
 		mutex:         sync.Mutex{},
 	}

@@ -174,7 +174,6 @@ export class Game extends BaseScene {
         this.powerupGroup.add(tile.powerup);
         break;
     }
-    console.debug(tile, x, y);
   }
 
   setupPlayers() {
@@ -268,7 +267,7 @@ export class Game extends BaseScene {
         y: tileY,
       },
     });
-    console.debug("send " + common.EventType[event.type]);
+    console.debug(`-> ${common.EventType[event.type]}`, event);
     const msg = common.Event.encode(event).finish();
     this.wsClient.send(msg);
 
@@ -287,7 +286,7 @@ export class Game extends BaseScene {
         return
       }
       this.state = newState;
-      console.debug(`newState = ${newState}`);
+      console.debug(`newState=${newState}`);
 
       try {
         switch (newState) {
@@ -325,6 +324,7 @@ export class Game extends BaseScene {
     this.handlePlayingOnce = true;
     this.messageBox.registerListener((ev: common.Event) => {
       if (this.state == STATE_PLAYING) {
+        console.log(`<- ${common.EventType[ev.type]}`)
         this.handleGameEvent(ev);
       }
     });
@@ -353,7 +353,6 @@ export class Game extends BaseScene {
         break;
 
       case common.EventType.PowerupDropped:
-        console.debug(ev);
         this.handlePowerupDroppedEvent(ev);
         break;
 
@@ -509,7 +508,6 @@ export class Game extends BaseScene {
       repeat: firepower - 1,
       callback: () => {
         if (currentFireIndex >= firepower || stoppedByOverlapping) {
-          console.debug("skip");
           return;
         }
 
@@ -673,7 +671,7 @@ export class Game extends BaseScene {
                   y: tileY,
                 },
               });
-              console.debug("send " + common.EventType[event.type]);
+              console.debug(`-> ${common.EventType[event.type]}`, event);
               const msg = common.Event.encode(event).finish();
               this.wsClient.send(msg);
             }
@@ -715,7 +713,7 @@ export class Game extends BaseScene {
           y: tileY,
         },
       });
-      console.debug("send " + common.EventType[event.type]);
+      console.debug(`-> ${common.EventType[event.type]}`);
       const msg = common.Event.encode(event).finish();
       this.wsClient.send(msg);
     }
