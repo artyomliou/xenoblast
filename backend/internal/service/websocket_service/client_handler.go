@@ -8,6 +8,7 @@ import (
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -23,6 +24,7 @@ type ClientHandler struct {
 	gameServerAddr string
 	logger         *log.Logger
 	msgCh          chan *messageContainer
+	gameClient     game.GameServiceClient
 }
 
 func NewClientHandler(client *Client, player *auth.PlayerInfoDto) *ClientHandler {
@@ -33,6 +35,7 @@ func NewClientHandler(client *Client, player *auth.PlayerInfoDto) *ClientHandler
 		gameServerAddr: "",
 		logger:         log.New(os.Stdout, fmt.Sprintf("[ClientHandler][%d] ", player.UserId), log.LstdFlags),
 		msgCh:          make(chan *messageContainer, 100),
+		gameClient:     nil,
 	}
 }
 
@@ -88,16 +91,26 @@ func (h *ClientHandler) Run(ctx context.Context) {
 
 				switch ev.Type {
 				case pkg_proto.EventType_NewMatch:
-					h.HandleNewMatch(ev)
-					if h.gameId == 0 || h.gameServerAddr == "" {
-						h.logger.Print("didnt properly set the gameId or gameServerAddr, skip subscription")
-						break
+					if err := h.HandleNewMatch(ev); err != nil {
+						h.logger.Print("Run() from matchmaking: ", err)
+						return
 					}
 
+					// Open a connection to game service, must check before use
+					h.logger.Printf("opening game service client to %s", h.gameServerAddr)
+					gameClient, close, err := game_service.NewGrpcClient(h.gameServerAddr)
+					if err != nil {
+						h.logger.Print("recvGameEvent(): ", err)
+						return
+					}
+					defer close()
+					h.gameClient = gameClient
+
+					// Start subscribing all game events
 					go h.recvGameEvent(ctx)
 
-					// Delete this before sending it to client
-					ev.GetNewMatch().GameServerAddr = ""
+					// All prepares done, send event to player
+					ev.GetNewMatch().GameServerAddr = "" // Delete this before sending it to client
 					if err := h.sendEvent(ev); err != nil {
 						h.logger.Print("failed to send NewMatch event", err)
 						break
@@ -179,27 +192,30 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 	}
 }
 
-func (h *ClientHandler) HandleNewMatch(ev *pkg_proto.Event) {
+func (h *ClientHandler) HandleNewMatch(ev *pkg_proto.Event) error {
 	data := ev.GetNewMatch()
 	if data == nil {
-		return
+		return errors.New(("didnt properly set the gameId or gameServerAddr, skip subscription"))
+	}
+	if ev.GameId == 0 {
+		return errors.New("ev.gameId == 0")
+	}
+	if data.GameServerAddr == "" {
+		return errors.New("data.GameServerAddr == \"\"")
 	}
 	h.gameId = ev.GameId
 	h.gameServerAddr = data.GameServerAddr
+	return nil
 }
 
 func (h *ClientHandler) recvGameEvent(ctx context.Context) {
 	defer h.logger.Print("recvGameEvent(): exit")
 
-	h.logger.Printf("opening game service client to %s", h.gameServerAddr)
-	gameClient, close, err := game_service.NewGrpcClient(h.gameServerAddr)
-	if err != nil {
-		h.logger.Print("recvGameEvent(): ", err)
+	if h.gameClient == nil {
+		h.logger.Print("recvGameEvent(): h.gameClient is nil")
 		return
 	}
-	defer close()
-
-	stream, err := gameClient.Subscribe(ctx, &game.SubscribeRequest{
+	stream, err := h.gameClient.Subscribe(ctx, &game.SubscribeRequest{
 		GameId: h.gameId,
 		Types: []pkg_proto.EventType{
 			pkg_proto.EventType_StateWaitingReady,
@@ -271,15 +287,11 @@ func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 		return
 	}
 
-	h.logger.Printf("opening game service client to %s", h.gameServerAddr)
-	gameClient, close, err := game_service.NewGrpcClient(h.gameServerAddr)
-	if err != nil {
-		h.logger.Print("HandlePlayerReadyEvent():", err)
+	if h.gameClient == nil {
+		h.logger.Print("recvGameEvent(): h.gameClient is nil")
 		return
 	}
-	defer close()
-
-	_, err = gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
+	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
 		Type:      msg.Type,
 		Timestamp: msg.Timestamp,
 		GameId:    h.gameId,
@@ -304,15 +316,11 @@ func (h *ClientHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 		return
 	}
 
-	h.logger.Printf("opening game service client to %s", h.gameServerAddr)
-	gameClient, close, err := game_service.NewGrpcClient(h.gameServerAddr)
-	if err != nil {
-		h.logger.Print("HandlePlayerMoveEvent():", err)
+	if h.gameClient == nil {
+		h.logger.Print("recvGameEvent(): h.gameClient is nil")
 		return
 	}
-	defer close()
-
-	_, err = gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
+	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
 		Type:      msg.Type,
 		Timestamp: msg.Timestamp,
 		GameId:    h.gameId,
@@ -339,15 +347,11 @@ func (h *ClientHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
 		return
 	}
 
-	h.logger.Printf("opening game service client to %s", h.gameServerAddr)
-	gameClient, close, err := game_service.NewGrpcClient(h.gameServerAddr)
-	if err != nil {
-		h.logger.Print("HandlePlayerPlantBombEvent():", err)
+	if h.gameClient == nil {
+		h.logger.Print("recvGameEvent(): h.gameClient is nil")
 		return
 	}
-	defer close()
-
-	_, err = gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
+	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
 		Type:      msg.Type,
 		Timestamp: msg.Timestamp,
 		GameId:    h.gameId,
@@ -374,15 +378,11 @@ func (h *ClientHandler) HandlePlayerGetPowerupEvent(msg *pkg_proto.Event) {
 		return
 	}
 
-	h.logger.Printf("opening game service client to %s", h.gameServerAddr)
-	gameClient, close, err := game_service.NewGrpcClient(h.gameServerAddr)
-	if err != nil {
-		h.logger.Print("HandlePlayerGetPowerupEvent():", err)
+	if h.gameClient == nil {
+		h.logger.Print("recvGameEvent(): h.gameClient is nil")
 		return
 	}
-	defer close()
-
-	_, err = gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
+	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
 		Type:      msg.Type,
 		Timestamp: msg.Timestamp,
 		GameId:    h.gameId,
