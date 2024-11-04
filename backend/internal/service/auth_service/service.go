@@ -5,6 +5,7 @@ import (
 	"artyomliou/xenoblast-backend/internal/storage"
 	"artyomliou/xenoblast-backend/pkg/utils"
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -12,6 +13,9 @@ import (
 )
 
 const maxRetries = 10
+const accessPattern1 = "nickname#%s#uid"
+const accessPattern2 = "user#%d#nickname"
+const accessPattern3 = "apiKey#%s#uid"
 
 type AuthService struct {
 	storage storage.Storage
@@ -25,40 +29,41 @@ func NewAuthService(storage storage.Storage) *AuthService {
 
 // always generate new api key
 func (service *AuthService) Register(ctx context.Context, nickname string) (apiKey string, userId int32, err error) {
-	var nicknameExists bool
 	var userIdInt int
-	var userIdString string
 	var selected bool
 
-	// ensure nickname has associated userId
-	if nicknameExists, err = service.storage.Has(ctx, nickname); err != nil {
+	// Ensure nickname has associated userId
+	key1 := fmt.Sprintf(accessPattern1, nickname)
+	userIdString, err := service.storage.Get(ctx, key1)
+	if err != nil && !errors.Is(err, storage.ErrKeyNotFound) {
 		return
-	} else if nicknameExists {
-		userIdString, err = service.storage.Get(ctx, nickname)
-		if err != nil {
-			return
-		}
+	}
+	if userIdString != "" {
 		userIdInt, err = strconv.Atoi(userIdString)
 		if err != nil {
 			return
 		}
 		userId = int32(userIdInt)
-	} else {
+	}
+	if userId == 0 {
 		userId = rand.Int31() // TODO increment in storage
-		userIdString = strconv.Itoa(int(userId))
-		if err = service.storage.Set(ctx, nickname, userIdString); err != nil {
-			return
-		}
-
-		// for GetNickname()
-		if err = service.storage.Set(ctx, userIdString, nickname); err != nil {
+		if err = service.storage.Set(ctx, key1, strconv.Itoa(int(userId))); err != nil {
 			return
 		}
 	}
 
+	// For GetNickname()
+	key2 := fmt.Sprintf(accessPattern2, userId)
+	if err = service.storage.Set(ctx, key2, nickname); err != nil {
+		return
+	}
+
+	// Generate api key for Validate()
+	var key3 string
 	for i := 0; i < maxRetries; i++ {
 		apiKey = utils.RandStringRunes(40)
-		exists, err := service.storage.Has(ctx, apiKey)
+		key3 = fmt.Sprintf(accessPattern3, apiKey)
+		exists, err := service.storage.Has(ctx, key3)
 		if err != nil {
 			return "", 0, err
 		}
@@ -69,24 +74,22 @@ func (service *AuthService) Register(ctx context.Context, nickname string) (apiK
 	if !selected {
 		return "", 0, fmt.Errorf("cannot generate api key in %d rounds", maxRetries)
 	}
-
-	if err := service.storage.Set(ctx, apiKey, userIdString); err != nil {
+	if err := service.storage.Set(ctx, key3, strconv.Itoa(int(userId))); err != nil {
 		return "", 0, err
 	}
 	return apiKey, userId, nil
 }
 
 func (service *AuthService) Validate(ctx context.Context, apiKey string) (validated bool, dto *auth.PlayerInfoDto, err error) {
-	validated, err = service.storage.Has(ctx, apiKey)
-	if err != nil {
+	validated, err = service.storage.Has(ctx, fmt.Sprintf(accessPattern3, apiKey))
+	if err != nil && !errors.Is(err, storage.ErrKeyNotFound) {
 		return
 	}
 	if !validated {
 		return
 	}
-
 	var userIdString string
-	userIdString, err = service.storage.Get(ctx, apiKey)
+	userIdString, err = service.storage.Get(ctx, fmt.Sprintf(accessPattern3, apiKey))
 	if err != nil {
 		return
 	}
@@ -99,7 +102,7 @@ func (service *AuthService) Validate(ctx context.Context, apiKey string) (valida
 	userId := int32(userIdInt)
 
 	var nickname string
-	nickname, err = service.storage.Get(ctx, userIdString)
+	nickname, err = service.storage.Get(ctx, fmt.Sprintf(accessPattern2, userId))
 	if err != nil {
 		return
 	}
@@ -114,7 +117,7 @@ func (service *AuthService) Validate(ctx context.Context, apiKey string) (valida
 func (service *AuthService) GetNicknames(ctx context.Context, playerIds []int32) (map[int32]string, error) {
 	idNicknameMap := map[int32]string{}
 	for _, playerId := range playerIds {
-		nickname, err := service.storage.Get(ctx, strconv.Itoa(int(playerId)))
+		nickname, err := service.storage.Get(ctx, fmt.Sprintf(accessPattern2, int(playerId)))
 		if err != nil {
 			log.Printf("cannot get nickname with player id %d", playerId)
 			nickname = "ERR"

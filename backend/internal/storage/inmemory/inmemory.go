@@ -47,7 +47,7 @@ func (inmemory *inmemoryStorage) Get(ctx context.Context, key string) (string, e
 	if v, ok := inmemory.m[key]; ok {
 		return v, nil
 	} else {
-		return "", &storage.NilError{Key: key}
+		return "", storage.ErrKeyNotFound
 	}
 }
 func (inmemory *inmemoryStorage) Delete(ctx context.Context, key string) error {
@@ -75,7 +75,7 @@ func (inmemory *inmemoryStorage) QueuePop(ctx context.Context, key string) (stri
 	if res, ok := inmemory.queuePop(key); ok {
 		return res, nil
 	}
-	return "", &storage.NotSufficientError{Key: key}
+	return "", storage.ErrQueueLengthZero
 }
 
 func (inmemory *inmemoryStorage) queuePop(key string) (string, bool) {

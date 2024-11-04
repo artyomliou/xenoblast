@@ -20,6 +20,7 @@ func TestAuthService(t *testing.T) {
 		validated, player, err := service.Validate(context.Background(), apiKey)
 		assert.NoError(t, err)
 		assert.Equal(t, true, validated)
+		assert.NotNil(t, player)
 		assert.Equal(t, userId, player.UserId)
 		assert.Equal(t, "nickname_1", player.Nickname)
 
