@@ -82,7 +82,7 @@ func (server *gameServer) Subscribe(req *game.SubscribeRequest, stream grpc.Serv
 	server.logger.Printf("Subscribe(): game %d", req.GameId)
 	defer server.logger.Printf("Subscribe(): game %d exit", req.GameId)
 
-	eventCh := make(chan *pkg_proto.Event, 10)
+	eventCh := make(chan *pkg_proto.Event, 30)
 	for _, eventType := range req.Types {
 		err := server.service.Subscribe(context.Background(), req.GameId, eventType, func(event *pkg_proto.Event) {
 			select {

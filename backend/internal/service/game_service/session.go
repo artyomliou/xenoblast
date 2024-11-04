@@ -17,8 +17,8 @@ import (
 
 const MinimumPlayer = 2
 const MaximumPlayer = 4
-const EventQueueLength = 100
-const MaxSendRetry = 60
+const EventQueueLength = 200
+const MaxWaitingReadyRetry = 20
 const GameCountdown = 2 * time.Second
 const GameMaxTime = 2 * time.Minute
 const BombBeforeExplodeDuration = 3 * time.Second
@@ -88,6 +88,7 @@ func (g *gameSession) setupSerializeEventChannel() {
 	g.eventBus.Subscribe(pkg_proto.EventType_PlayerDead, redirectEventToChannel)
 	g.eventBus.Subscribe(pkg_proto.EventType_WinConditionSatisfied, redirectEventToChannel)
 	g.eventBus.Subscribe(pkg_proto.EventType_StateGameover, redirectEventToChannel)
+	g.eventBus.Subscribe(pkg_proto.EventType_StateCrash, redirectEventToChannel)
 }
 
 func (g *gameSession) Run(ctx context.Context) {
@@ -253,8 +254,8 @@ func (g *gameSession) HandlePrepared() {
 	go func() {
 		ticker := time.NewTicker(1 * time.Second)
 		defer ticker.Stop()
-		for i := 0; i < MaxSendRetry; i++ {
-			if g.state.CurrentState() != pkg_proto.GameState_WaitingReady {
+		for i := 0; i < MaxWaitingReadyRetry; i++ {
+			if g.state.CurrentState() > pkg_proto.GameState_WaitingReady {
 				return
 			}
 			go g.eventBus.Publish(&pkg_proto.Event{
@@ -265,10 +266,12 @@ func (g *gameSession) HandlePrepared() {
 			<-ticker.C
 		}
 
-		if g.state.CurrentState() != pkg_proto.GameState_Crash {
+		reason := fmt.Sprintf("Some players are not ready in %d", MaxWaitingReadyRetry)
+		if err := g.state.Transition(pkg_proto.GameState_Crash); err != nil {
+			g.logger.Print("HandlePrepared(): ", reason)
 			return
 		}
-		g.publishCrashEvent("state should be transisted to Countdown in 60 retries")
+		g.publishCrashEvent(reason)
 	}()
 }
 

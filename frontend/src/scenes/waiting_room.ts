@@ -9,6 +9,8 @@ const STATE_WAITING_READY = 4;
 const STATE_READY = 5;
 const STATE_COUNTDOWN = 6;
 
+const MAX_WAITING_READY_RETRY = 20;
+
 export class WaitingRoom extends BaseScene {
 
   state!: number;
@@ -80,8 +82,12 @@ export class WaitingRoom extends BaseScene {
 
           case STATE_READY:
             this.text.setText(`Waiting other players...`);
-            await this.receiveCountdownFromWebsocket();
-            this.newStateQueue.push(STATE_COUNTDOWN);
+            const event = await this.receiveCountdownFromWebsocket();
+            if (event && event.type == common.EventType.StateCountdown) {
+              this.handleCountdownEvent(event);
+            } else if (event == undefined || event.type == common.EventType.StateCrash) {
+              this.handleCrashEvent(event);
+            }
             break;
 
           case STATE_COUNTDOWN:
@@ -161,10 +167,48 @@ export class WaitingRoom extends BaseScene {
     this.wsClient.send(msg);
   }
 
-  receiveCountdownFromWebsocket() {
-    return this.messageBox.blockUntilReceiveSpecficEvent(
-      common.EventType.StateCountdown,
-      10
-    );
+  async receiveCountdownFromWebsocket() {
+    const additionalSeconds = 2;
+
+    // Will receive NewMatch or Crash eventually
+    let event: common.Event | undefined;
+    try {
+      const promise1 = this.messageBox.blockUntilReceiveSpecficEvent(
+        common.EventType.StateCountdown,
+        MAX_WAITING_READY_RETRY + additionalSeconds
+      );
+      const promise2 = this.messageBox.blockUntilReceiveSpecficEvent(
+        common.EventType.StateCrash,
+        MAX_WAITING_READY_RETRY + additionalSeconds
+      );
+      event = await Promise.race([promise1, promise2]);
+    } catch (error) {
+      console.error(error)
+    }
+    return event
+  }
+
+  handleCountdownEvent(event: common.Event) {
+    this.session.gameId = event.gameId;
+    if (!event.gameId) {
+      throw new Error("event.gameId should not be zero value");
+    }
+    console.debug("gameId", event.gameId);
+    this.newStateQueue.push(STATE_COUNTDOWN);
+  }
+
+  handleCrashEvent(event: common.Event | undefined) {
+    const reason = event?.crash?.reason || "Game crash";
+    this.text.setText(`${reason}\nRetry after 2 seconds`);
+
+    setTimeout(() => {
+      this.cleanWebsocketConnection();
+      this.newStateQueue.push(STATE_INIT);
+    }, 2000);
+  }
+
+  cleanWebsocketConnection() {
+    this.wsClient.close();
+    this.messageBox.clean();
   }
 }

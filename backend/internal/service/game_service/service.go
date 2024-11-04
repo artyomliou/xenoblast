@@ -75,6 +75,9 @@ func (service *GameService) GetGameInfo(ctx context.Context, gameId int32) (*gam
 	if !ok {
 		return nil, &InvalidGameIdError{GameId: gameId}
 	}
+	if sess.state.CurrentState() >= pkg_proto.GameState_Gameover {
+		return nil, &InvalidGameIdError{GameId: gameId}
+	}
 
 	// TODO cache
 	players := []*pkg_proto.PlayerPropertyDto{}
