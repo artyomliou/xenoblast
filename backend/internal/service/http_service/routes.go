@@ -23,8 +23,6 @@ func InitRoutes() http.Handler {
 		ctl := NewApiController()
 		apiGroup.POST("/auth/register", ctl.Register)
 		apiGroup.GET("/auth/validate", ctl.Validate)
-		apiGroup.PUT("/matchmaking/enroll", ctl.Enroll)
-		apiGroup.DELETE("/matchmaking/cancel", ctl.Cancel)
 		apiGroup.GET("/matchmaking/get_waiting_player_count", ctl.GetWaitingPlayerCount)
 		apiGroup.GET("/game/get_game_info", ctl.GetGameInfo)
 	}

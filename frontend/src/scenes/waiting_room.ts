@@ -48,11 +48,8 @@ export class WaitingRoom extends BaseScene {
           case STATE_INIT:
             this.text.setText(`Welcome ${this.session.nickname}`);
             await this.startWebsocketConnection();
-            const enrolled = await this.sendEnrollMatchmakingOverHttp();
             this.waitingPlayerCount = await this.sendGetWaitingPlayerCountOverHttp();
-            if (enrolled) {
-              this.newStateQueue.push(STATE_ENROLLED);
-            }
+            this.newStateQueue.push(STATE_ENROLLED);
             break;
 
           case STATE_ENROLLED:
@@ -103,10 +100,6 @@ export class WaitingRoom extends BaseScene {
     await this.wsClient.open(this.session.apiKey, (ev: MessageEvent<any>) => {
       this.messageBox.handleMessageEvent(ev);
     });
-  }
-
-  async sendEnrollMatchmakingOverHttp() {
-    return await this.apiClient.matchmakingEnroll(this.session.apiKey);
   }
 
   async sendGetWaitingPlayerCountOverHttp() {

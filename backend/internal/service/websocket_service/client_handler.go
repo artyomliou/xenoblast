@@ -73,6 +73,20 @@ func (h *ClientHandler) Run(ctx context.Context) {
 				case pkg_proto.EventType_SubscribeNewMatch:
 					go h.recvMatchmakingEvent(ctx)
 
+					// Automatically enroll once connected
+					if err := h.sendEnrollMatchmakingOverHttp(ctx); err != nil {
+						h.logger.Print("Run(): ", err)
+						return
+					}
+
+					// Cancel matchmaking when disconnecting
+					defer func() {
+						if err := h.sendCancelMatchmakingOverHttp(ctx); err != nil {
+							h.logger.Print("Run(): ", err)
+							return
+						}
+					}()
+
 				case pkg_proto.EventType_PlayerReady:
 					h.HandlePlayerReadyEvent(ev)
 
@@ -190,6 +204,38 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 		case h.msgCh <- &messageContainer{event: ev, fromMatchmaking: true}:
 		}
 	}
+}
+
+func (h *ClientHandler) sendEnrollMatchmakingOverHttp(ctx context.Context) error {
+	matchmakingClient, close, err := matchmaking_service.NewGrpcClient()
+	if err != nil {
+		return err
+	}
+	defer close()
+
+	_, err = matchmakingClient.Enroll(ctx, &matchmaking.MatchmakingRequest{
+		PlayerId: h.player.PlayerId,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *ClientHandler) sendCancelMatchmakingOverHttp(ctx context.Context) error {
+	matchmakingClient, close, err := matchmaking_service.NewGrpcClient()
+	if err != nil {
+		return err
+	}
+	defer close()
+
+	_, err = matchmakingClient.Cancel(ctx, &matchmaking.MatchmakingRequest{
+		PlayerId: h.player.PlayerId,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (h *ClientHandler) HandleNewMatch(ev *pkg_proto.Event) error {

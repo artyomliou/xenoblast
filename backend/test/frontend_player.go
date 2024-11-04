@@ -86,7 +86,6 @@ func (player *frontendPlayer) Run(t *testing.T) {
 
 			case stateWaitingRoomInit:
 				player.startWebsocketConnection(t)
-				player.sendEnrollMatchmakingOverHttp(t)
 				player.sendGetWaitingPlayerCountOverHttp(t)
 				player.newStateQueue <- stateWaitingRoomEnrolled
 
@@ -145,11 +144,6 @@ func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, conn)
 	player.conn = conn
-}
-
-func (player *frontendPlayer) sendEnrollMatchmakingOverHttp(t *testing.T) {
-	_, err := player.sendHttpRequest(http.MethodPut, "api/matchmaking/enroll", nil, nil, &player.apiKey)
-	assert.NoError(t, err)
 }
 
 func (player *frontendPlayer) sendGetWaitingPlayerCountOverHttp(t *testing.T) {
