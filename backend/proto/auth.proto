@@ -31,6 +31,6 @@ message GetNicknameResponse {
 }
 
 message PlayerInfoDto {
-  int32 userId = 1;
+  int32 playerId = 1;
   string nickname = 2;
 }

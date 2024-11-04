@@ -77,7 +77,7 @@ message CountdownData {
 
 message GameOverData {
   GameOverReason reason = 1;
-  int32 winnerUserId = 2;
+  int32 winnerPlayerId = 2;
 }
 
 enum GameOverReason {
@@ -96,42 +96,42 @@ message NewMatchData {
 }
 
 message PlayerReadyData {
-  int32 userId = 1;
+  int32 playerId = 1;
 }
 
 message PlayerMoveData {
-  int32 userId = 1;
+  int32 playerId = 1;
   int32 x = 2;
   int32 y = 3;
 }
 
 message PlayerGetPowerupData {
-  int32 userId = 1;
+  int32 playerId = 1;
   int32 x = 2;
   int32 y = 3;
 }
 
 message PlayerPlantBombData {
-  int32 userId = 1;
+  int32 playerId = 1;
   int32 x = 2;
   int32 y = 3;
 }
 
 message PlayerMovedData {
-  int32 userId = 1;
+  int32 playerId = 1;
   int32 x = 2;
   int32 y = 3;
 }
 
 message PlayerDeadData {
-  int32 userId = 1;
+  int32 playerId = 1;
 }
 
 message BombPlantedData {
   int32 x = 1;
   int32 y = 2;
   int64 explodedAt = 3;
-  int32 userId = 4;
+  int32 playerId = 4;
   int32 userBombcount = 5;
 }
 
@@ -139,14 +139,14 @@ message BombWillExplodeData {
   int32 x = 1;
   int32 y = 2;
   int32 bombFirepower = 3;
-  int32 userId = 4;
+  int32 playerId = 4;
 }
 
 message BombExplodedData {
   int32 x = 1;
   int32 y = 2;
   int32 bombFirepower = 3;
-  int32 userId = 4;
+  int32 playerId = 4;
   int32 userBombcount = 5;
 }
 
@@ -162,7 +162,7 @@ message PowerupDroppedData {
 }
 
 message PowerupConsumedData {
-  int32 userId = 1;
+  int32 playerId = 1;
   int32 x = 2;
   int32 y = 3;
   PowerupType type = 4;
@@ -171,7 +171,7 @@ message PowerupConsumedData {
 }
 
 message PlayerPropertyDto {
-  int32 userId = 1;
+  int32 playerId = 1;
   int32 x = 2;
   int32 y = 3;
   int32 firepower = 4;

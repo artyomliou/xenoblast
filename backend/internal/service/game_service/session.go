@@ -218,27 +218,27 @@ func (g *gameSession) setupPlayerCoords() {
 	sort.Ints(keys)
 
 	for i := 0; i < len(keys); i++ {
-		userId := keys[i]
-		player := g.players[int32(userId)]
+		playerId := keys[i]
+		player := g.players[int32(playerId)]
 		coord := g.gameMap.PredefinedPlayerCoords[i]
 		x := coord[0]
 		y := coord[1]
 		player.SetTile(g.gameMap.GetTile(x, y))
 		player.X = x
 		player.Y = y
-		g.logger.Printf("player %d coord x=%d y=%d\n", userId, x, y)
+		g.logger.Printf("player %d coord x=%d y=%d\n", playerId, x, y)
 	}
 }
 
 func (g *gameSession) setupPlayerAliveMap() {
-	for userId, _ := range g.players {
-		g.alivePlayers[userId] = true
+	for playerId, _ := range g.players {
+		g.alivePlayers[playerId] = true
 	}
 }
 
 func (g *gameSession) setupPlayerReadyMap() {
-	for userId, _ := range g.players {
-		g.readyPlayers[userId] = false
+	for playerId, _ := range g.players {
+		g.readyPlayers[playerId] = false
 	}
 }
 
@@ -281,9 +281,9 @@ func (g *gameSession) HandlePlayerReady(ev *pkg_proto.Event) {
 		return
 	}
 
-	g.markPlayerReady(data.UserId)
+	g.markPlayerReady(data.PlayerId)
 	if g.debugMode {
-		g.logger.Printf("player %d ready", data.UserId)
+		g.logger.Printf("player %d ready", data.PlayerId)
 	}
 
 	if !g.allPlayersReady() {
@@ -364,7 +364,7 @@ func (g *gameSession) HandlePlayerMove(ev *pkg_proto.Event) {
 	if data == nil {
 		return
 	}
-	player := g.players[data.UserId]
+	player := g.players[data.PlayerId]
 	if player == nil {
 		return
 	}
@@ -379,14 +379,14 @@ func (g *gameSession) HandlePlayerMove(ev *pkg_proto.Event) {
 		GameId:    g.id,
 		Data: &pkg_proto.Event_PlayerMoved{
 			PlayerMoved: &pkg_proto.PlayerMovedData{
-				UserId: data.UserId,
-				X:      data.X,
-				Y:      data.Y,
+				PlayerId: data.PlayerId,
+				X:        data.X,
+				Y:        data.Y,
 			},
 		},
 	})
 	if g.debugMode {
-		g.logger.Printf("player %d move to X=%d Y=%d", player.userId, data.X, data.Y)
+		g.logger.Printf("player %d move to X=%d Y=%d", player.playerId, data.X, data.Y)
 	}
 }
 
@@ -398,13 +398,13 @@ func (g *gameSession) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 	if data == nil {
 		return
 	}
-	player := g.players[data.UserId]
+	player := g.players[data.PlayerId]
 	if player == nil {
 		return
 	}
 
 	if player.BombCount <= 0 {
-		g.logger.Printf("player %d BombCount less than or equal to 0", data.UserId)
+		g.logger.Printf("player %d BombCount less than or equal to 0", data.PlayerId)
 		return
 	}
 	player.BombCount--
@@ -423,13 +423,13 @@ func (g *gameSession) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 				X:             data.X,
 				Y:             data.Y,
 				ExplodedAt:    explodedAt.Unix(),
-				UserId:        data.UserId,
+				PlayerId:      data.PlayerId,
 				UserBombcount: player.BombCount,
 			},
 		},
 	})
 	if g.debugMode {
-		g.logger.Printf("player %d plant bomb at X=%d Y=%d exploded at %d", player.userId, data.X, data.Y, explodedAt.Unix())
+		g.logger.Printf("player %d plant bomb at X=%d Y=%d exploded at %d", player.playerId, data.X, data.Y, explodedAt.Unix())
 	}
 
 	go func() {
@@ -443,7 +443,7 @@ func (g *gameSession) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 					X:             data.X,
 					Y:             data.Y,
 					BombFirepower: bombFirepower,
-					UserId:        data.UserId,
+					PlayerId:      data.PlayerId,
 				},
 			},
 		})
@@ -458,7 +458,7 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 	if data == nil {
 		return
 	}
-	player := g.players[data.UserId]
+	player := g.players[data.PlayerId]
 	if player == nil {
 		return
 	}
@@ -479,7 +479,7 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 				X:             data.X,
 				Y:             data.Y,
 				BombFirepower: data.BombFirepower,
-				UserId:        data.UserId,
+				PlayerId:      data.PlayerId,
 				UserBombcount: player.BombCount,
 			},
 		},
@@ -494,20 +494,20 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 			g.logger.Printf("box was bombed at x=%d y=%d", data.X, data.Y)
 		}
 	}
-	for _, bombedUserId := range g.findBombedPlayers(data) {
-		g.alivePlayers[bombedUserId] = false
+	for _, bombedPlayerId := range g.findBombedPlayers(data) {
+		g.alivePlayers[bombedPlayerId] = false
 		go g.eventBus.Publish(&pkg_proto.Event{
 			Type:      pkg_proto.EventType_PlayerDead,
 			Timestamp: time.Now().Unix(),
 			GameId:    g.id,
 			Data: &pkg_proto.Event_PlayerDead{
 				PlayerDead: &pkg_proto.PlayerDeadData{
-					UserId: bombedUserId,
+					PlayerId: bombedPlayerId,
 				},
 			},
 		})
 		if g.debugMode {
-			g.logger.Printf("player %d was bombed at x=%d y=%d", bombedUserId, data.X, data.Y)
+			g.logger.Printf("player %d was bombed at x=%d y=%d", bombedPlayerId, data.X, data.Y)
 		}
 	}
 }
@@ -543,12 +543,12 @@ func (g *gameSession) findBombedPlayers(data *pkg_proto.BombWillExplodeData) (bo
 	x2 := data.X + data.BombFirepower
 	y1 := data.Y - data.BombFirepower
 	y2 := data.Y + data.BombFirepower
-	for userId, player := range g.players {
-		if g.alivePlayers[userId] {
+	for playerId, player := range g.players {
+		if g.alivePlayers[playerId] {
 			bombedVertically := player.X == data.X && y1 <= player.Y && player.Y <= y2
 			bombedHorizontally := player.Y == data.Y && x1 <= player.X && player.X <= x2
 			if bombedVertically || bombedHorizontally {
-				bombedPlayerIds = append(bombedPlayerIds, userId)
+				bombedPlayerIds = append(bombedPlayerIds, playerId)
 			}
 		}
 	}
@@ -613,7 +613,7 @@ func (g *gameSession) HandleGetPowerup(ev *pkg_proto.Event) {
 	if data == nil {
 		return
 	}
-	player := g.players[data.UserId]
+	player := g.players[data.PlayerId]
 	if player == nil {
 		return
 	}
@@ -644,7 +644,7 @@ func (g *gameSession) HandleGetPowerup(ev *pkg_proto.Event) {
 			PowerupConsumed: &pkg_proto.PowerupConsumedData{
 				X:             data.X,
 				Y:             data.Y,
-				UserId:        player.userId,
+				PlayerId:      player.playerId,
 				Type:          powerup.Type,
 				UserBombcount: player.BombCount,
 				UserFirepower: player.Firepower,
@@ -652,7 +652,7 @@ func (g *gameSession) HandleGetPowerup(ev *pkg_proto.Event) {
 		},
 	})
 	if g.debugMode {
-		g.logger.Printf("player %d got powerup(%s)at x=%d y=%d", player.userId, powerup.Type.String(), data.X, data.Y)
+		g.logger.Printf("player %d got powerup(%s)at x=%d y=%d", player.playerId, powerup.Type.String(), data.X, data.Y)
 	}
 }
 
@@ -664,7 +664,7 @@ func (g *gameSession) HandlePlayerDead(ev *pkg_proto.Event) {
 	if data == nil {
 		return
 	}
-	player := g.players[data.UserId]
+	player := g.players[data.PlayerId]
 	if player == nil {
 		return
 	}
@@ -678,7 +678,7 @@ func (g *gameSession) HandlePlayerDead(ev *pkg_proto.Event) {
 		GameId:    g.id,
 	})
 	if g.debugMode {
-		g.logger.Printf("player %d dead", player.userId)
+		g.logger.Printf("player %d dead", player.playerId)
 	}
 }
 
@@ -691,15 +691,15 @@ func (g *gameSession) HandleWinConditionSatisfied(ev *pkg_proto.Event) {
 	g.publishGameoverEvent(pkg_proto.GameOverReason_Reason_WinConditionSatisfied, g.winCondition.GetWinner())
 }
 
-func (g *gameSession) publishGameoverEvent(reason pkg_proto.GameOverReason, winnerUserId int32) {
+func (g *gameSession) publishGameoverEvent(reason pkg_proto.GameOverReason, winnerPlayerId int32) {
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_StateGameover,
 		Timestamp: time.Now().Unix(),
 		GameId:    g.id,
 		Data: &pkg_proto.Event_GameOver{
 			GameOver: &pkg_proto.GameOverData{
-				Reason:       reason,
-				WinnerUserId: winnerUserId,
+				Reason:         reason,
+				WinnerPlayerId: winnerPlayerId,
 			},
 		},
 	})

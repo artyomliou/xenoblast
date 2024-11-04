@@ -47,7 +47,7 @@ func TestGameLogicService(t *testing.T) {
 		assert.Equal(t, 1, int(response.GameId))
 		assert.Equal(t, pkg_proto.GameState_WaitingReady, response.State)
 		for _, playerDto := range response.Players {
-			assert.Contains(t, players, playerDto.UserId)
+			assert.Contains(t, players, playerDto.PlayerId)
 			assert.Equal(t, gamelogic.DefaultFirepower, playerDto.Firepower)
 			assert.Equal(t, gamelogic.DefaultBombCount, playerDto.Bombcount)
 		}
@@ -68,9 +68,9 @@ func TestGameLogicService(t *testing.T) {
 			GameId:    1,
 			Data: &pkg_proto.Event_PlayerMove{
 				PlayerMove: &pkg_proto.PlayerMoveData{
-					UserId: 1,
-					X:      0,
-					Y:      1,
+					PlayerId: 1,
+					X:        0,
+					Y:        1,
 				},
 			},
 		})
@@ -87,7 +87,7 @@ func TestGameLogicService(t *testing.T) {
 
 		data := ev.GetPlayerMove()
 		assert.NotNil(t, data)
-		assert.Equal(t, 1, int(data.UserId))
+		assert.Equal(t, 1, int(data.PlayerId))
 		assert.Equal(t, 0, int(data.X))
 		assert.Equal(t, 1, int(data.Y))
 	})

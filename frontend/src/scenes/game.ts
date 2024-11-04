@@ -188,7 +188,7 @@ export class Game extends BaseScene {
       // setting this avoids too many collision which is annoying.
       player.sprite.setSize(35, 35).setOffset(2.5, 2.5);
 
-      if (player.userId == this.session.uid) {
+      if (player.playerId == this.session.playerId) {
         this.player = player;
       }
     }
@@ -262,7 +262,7 @@ export class Game extends BaseScene {
       timestamp: new Date().getTime() / 1000,
       gameId: this.session.gameId,
       playerGetPowerup: {
-        userId: this.session.uid,
+        playerId: this.session.playerId,
         x: tileX,
         y: tileY,
       },
@@ -374,11 +374,11 @@ export class Game extends BaseScene {
     if (!ev.playerMoved) {
       return
     }
-    if (ev.playerMoved.userId == this.session.uid) {
+    if (ev.playerMoved.playerId == this.session.playerId) {
       return;
     }
     for (const player of this.gameInfo.players) {
-      if (player.isAlive && player.userId == ev.playerMoved.userId) {
+      if (player.isAlive && player.playerId == ev.playerMoved.playerId) {
         player.targetX = ev.playerMoved.x || 0;
         player.targetY = ev.playerMoved.y || 0;
       }
@@ -390,13 +390,13 @@ export class Game extends BaseScene {
       return
     }
     for (const player of this.gameInfo.players) {
-      if (player.userId == ev.playerDead.userId) {
+      if (player.playerId == ev.playerDead.playerId) {
         player.isAlive = false;
         if (player.sprite) {
           player.sprite.destroy();
           player.sprite = undefined;
         }
-        console.debug(`PlayerDead, user=${player.userId}`);
+        console.debug(`PlayerDead, user=${player.playerId}`);
       }
     }
   }
@@ -414,7 +414,7 @@ export class Game extends BaseScene {
     this.bombTiles.add(tile);
     console.debug(`BombPlanted, x=${x} y=${y}`);
 
-    if (ev.bombPlanted.userId == this.session.uid) {
+    if (ev.bombPlanted.playerId == this.session.playerId) {
       this.player.bombcount = ev.bombPlanted.userBombcount || 0;
       console.debug(`bombcount was set to ${ev.bombPlanted.userBombcount || 0}`);
     }
@@ -492,7 +492,7 @@ export class Game extends BaseScene {
     console.debug(`BombExploded, x=${x} y=${y}`);
 
     // Restore current player bombcount
-    if (ev.bombExploded.userId == this.session.uid) {
+    if (ev.bombExploded.playerId == this.session.playerId) {
       this.player.bombcount = userBombcount;
       console.debug(
         `bomb exploded, bombcount was set to ${userBombcount}`
@@ -575,13 +575,13 @@ export class Game extends BaseScene {
     }
     const x = ev.powerupConsumed.x || 0; // workaround zero-value marshalling
     const y = ev.powerupConsumed.y || 0;
-    const userId = ev.powerupConsumed.userId || 0;
+    const playerId = ev.powerupConsumed.playerId || 0;
     const userBombcount = ev.powerupConsumed.userBombcount || 0;
     const userFirepower = ev.powerupConsumed.userFirepower || 0;
 
     const tile = this.gameInfo.tiles[x][y];
 
-    if (userId == this.session.uid) {
+    if (playerId == this.session.playerId) {
       this.player.bombcount = userBombcount;
       this.player.firepower = userFirepower;
       console.debug(
@@ -604,12 +604,12 @@ export class Game extends BaseScene {
     if (ev.gameOver.reason == null || ev.gameOver.reason == undefined) {
       ev.gameOver.reason = common.GameOverReason.Reason_WinConditionSatisfied // workaround zero-value marshaling
     }
-    console.debug(`Gameover, reason=${common.GameOverReason[ev.gameOver.reason]}, winnerUserId=${ev.gameOver.winnerUserId}`);
+    console.debug(`Gameover, reason=${common.GameOverReason[ev.gameOver.reason]}, winnerPlayerId=${ev.gameOver.winnerPlayerId}`);
 
     switch (ev.gameOver.reason) {
       case common.GameOverReason.Reason_WinConditionSatisfied:
         for (const player of this.gameInfo.players) {
-          if (player.userId == ev.gameOver.winnerUserId) {
+          if (player.playerId == ev.gameOver.winnerPlayerId) {
             this.scene.start("GameOver", { reason: `Winner is ${player.nickname}` });
             return;
           }
@@ -666,7 +666,7 @@ export class Game extends BaseScene {
                 timestamp: new Date().getTime() / 1000,
                 gameId: this.session.gameId,
                 playerPlantBomb: {
-                  userId: this.session.uid,
+                  playerId: this.session.playerId,
                   x: tileX,
                   y: tileY,
                 },
@@ -681,7 +681,7 @@ export class Game extends BaseScene {
 
       // process other players
       this.gameInfo.players.forEach((player) => {
-        if (player.userId == this.session.uid) {
+        if (player.playerId == this.session.playerId) {
           return;
         }
         player.update();
@@ -708,7 +708,7 @@ export class Game extends BaseScene {
         timestamp: new Date().getTime() / 1000,
         gameId: this.session.gameId,
         playerMove: {
-          userId: this.session.uid,
+          playerId: this.session.playerId,
           x: tileX,
           y: tileY,
         },

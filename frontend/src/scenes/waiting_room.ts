@@ -158,7 +158,7 @@ export class WaitingRoom extends BaseScene {
       timestamp: new Date().getTime() / 1000,
       gameId: this.session.gameId,
       playerReady: {
-        userId: this.session.uid,
+        playerId: this.session.playerId,
       },
     });
     console.debug(`-> ${common.EventType[event.type]}`, event);

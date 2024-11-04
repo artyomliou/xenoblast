@@ -118,7 +118,7 @@ func TestGameSession(t *testing.T) {
 				GameId:    1,
 				Data: &pkg_proto.Event_PlayerReady{
 					PlayerReady: &pkg_proto.PlayerReadyData{
-						UserId: int32(i),
+						PlayerId: int32(i),
 					},
 				},
 			})
@@ -218,9 +218,9 @@ func TestGameSession(t *testing.T) {
 			GameId:    1,
 			Data: &pkg_proto.Event_PlayerMove{
 				PlayerMove: &pkg_proto.PlayerMoveData{
-					UserId: 1,
-					X:      5,
-					Y:      5,
+					PlayerId: 1,
+					X:        5,
+					Y:        5,
 				},
 			},
 		})
@@ -260,9 +260,9 @@ func TestGameSession(t *testing.T) {
 			GameId:    1,
 			Data: &pkg_proto.Event_PlayerPlantBomb{
 				PlayerPlantBomb: &pkg_proto.PlayerPlantBombData{
-					UserId: 1,
-					X:      5,
-					Y:      5,
+					PlayerId: 1,
+					X:        5,
+					Y:        5,
 				},
 			},
 		})
@@ -318,7 +318,7 @@ func TestGameSession(t *testing.T) {
 					assert.Equal(t, 0, int(data.X))
 					assert.Equal(t, 0, int(data.Y))
 					assert.Equal(t, gamelogic.DefaultFirepower, data.BombFirepower)
-					assert.Equal(t, 1, int(data.UserId))
+					assert.Equal(t, 1, int(data.PlayerId))
 					assert.Equal(t, gamelogic.DefaultBombCount, data.UserBombcount)
 					assert.Equal(t, false, gameMap.CheckObstacleType(0, 0, pkg_proto.ObstacleType_Bomb))
 				},
@@ -331,7 +331,7 @@ func TestGameSession(t *testing.T) {
 				AssertFunc: func(state *state.StateManager, gameMap *maploader.GameMap, ev *pkg_proto.Event) {
 					data := ev.GetPlayerDead()
 					assert.NotNil(t, data)
-					assert.Equal(t, 1, int(data.UserId))
+					assert.Equal(t, 1, int(data.PlayerId))
 				},
 			},
 			{
@@ -391,9 +391,9 @@ func TestGameSession(t *testing.T) {
 					GameId:    1,
 					Data: &pkg_proto.Event_PlayerPlantBomb{
 						PlayerPlantBomb: &pkg_proto.PlayerPlantBombData{
-							UserId: 1,
-							X:      int32(c.BombX),
-							Y:      int32(c.BombY),
+							PlayerId: 1,
+							X:        int32(c.BombX),
+							Y:        int32(c.BombY),
 						},
 					},
 				})
@@ -466,9 +466,9 @@ func TestGameSession(t *testing.T) {
 					GameId:    1,
 					Data: &pkg_proto.Event_PlayerGetPowerup{
 						PlayerGetPowerup: &pkg_proto.PlayerGetPowerupData{
-							UserId: 1,
-							X:      0,
-							Y:      0,
+							PlayerId: 1,
+							X:        0,
+							Y:        0,
 						},
 					},
 				})
@@ -484,7 +484,7 @@ func TestGameSession(t *testing.T) {
 
 				data := ev.GetPowerupConsumed()
 				assert.NotNil(t, data)
-				assert.Equal(t, 1, int(data.UserId))
+				assert.Equal(t, 1, int(data.PlayerId))
 				assert.Equal(t, 0, int(data.X))
 				assert.Equal(t, 0, int(data.Y))
 				assert.Equal(t, c.PowerupType, data.Type)
@@ -539,7 +539,7 @@ func TestGameSession(t *testing.T) {
 			{4, 14, 0},
 		}
 		for _, bombPlan := range bombPlans {
-			userId := bombPlan[0]
+			playerId := bombPlan[0]
 			bombX := bombPlan[1]
 			bombY := bombPlan[2]
 
@@ -549,9 +549,9 @@ func TestGameSession(t *testing.T) {
 				GameId:    1,
 				Data: &pkg_proto.Event_PlayerPlantBomb{
 					PlayerPlantBomb: &pkg_proto.PlayerPlantBombData{
-						UserId: userId,
-						X:      bombX,
-						Y:      bombY,
+						PlayerId: playerId,
+						X:        bombX,
+						Y:        bombY,
 					},
 				},
 			})
@@ -568,6 +568,6 @@ func TestGameSession(t *testing.T) {
 
 		data := ev.GetGameOver()
 		assert.NotNil(t, data)
-		assert.Equal(t, 1, int(data.WinnerUserId))
+		assert.Equal(t, 1, int(data.WinnerPlayerId))
 	})
 }

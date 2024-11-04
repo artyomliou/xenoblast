@@ -359,8 +359,8 @@ export namespace common {
         /** GameOverData reason */
         reason?: (common.GameOverReason|null);
 
-        /** GameOverData winnerUserId */
-        winnerUserId?: (number|null);
+        /** GameOverData winnerPlayerId */
+        winnerPlayerId?: (number|null);
     }
 
     /** Represents a GameOverData. */
@@ -375,8 +375,8 @@ export namespace common {
         /** GameOverData reason. */
         public reason: common.GameOverReason;
 
-        /** GameOverData winnerUserId. */
-        public winnerUserId: number;
+        /** GameOverData winnerPlayerId. */
+        public winnerPlayerId: number;
 
         /**
          * Creates a new GameOverData instance using the specified properties.
@@ -665,8 +665,8 @@ export namespace common {
     /** Properties of a PlayerReadyData. */
     interface IPlayerReadyData {
 
-        /** PlayerReadyData userId */
-        userId?: (number|null);
+        /** PlayerReadyData playerId */
+        playerId?: (number|null);
     }
 
     /** Represents a PlayerReadyData. */
@@ -678,8 +678,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerReadyData);
 
-        /** PlayerReadyData userId. */
-        public userId: number;
+        /** PlayerReadyData playerId. */
+        public playerId: number;
 
         /**
          * Creates a new PlayerReadyData instance using the specified properties.
@@ -762,8 +762,8 @@ export namespace common {
     /** Properties of a PlayerMoveData. */
     interface IPlayerMoveData {
 
-        /** PlayerMoveData userId */
-        userId?: (number|null);
+        /** PlayerMoveData playerId */
+        playerId?: (number|null);
 
         /** PlayerMoveData x */
         x?: (number|null);
@@ -781,8 +781,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerMoveData);
 
-        /** PlayerMoveData userId. */
-        public userId: number;
+        /** PlayerMoveData playerId. */
+        public playerId: number;
 
         /** PlayerMoveData x. */
         public x: number;
@@ -871,8 +871,8 @@ export namespace common {
     /** Properties of a PlayerGetPowerupData. */
     interface IPlayerGetPowerupData {
 
-        /** PlayerGetPowerupData userId */
-        userId?: (number|null);
+        /** PlayerGetPowerupData playerId */
+        playerId?: (number|null);
 
         /** PlayerGetPowerupData x */
         x?: (number|null);
@@ -890,8 +890,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerGetPowerupData);
 
-        /** PlayerGetPowerupData userId. */
-        public userId: number;
+        /** PlayerGetPowerupData playerId. */
+        public playerId: number;
 
         /** PlayerGetPowerupData x. */
         public x: number;
@@ -980,8 +980,8 @@ export namespace common {
     /** Properties of a PlayerPlantBombData. */
     interface IPlayerPlantBombData {
 
-        /** PlayerPlantBombData userId */
-        userId?: (number|null);
+        /** PlayerPlantBombData playerId */
+        playerId?: (number|null);
 
         /** PlayerPlantBombData x */
         x?: (number|null);
@@ -999,8 +999,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerPlantBombData);
 
-        /** PlayerPlantBombData userId. */
-        public userId: number;
+        /** PlayerPlantBombData playerId. */
+        public playerId: number;
 
         /** PlayerPlantBombData x. */
         public x: number;
@@ -1089,8 +1089,8 @@ export namespace common {
     /** Properties of a PlayerMovedData. */
     interface IPlayerMovedData {
 
-        /** PlayerMovedData userId */
-        userId?: (number|null);
+        /** PlayerMovedData playerId */
+        playerId?: (number|null);
 
         /** PlayerMovedData x */
         x?: (number|null);
@@ -1108,8 +1108,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerMovedData);
 
-        /** PlayerMovedData userId. */
-        public userId: number;
+        /** PlayerMovedData playerId. */
+        public playerId: number;
 
         /** PlayerMovedData x. */
         public x: number;
@@ -1198,8 +1198,8 @@ export namespace common {
     /** Properties of a PlayerDeadData. */
     interface IPlayerDeadData {
 
-        /** PlayerDeadData userId */
-        userId?: (number|null);
+        /** PlayerDeadData playerId */
+        playerId?: (number|null);
     }
 
     /** Represents a PlayerDeadData. */
@@ -1211,8 +1211,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerDeadData);
 
-        /** PlayerDeadData userId. */
-        public userId: number;
+        /** PlayerDeadData playerId. */
+        public playerId: number;
 
         /**
          * Creates a new PlayerDeadData instance using the specified properties.
@@ -1304,8 +1304,8 @@ export namespace common {
         /** BombPlantedData explodedAt */
         explodedAt?: (number|Long|null);
 
-        /** BombPlantedData userId */
-        userId?: (number|null);
+        /** BombPlantedData playerId */
+        playerId?: (number|null);
 
         /** BombPlantedData userBombcount */
         userBombcount?: (number|null);
@@ -1329,8 +1329,8 @@ export namespace common {
         /** BombPlantedData explodedAt. */
         public explodedAt: (number|Long);
 
-        /** BombPlantedData userId. */
-        public userId: number;
+        /** BombPlantedData playerId. */
+        public playerId: number;
 
         /** BombPlantedData userBombcount. */
         public userBombcount: number;
@@ -1425,8 +1425,8 @@ export namespace common {
         /** BombWillExplodeData bombFirepower */
         bombFirepower?: (number|null);
 
-        /** BombWillExplodeData userId */
-        userId?: (number|null);
+        /** BombWillExplodeData playerId */
+        playerId?: (number|null);
     }
 
     /** Represents a BombWillExplodeData. */
@@ -1447,8 +1447,8 @@ export namespace common {
         /** BombWillExplodeData bombFirepower. */
         public bombFirepower: number;
 
-        /** BombWillExplodeData userId. */
-        public userId: number;
+        /** BombWillExplodeData playerId. */
+        public playerId: number;
 
         /**
          * Creates a new BombWillExplodeData instance using the specified properties.
@@ -1540,8 +1540,8 @@ export namespace common {
         /** BombExplodedData bombFirepower */
         bombFirepower?: (number|null);
 
-        /** BombExplodedData userId */
-        userId?: (number|null);
+        /** BombExplodedData playerId */
+        playerId?: (number|null);
 
         /** BombExplodedData userBombcount */
         userBombcount?: (number|null);
@@ -1565,8 +1565,8 @@ export namespace common {
         /** BombExplodedData bombFirepower. */
         public bombFirepower: number;
 
-        /** BombExplodedData userId. */
-        public userId: number;
+        /** BombExplodedData playerId. */
+        public playerId: number;
 
         /** BombExplodedData userBombcount. */
         public userBombcount: number;
@@ -1864,8 +1864,8 @@ export namespace common {
     /** Properties of a PowerupConsumedData. */
     interface IPowerupConsumedData {
 
-        /** PowerupConsumedData userId */
-        userId?: (number|null);
+        /** PowerupConsumedData playerId */
+        playerId?: (number|null);
 
         /** PowerupConsumedData x */
         x?: (number|null);
@@ -1892,8 +1892,8 @@ export namespace common {
          */
         constructor(properties?: common.IPowerupConsumedData);
 
-        /** PowerupConsumedData userId. */
-        public userId: number;
+        /** PowerupConsumedData playerId. */
+        public playerId: number;
 
         /** PowerupConsumedData x. */
         public x: number;
@@ -1991,8 +1991,8 @@ export namespace common {
     /** Properties of a PlayerPropertyDto. */
     interface IPlayerPropertyDto {
 
-        /** PlayerPropertyDto userId */
-        userId?: (number|null);
+        /** PlayerPropertyDto playerId */
+        playerId?: (number|null);
 
         /** PlayerPropertyDto x */
         x?: (number|null);
@@ -2019,8 +2019,8 @@ export namespace common {
          */
         constructor(properties?: common.IPlayerPropertyDto);
 
-        /** PlayerPropertyDto userId. */
-        public userId: number;
+        /** PlayerPropertyDto playerId. */
+        public playerId: number;
 
         /** PlayerPropertyDto x. */
         public x: number;
@@ -3119,8 +3119,8 @@ export namespace auth {
     /** Properties of a PlayerInfoDto. */
     interface IPlayerInfoDto {
 
-        /** PlayerInfoDto userId */
-        userId?: (number|null);
+        /** PlayerInfoDto playerId */
+        playerId?: (number|null);
 
         /** PlayerInfoDto nickname */
         nickname?: (string|null);
@@ -3135,8 +3135,8 @@ export namespace auth {
          */
         constructor(properties?: auth.IPlayerInfoDto);
 
-        /** PlayerInfoDto userId. */
-        public userId: number;
+        /** PlayerInfoDto playerId. */
+        public playerId: number;
 
         /** PlayerInfoDto nickname. */
         public nickname: string;
@@ -3355,8 +3355,8 @@ export namespace matchmaking {
     /** Properties of a MatchmakingRequest. */
     interface IMatchmakingRequest {
 
-        /** MatchmakingRequest userId */
-        userId?: (number|null);
+        /** MatchmakingRequest playerId */
+        playerId?: (number|null);
     }
 
     /** Represents a MatchmakingRequest. */
@@ -3368,8 +3368,8 @@ export namespace matchmaking {
          */
         constructor(properties?: matchmaking.IMatchmakingRequest);
 
-        /** MatchmakingRequest userId. */
-        public userId: number;
+        /** MatchmakingRequest playerId. */
+        public playerId: number;
 
         /**
          * Creates a new MatchmakingRequest instance using the specified properties.
@@ -3549,8 +3549,8 @@ export namespace matchmaking {
     /** Properties of a GetGameServerAddrRequest. */
     interface IGetGameServerAddrRequest {
 
-        /** GetGameServerAddrRequest userId */
-        userId?: (number|null);
+        /** GetGameServerAddrRequest playerId */
+        playerId?: (number|null);
     }
 
     /** Represents a GetGameServerAddrRequest. */
@@ -3562,8 +3562,8 @@ export namespace matchmaking {
          */
         constructor(properties?: matchmaking.IGetGameServerAddrRequest);
 
-        /** GetGameServerAddrRequest userId. */
-        public userId: number;
+        /** GetGameServerAddrRequest playerId. */
+        public playerId: number;
 
         /**
          * Creates a new GetGameServerAddrRequest instance using the specified properties.
@@ -4488,8 +4488,8 @@ export namespace http_api {
         /** RegisterResponse apiKey */
         apiKey?: (string|null);
 
-        /** RegisterResponse userId */
-        userId?: (number|null);
+        /** RegisterResponse playerId */
+        playerId?: (number|null);
     }
 
     /** Represents a RegisterResponse. */
@@ -4504,8 +4504,8 @@ export namespace http_api {
         /** RegisterResponse apiKey. */
         public apiKey: string;
 
-        /** RegisterResponse userId. */
-        public userId: number;
+        /** RegisterResponse playerId. */
+        public playerId: number;
 
         /**
          * Creates a new RegisterResponse instance using the specified properties.

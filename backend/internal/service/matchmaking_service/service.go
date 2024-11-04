@@ -40,15 +40,15 @@ func NewMatchmakingService(storage storage.Storage, eventBus *eventbus.EventBus)
 	}
 }
 
-func (service *MatchmakingService) Enroll(ctx context.Context, userId int32) error {
+func (service *MatchmakingService) Enroll(ctx context.Context, playerId int32) error {
 	service.mutex.Lock()
 	defer service.mutex.Unlock()
-	service.nextTickQueue = append(service.nextTickQueue, userId)
+	service.nextTickQueue = append(service.nextTickQueue, playerId)
 	return nil
 }
 
-func (service *MatchmakingService) Cancel(ctx context.Context, userId int32) error {
-	return service.storage.SortedSetRemove(ctx, sortedSetKey, strconv.Itoa(int(userId)))
+func (service *MatchmakingService) Cancel(ctx context.Context, playerId int32) error {
+	return service.storage.SortedSetRemove(ctx, sortedSetKey, strconv.Itoa(int(playerId)))
 }
 
 func (service *MatchmakingService) StartMatchmaking(ctx context.Context) {
@@ -80,26 +80,26 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 		return
 	}
 
-	userIds, err := service.storage.SortedSetGetN(ctx, sortedSetKey, maximumPlayer)
+	playerIdStrings, err := service.storage.SortedSetGetN(ctx, sortedSetKey, maximumPlayer)
 	if err != nil {
 		service.logger.Println("cannot getN from sorted set: ", err)
 		return
 	}
-	for _, userId := range userIds {
-		if err := service.storage.SortedSetRemove(ctx, sortedSetKey, userId); err != nil {
+	for _, playerIdString := range playerIdStrings {
+		if err := service.storage.SortedSetRemove(ctx, sortedSetKey, playerIdString); err != nil {
 			service.logger.Println("cannot remove from sorted set: ", err)
 			return
 		}
 	}
 
 	playerIds := []int32{}
-	for _, userIdString := range userIds {
-		userId, err := strconv.Atoi(userIdString)
+	for _, playerIdString := range playerIdStrings {
+		playerId, err := strconv.Atoi(playerIdString)
 		if err != nil {
 			service.logger.Println("cannot convert string to int", err)
 			return
 		}
-		playerIds = append(playerIds, int32(userId))
+		playerIds = append(playerIds, int32(playerId))
 	}
 
 	gameId := rand.Int31() // TODO definitely introduce some bug here
@@ -130,8 +130,8 @@ func (service *MatchmakingService) clearNextTickQueue(ctx context.Context) {
 	service.mutex.Lock()
 	defer service.mutex.Unlock()
 
-	for _, userId := range service.nextTickQueue {
-		err := service.storage.SortedSetAdd(ctx, sortedSetKey, strconv.Itoa(int(userId)), int(time.Now().Unix()))
+	for _, playerId := range service.nextTickQueue {
+		err := service.storage.SortedSetAdd(ctx, sortedSetKey, strconv.Itoa(int(playerId)), int(time.Now().Unix()))
 		if err != nil {
 			service.logger.Print("clearNextTickQueue(): ", err)
 		}

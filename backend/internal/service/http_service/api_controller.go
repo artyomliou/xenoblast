@@ -50,8 +50,8 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, &http_api.RegisterResponse{
-		ApiKey: resp.ApiKey,
-		UserId: resp.Player.UserId,
+		ApiKey:   resp.ApiKey,
+		PlayerId: resp.Player.PlayerId,
 	})
 }
 
@@ -112,7 +112,7 @@ func (ctl *apiController) Enroll(ctx *gin.Context) {
 	}
 	defer matchmakingClientClose()
 	_, err = matchmakingClient.Enroll(ctx, &matchmaking.MatchmakingRequest{
-		UserId: player.UserId,
+		PlayerId: player.PlayerId,
 	})
 	if err != nil {
 		ctl.logger.Print("Enroll(): ", err)
@@ -153,7 +153,7 @@ func (ctl *apiController) Cancel(ctx *gin.Context) {
 	}
 	defer matchmakingClientClose()
 	_, err = matchmakingClient.Cancel(ctx, &matchmaking.MatchmakingRequest{
-		UserId: player.UserId,
+		PlayerId: player.PlayerId,
 	})
 	if err != nil {
 		ctl.logger.Print("Cancel(): ", err)
@@ -228,7 +228,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 		return
 	}
 
-	// Get gameServerAddr by userId
+	// Get gameServerAddr by playerId
 	matchmakingClient, close, err := matchmaking_service.NewGrpcClient()
 	if err != nil {
 		ctl.logger.Print("GetGameInfo(): ", err)
@@ -236,7 +236,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 		return
 	}
 	defer close()
-	resp1, err := matchmakingClient.GetGameServerAddr(ctx, &matchmaking.GetGameServerAddrRequest{UserId: player.UserId})
+	resp1, err := matchmakingClient.GetGameServerAddr(ctx, &matchmaking.GetGameServerAddrRequest{PlayerId: player.PlayerId})
 	if err != nil {
 		ctl.logger.Print("GetGameInfo(): ", err)
 		ctx.String(http.StatusInternalServerError, "Internal server error")

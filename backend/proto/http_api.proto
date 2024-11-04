@@ -10,7 +10,7 @@ message RegisterRequest {
 
 message RegisterResponse{
   string apiKey = 1;
-  int32 userId = 2;
+  int32 playerId = 2;
 }
 
 message ValidateResponse {

@@ -33,7 +33,7 @@ func NewClientHandler(client *Client, player *auth.PlayerInfoDto) *ClientHandler
 		player:         player,
 		gameId:         0,
 		gameServerAddr: "",
-		logger:         log.New(os.Stdout, fmt.Sprintf("[ClientHandler][%d] ", player.UserId), log.LstdFlags),
+		logger:         log.New(os.Stdout, fmt.Sprintf("[ClientHandler][%d] ", player.PlayerId), log.LstdFlags),
 		msgCh:          make(chan *messageContainer, 100),
 		gameClient:     nil,
 	}
@@ -163,7 +163,7 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 	defer close()
 
 	stream, err := matchmakingClient.SubscribeMatch(ctx, &matchmaking.MatchmakingRequest{
-		UserId: h.player.UserId,
+		PlayerId: h.player.PlayerId,
 	})
 	if err != nil {
 		h.logger.Print("recvMatchmakingEvent(): ", err)
@@ -278,12 +278,12 @@ func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 		h.logger.Print("HandlePlayerReadyEvent(): data is nil")
 		return
 	}
-	if data.UserId != h.player.UserId {
-		h.logger.Print("HandlePlayerReadyEvent(): user_id unmatch")
+	if data.PlayerId != h.player.PlayerId {
+		h.logger.Print("HandlePlayerReadyEvent(): playerId unmatch")
 		return
 	}
 	if msg.GameId != h.gameId {
-		h.logger.Print("HandlePlayerReadyEvent(): game_id unmatch")
+		h.logger.Print("HandlePlayerReadyEvent(): gameId unmatch")
 		return
 	}
 
@@ -297,7 +297,7 @@ func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 		GameId:    h.gameId,
 		Data: &pkg_proto.Event_PlayerReady{
 			PlayerReady: &pkg_proto.PlayerReadyData{
-				UserId: data.UserId,
+				PlayerId: data.PlayerId,
 			},
 		},
 	})
@@ -312,7 +312,7 @@ func (h *ClientHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 	if data == nil {
 		return
 	}
-	if data.UserId != h.player.UserId {
+	if data.PlayerId != h.player.PlayerId {
 		return
 	}
 
@@ -326,9 +326,9 @@ func (h *ClientHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 		GameId:    h.gameId,
 		Data: &pkg_proto.Event_PlayerMove{
 			PlayerMove: &pkg_proto.PlayerMoveData{
-				UserId: data.UserId,
-				X:      data.X,
-				Y:      data.Y,
+				PlayerId: data.PlayerId,
+				X:        data.X,
+				Y:        data.Y,
 			},
 		},
 	})
@@ -343,7 +343,7 @@ func (h *ClientHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
 	if data == nil {
 		return
 	}
-	if data.UserId != h.player.UserId {
+	if data.PlayerId != h.player.PlayerId {
 		return
 	}
 
@@ -357,9 +357,9 @@ func (h *ClientHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
 		GameId:    h.gameId,
 		Data: &pkg_proto.Event_PlayerPlantBomb{
 			PlayerPlantBomb: &pkg_proto.PlayerPlantBombData{
-				UserId: data.UserId,
-				X:      data.X,
-				Y:      data.Y,
+				PlayerId: data.PlayerId,
+				X:        data.X,
+				Y:        data.Y,
 			},
 		},
 	})
@@ -374,7 +374,7 @@ func (h *ClientHandler) HandlePlayerGetPowerupEvent(msg *pkg_proto.Event) {
 	if data == nil {
 		return
 	}
-	if data.UserId != h.player.UserId {
+	if data.PlayerId != h.player.PlayerId {
 		return
 	}
 
@@ -388,9 +388,9 @@ func (h *ClientHandler) HandlePlayerGetPowerupEvent(msg *pkg_proto.Event) {
 		GameId:    h.gameId,
 		Data: &pkg_proto.Event_PlayerGetPowerup{
 			PlayerGetPowerup: &pkg_proto.PlayerGetPowerupData{
-				UserId: data.UserId,
-				X:      data.X,
-				Y:      data.Y,
+				PlayerId: data.PlayerId,
+				X:        data.X,
+				Y:        data.Y,
 			},
 		},
 	})

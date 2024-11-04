@@ -33,29 +33,29 @@ func TestMatchmakingService(t *testing.T) {
 
 	t.Run("Matchmaking", func(t *testing.T) {
 		type testCase struct {
-			userIds  []int32
-			expected bool
+			playerIds []int32
+			expected  bool
 		}
 		cases := []testCase{
 			{
-				userIds:  []int32{},
-				expected: false,
+				playerIds: []int32{},
+				expected:  false,
 			},
 			{
-				userIds:  []int32{1},
-				expected: false,
+				playerIds: []int32{1},
+				expected:  false,
 			},
 			{
-				userIds:  []int32{1, 2},
-				expected: true,
+				playerIds: []int32{1, 2},
+				expected:  true,
 			},
 			{
-				userIds:  []int32{1, 2, 3, 4, 5, 6},
-				expected: true,
+				playerIds: []int32{1, 2, 3, 4, 5, 6},
+				expected:  true,
 			},
 		}
 		for _, c := range cases {
-			title := fmt.Sprintf("userIds=%+v expected=%t", c.userIds, c.expected)
+			title := fmt.Sprintf("playerIds=%+v expected=%t", c.playerIds, c.expected)
 			t.Run(title, func(t *testing.T) {
 				t.Parallel()
 
@@ -71,8 +71,8 @@ func TestMatchmakingService(t *testing.T) {
 
 				ctx, cancel := context.WithTimeout(context.Background(), matchmaking_service.MatchmakingInterval*2+time.Second)
 				defer cancel()
-				for _, userId := range c.userIds {
-					assert.NoError(t, service.Enroll(ctx, userId))
+				for _, playerId := range c.playerIds {
+					assert.NoError(t, service.Enroll(ctx, playerId))
 				}
 				go service.StartMatchmaking(ctx)
 

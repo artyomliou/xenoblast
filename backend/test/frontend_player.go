@@ -50,7 +50,7 @@ type frontendPlayer struct {
 
 	nickname       string
 	apiKey         string
-	userId         int32
+	playerId       int32
 	gameId         int32
 	countdownEndAt int64
 	conn           *websocket.Conn
@@ -134,9 +134,9 @@ func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
 	err = json.Unmarshal(respBytes, resp)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, resp.ApiKey)
-	assert.NotEmpty(t, resp.UserId)
+	assert.NotEmpty(t, resp.PlayerId)
 	player.apiKey = resp.ApiKey
-	player.userId = resp.UserId
+	player.playerId = resp.PlayerId
 }
 
 func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {
@@ -184,7 +184,7 @@ func (player *frontendPlayer) receiveNewMatchFromWebsocket(t *testing.T) {
 	assert.Equal(t, pkg_proto.EventType_NewMatch, event.Type)
 	data := event.GetNewMatch()
 	assert.NotNil(t, data)
-	assert.Contains(t, data.Players, player.userId)
+	assert.Contains(t, data.Players, player.playerId)
 	assert.Empty(t, data.GameServerAddr)
 
 	player.gameId = event.GameId
@@ -217,7 +217,7 @@ func (player *frontendPlayer) sendGetGameInfoOverHttp(t *testing.T) {
 
 	hasCurrentUser := false
 	for _, respPlayer := range resp.Players {
-		if respPlayer.UserId == player.userId {
+		if respPlayer.PlayerId == player.playerId {
 			assert.Equal(t, player.nickname, respPlayer.Nickname)
 			hasCurrentUser = true
 		}
@@ -235,7 +235,7 @@ func (player *frontendPlayer) sendPlayerReadyOverWebsocket(t *testing.T) {
 		GameId:    player.gameId,
 		Data: &pkg_proto.Event_PlayerReady{
 			PlayerReady: &pkg_proto.PlayerReadyData{
-				UserId: player.userId,
+				PlayerId: player.playerId,
 			},
 		},
 	}
@@ -279,9 +279,9 @@ func (player *frontendPlayer) sendPlayerMoveOverWebsocket(t *testing.T) {
 		GameId:    player.gameId,
 		Data: &pkg_proto.Event_PlayerMove{
 			PlayerMove: &pkg_proto.PlayerMoveData{
-				UserId: player.userId,
-				X:      1,
-				Y:      1,
+				PlayerId: player.playerId,
+				X:        1,
+				Y:        1,
 			},
 		},
 	}

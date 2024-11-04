@@ -26,7 +26,7 @@ func NewAuthServer(service *AuthService) *authServer {
 func (server *authServer) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
 	server.logger.Printf("Register(): %s", req.Nickname)
 
-	apiKey, userId, err := server.service.Register(ctx, req.Nickname)
+	apiKey, playerId, err := server.service.Register(ctx, req.Nickname)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func (server *authServer) Register(ctx context.Context, req *auth.RegisterReques
 	return &auth.RegisterResponse{
 		ApiKey: apiKey,
 		Player: &auth.PlayerInfoDto{
-			UserId:   userId,
+			PlayerId: playerId,
 			Nickname: req.Nickname,
 		},
 	}, nil

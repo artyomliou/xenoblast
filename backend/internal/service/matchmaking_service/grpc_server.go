@@ -35,15 +35,15 @@ func NewMatchmakingServer(service *MatchmakingService) *matchmakingServer {
 }
 
 func (server *matchmakingServer) Enroll(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
-	server.logger.Printf("Enroll(): %d", req.UserId)
+	server.logger.Printf("Enroll(): %d", req.PlayerId)
 
-	return nil, server.service.Enroll(ctx, req.UserId)
+	return nil, server.service.Enroll(ctx, req.PlayerId)
 }
 
 func (server *matchmakingServer) Cancel(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
-	server.logger.Printf("Cancel(): %d", req.UserId)
+	server.logger.Printf("Cancel(): %d", req.PlayerId)
 
-	return nil, server.service.Cancel(ctx, req.UserId)
+	return nil, server.service.Cancel(ctx, req.PlayerId)
 }
 
 func (server *matchmakingServer) GetWaitingPlayerCount(ctx context.Context, req *empty.Empty) (*matchmaking.GetWaitingPlayerCountResponse, error) {
@@ -53,8 +53,8 @@ func (server *matchmakingServer) GetWaitingPlayerCount(ctx context.Context, req 
 }
 
 func (server *matchmakingServer) SubscribeMatch(req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
-	server.logger.Printf("SubscribeMatch(): %d", req.UserId)
-	defer server.logger.Printf("SubscribeMatch(): %d, exit", req.UserId)
+	server.logger.Printf("SubscribeMatch(): %d", req.PlayerId)
+	defer server.logger.Printf("SubscribeMatch(): %d, exit", req.PlayerId)
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -69,7 +69,7 @@ func (server *matchmakingServer) SubscribeMatch(req *matchmaking.MatchmakingRequ
 		defer cancel()
 
 		// Bind this game to specific game service instance
-		if err := server.service.SetGameIdForPlayer(ctx, event.GameId, req.UserId); err != nil {
+		if err := server.service.SetGameIdForPlayer(ctx, event.GameId, req.PlayerId); err != nil {
 			server.logger.Println("SetGameIdForPlayer(): ", err)
 			return
 		}
@@ -99,7 +99,7 @@ func (server *matchmakingServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *m
 
 	// workaround: ensure this event is related to requestor
 	for _, playerId := range data.Players {
-		if playerId == req.UserId {
+		if playerId == req.PlayerId {
 			if err := stream.Send(ev); err != nil {
 				server.logger.Print("HandleNewMatchEvent(): ", err)
 				return
@@ -143,7 +143,7 @@ func (server *matchmakingServer) sendNewGameRequest(ev *pkg_proto.Event) error {
 }
 
 func (server *matchmakingServer) GetGameServerAddr(ctx context.Context, req *matchmaking.GetGameServerAddrRequest) (*matchmaking.GetGameServerAddrResponse, error) {
-	gameServerAddr, err := server.service.GetGameServerAddrForPlayer(ctx, req.UserId)
+	gameServerAddr, err := server.service.GetGameServerAddrForPlayer(ctx, req.PlayerId)
 	if err != nil {
 		return nil, err
 	}

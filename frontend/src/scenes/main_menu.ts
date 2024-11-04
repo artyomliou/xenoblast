@@ -65,8 +65,8 @@ export class MainMenu extends BaseScene {
     const resp = await this.apiClient.authRegister(nickname);
     this.session.nickname = nickname;
     this.session.apiKey = resp.apiKey;
-    this.session.uid = resp.userId;
-    console.debug(`uid ${this.session.uid}`);
+    this.session.playerId = resp.playerId;
+    console.debug(`playerId ${this.session.playerId}`);
     this.scene.start("WaitingRoom");
   }
 }

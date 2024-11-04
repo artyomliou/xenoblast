@@ -43,8 +43,8 @@ func (service *GameService) NewGame(ctx context.Context, gameId int32, idNicknam
 	gameMap := maploader.NewGameMap(mapInfo)
 
 	players := map[int32]*Player{}
-	for userId, nickname := range idNicknameMap {
-		players[userId] = NewPlayer(userId, nickname, nil)
+	for playerId, nickname := range idNicknameMap {
+		players[playerId] = NewPlayer(playerId, nickname, nil)
 	}
 
 	sess, err := NewGameSession(gameId, state, eventBus, gameMap, players)

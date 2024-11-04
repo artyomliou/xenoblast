@@ -14,9 +14,9 @@ import (
 )
 
 const maxRetries = 10
-const accessPattern1 = "nickname#%s#uid"
-const accessPattern2 = "user#%d#nickname"
-const accessPattern3 = "apiKey#%s#uid"
+const accessPattern1 = "nickname#%s#playerId"
+const accessPattern2 = "player#%d#nickname"
+const accessPattern3 = "apiKey#%s#playerId"
 
 type AuthService struct {
 	storage storage.Storage
@@ -31,32 +31,32 @@ func NewAuthService(storage storage.Storage) *AuthService {
 }
 
 // always generate new api key
-func (service *AuthService) Register(ctx context.Context, nickname string) (apiKey string, userId int32, err error) {
-	var userIdInt int
+func (service *AuthService) Register(ctx context.Context, nickname string) (apiKey string, playerId int32, err error) {
+	var playerIdInt int
 	var selected bool
 
-	// Ensure nickname has associated userId
+	// Ensure nickname has associated playerId
 	key1 := fmt.Sprintf(accessPattern1, nickname)
-	userIdString, err := service.storage.Get(ctx, key1)
+	playerIdString, err := service.storage.Get(ctx, key1)
 	if err != nil && !errors.Is(err, storage.ErrKeyNotFound) {
 		return
 	}
-	if userIdString != "" {
-		userIdInt, err = strconv.Atoi(userIdString)
+	if playerIdString != "" {
+		playerIdInt, err = strconv.Atoi(playerIdString)
 		if err != nil {
 			return
 		}
-		userId = int32(userIdInt)
+		playerId = int32(playerIdInt)
 	}
-	if userId == 0 {
-		userId = rand.Int31() // TODO increment in storage
-		if err = service.storage.Set(ctx, key1, strconv.Itoa(int(userId))); err != nil {
+	if playerId == 0 {
+		playerId = rand.Int31() // TODO increment in storage
+		if err = service.storage.Set(ctx, key1, strconv.Itoa(int(playerId))); err != nil {
 			return
 		}
 	}
 
 	// For GetNickname()
-	key2 := fmt.Sprintf(accessPattern2, userId)
+	key2 := fmt.Sprintf(accessPattern2, playerId)
 	if err = service.storage.Set(ctx, key2, nickname); err != nil {
 		return
 	}
@@ -77,10 +77,10 @@ func (service *AuthService) Register(ctx context.Context, nickname string) (apiK
 	if !selected {
 		return "", 0, fmt.Errorf("cannot generate api key in %d rounds", maxRetries)
 	}
-	if err := service.storage.Set(ctx, key3, strconv.Itoa(int(userId))); err != nil {
+	if err := service.storage.Set(ctx, key3, strconv.Itoa(int(playerId))); err != nil {
 		return "", 0, err
 	}
-	return apiKey, userId, nil
+	return apiKey, playerId, nil
 }
 
 func (service *AuthService) Validate(ctx context.Context, apiKey string) (validated bool, dto *auth.PlayerInfoDto, err error) {
@@ -91,27 +91,27 @@ func (service *AuthService) Validate(ctx context.Context, apiKey string) (valida
 	if !validated {
 		return
 	}
-	var userIdString string
-	userIdString, err = service.storage.Get(ctx, fmt.Sprintf(accessPattern3, apiKey))
+	var playerIdString string
+	playerIdString, err = service.storage.Get(ctx, fmt.Sprintf(accessPattern3, apiKey))
 	if err != nil {
 		return
 	}
 
-	var userIdInt int
-	userIdInt, err = strconv.Atoi(userIdString)
+	var playerIdInt int
+	playerIdInt, err = strconv.Atoi(playerIdString)
 	if err != nil {
 		return
 	}
-	userId := int32(userIdInt)
+	playerId := int32(playerIdInt)
 
 	var nickname string
-	nickname, err = service.storage.Get(ctx, fmt.Sprintf(accessPattern2, userId))
+	nickname, err = service.storage.Get(ctx, fmt.Sprintf(accessPattern2, playerId))
 	if err != nil {
 		return
 	}
 
 	dto = &auth.PlayerInfoDto{
-		UserId:   userId,
+		PlayerId: playerId,
 		Nickname: nickname,
 	}
 	return

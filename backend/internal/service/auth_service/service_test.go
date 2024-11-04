@@ -12,23 +12,23 @@ import (
 func TestAuthService(t *testing.T) {
 	t.Run("register & validate & get nickname", func(t *testing.T) {
 		service := auth_service.NewAuthService(inmemory.CreateInmemoryStorage())
-		apiKey, userId, err := service.Register(context.Background(), "nickname_1")
+		apiKey, playerId, err := service.Register(context.Background(), "nickname_1")
 		assert.NoError(t, err)
 		assert.Len(t, apiKey, 40)
-		assert.NotEmpty(t, userId)
+		assert.NotEmpty(t, playerId)
 
 		validated, player, err := service.Validate(context.Background(), apiKey)
 		assert.NoError(t, err)
 		assert.Equal(t, true, validated)
 		assert.NotNil(t, player)
-		assert.Equal(t, userId, player.UserId)
+		assert.Equal(t, playerId, player.PlayerId)
 		assert.Equal(t, "nickname_1", player.Nickname)
 
-		userIds := []int32{int32(userId)}
-		idNicknameMap, err := service.GetNicknames(context.Background(), userIds)
+		playerIds := []int32{int32(playerId)}
+		idNicknameMap, err := service.GetNicknames(context.Background(), playerIds)
 		assert.NoError(t, err)
-		assert.Equal(t, len(userIds), len(idNicknameMap))
-		assert.Equal(t, "nickname_1", idNicknameMap[userId])
+		assert.Equal(t, len(playerIds), len(idNicknameMap))
+		assert.Equal(t, "nickname_1", idNicknameMap[playerId])
 	})
 
 	t.Run("validate - failed", func(t *testing.T) {

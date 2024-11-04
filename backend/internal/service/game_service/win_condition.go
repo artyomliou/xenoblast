@@ -21,9 +21,9 @@ func (cond *OnlyOnePlayerLeft) Satisfy() bool {
 
 func (cond *OnlyOnePlayerLeft) GetWinner() int32 {
 	var winner int32
-	for userId, playerAlive := range *cond.AlivePlayers {
+	for playerId, playerAlive := range *cond.AlivePlayers {
 		if playerAlive {
-			winner = userId
+			winner = playerId
 			break
 		}
 	}
