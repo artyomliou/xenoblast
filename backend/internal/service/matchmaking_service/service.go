@@ -73,7 +73,9 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 		return
 	}
 	service.waitingPlayerCount = count
-	service.logger.Printf("waiting player count: %d", count)
+	if count > 0 {
+		service.logger.Printf("waiting player count: %d", count)
+	}
 	if count < minimumPlayer {
 		return
 	}
