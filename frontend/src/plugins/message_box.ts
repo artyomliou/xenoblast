@@ -63,4 +63,10 @@ export class MessageBox extends Plugins.BasePlugin {
       }, 100);
     });
   }
+
+  clean() {
+    this.lastEventMap = new Map();
+    this.eventQueue = [];
+    this.listeners = [];
+  }
 }
