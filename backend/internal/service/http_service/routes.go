@@ -6,11 +6,12 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 const ApiKeyHeader = "X-API-KEY"
 
-func InitRoutes(cfg *config.Config) http.Handler {
+func InitRoutes(cfg *config.Config, logger *zap.Logger) http.Handler {
 	r := gin.Default()
 
 	cors.Default()
@@ -21,7 +22,7 @@ func InitRoutes(cfg *config.Config) http.Handler {
 
 	apiGroup := r.Group("api")
 	{
-		ctl := NewApiController(cfg)
+		ctl := NewApiController(cfg, logger)
 		apiGroup.POST("/auth/register", ctl.Register)
 		apiGroup.GET("/auth/validate", ctl.Validate)
 		apiGroup.GET("/matchmaking/get_waiting_player_count", ctl.GetWaitingPlayerCount)

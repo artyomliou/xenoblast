@@ -1,5 +1,6 @@
 environment: dev
 graceful_shutdown: true
+logger_output: stdout
 
 http_service:
   host: http_service

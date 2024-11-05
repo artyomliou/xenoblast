@@ -10,10 +10,11 @@ import (
 	"log"
 	"math/rand"
 	"net"
-	"os"
 	"strconv"
 	"sync"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 const sortedSetKey = "matchmaking_players"
@@ -25,18 +26,18 @@ type MatchmakingService struct {
 	cfg                *config.Config
 	storage            storage.Storage
 	eventBus           *eventbus.EventBus
-	logger             *log.Logger
+	logger             *zap.Logger
 	waitingPlayerCount int
 	nextTickQueue      []int32
 	mutex              sync.Mutex
 }
 
-func NewMatchmakingService(cfg *config.Config, storage storage.Storage, eventBus *eventbus.EventBus) *MatchmakingService {
+func NewMatchmakingService(cfg *config.Config, logger *zap.Logger, storage storage.Storage, eventBus *eventbus.EventBus) *MatchmakingService {
 	return &MatchmakingService{
 		cfg:           cfg,
 		storage:       storage,
 		eventBus:      eventBus,
-		logger:        log.New(os.Stdout, "[MatchmakingService] ", log.LstdFlags),
+		logger:        logger,
 		nextTickQueue: []int32{},
 		mutex:         sync.Mutex{},
 	}
@@ -54,7 +55,7 @@ func (service *MatchmakingService) Cancel(ctx context.Context, playerId int32) e
 }
 
 func (service *MatchmakingService) StartMatchmaking(ctx context.Context) {
-	service.logger.Println("Start matchmaking")
+	service.logger.Info("Start matchmaking")
 	ticker := time.NewTicker(MatchmakingInterval)
 	for {
 		select {
@@ -71,12 +72,12 @@ func (service *MatchmakingService) StartMatchmaking(ctx context.Context) {
 func (service *MatchmakingService) matchmaking(ctx context.Context) {
 	count, err := service.storage.SortedSetLen(ctx, sortedSetKey)
 	if err != nil {
-		service.logger.Println("cannot get length of sorted set: ", err)
+		service.logger.Error("cannot get length of sorted set: ", zap.Error(err))
 		return
 	}
 	service.waitingPlayerCount = count
 	if count > 0 {
-		service.logger.Printf("waiting player count: %d", count)
+		service.logger.Sugar().Debugf("waiting player count: %d", count)
 	}
 	if count < minimumPlayer {
 		return
@@ -84,12 +85,12 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 
 	playerIdStrings, err := service.storage.SortedSetGetN(ctx, sortedSetKey, maximumPlayer)
 	if err != nil {
-		service.logger.Println("cannot getN from sorted set: ", err)
+		service.logger.Error("cannot getN from sorted set: ", zap.Error(err))
 		return
 	}
 	for _, playerIdString := range playerIdStrings {
 		if err := service.storage.SortedSetRemove(ctx, sortedSetKey, playerIdString); err != nil {
-			service.logger.Println("cannot remove from sorted set: ", err)
+			service.logger.Error("cannot remove from sorted set: ", zap.Error(err))
 			return
 		}
 	}
@@ -98,7 +99,7 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 	for _, playerIdString := range playerIdStrings {
 		playerId, err := strconv.Atoi(playerIdString)
 		if err != nil {
-			service.logger.Println("cannot convert string to int", err)
+			service.logger.Error("cannot convert string to int", zap.Error(err))
 			return
 		}
 		playerIds = append(playerIds, int32(playerId))
@@ -109,12 +110,12 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 	// Get a specfic game server IP for this game
 	gameServerIp, err := net.ResolveIPAddr("ip", service.cfg.GameService.Host)
 	if err != nil {
-		service.logger.Println("cannot resolve ip of game service: ", err)
+		service.logger.Error("cannot resolve ip of game service: ", zap.Error(err))
 		return
 	}
 	gameServerAddr := fmt.Sprintf("%s:%d", gameServerIp.String(), service.cfg.GameService.Port)
 
-	service.logger.Printf("new match gameId=%d players=%+v", gameId, playerIds)
+	service.logger.Sugar().Infof("new match gameId=%d players=%+v", gameId, playerIds)
 	go service.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_NewMatch,
 		Timestamp: time.Now().Unix(),
@@ -135,7 +136,7 @@ func (service *MatchmakingService) clearNextTickQueue(ctx context.Context) {
 	for _, playerId := range service.nextTickQueue {
 		err := service.storage.SortedSetAdd(ctx, sortedSetKey, strconv.Itoa(int(playerId)), int(time.Now().Unix()))
 		if err != nil {
-			service.logger.Print("clearNextTickQueue(): ", err)
+			service.logger.Error("clearNextTickQueue(): ", zap.Error(err))
 		}
 	}
 	service.nextTickQueue = []int32{}

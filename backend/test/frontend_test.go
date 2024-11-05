@@ -2,6 +2,7 @@ package test
 
 import (
 	"artyomliou/xenoblast-backend/internal/config"
+	"artyomliou/xenoblast-backend/internal/logger"
 	"artyomliou/xenoblast-backend/internal/service"
 	"artyomliou/xenoblast-backend/internal/service/http_service"
 	"artyomliou/xenoblast-backend/internal/service/websocket_service"
@@ -11,26 +12,27 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
-func setupServers(ctx context.Context, cfg *config.Config) (service.StartFunc, service.CloseFunc, error) {
-	authStart, authClose, authErr := service.BuildAuthServer(cfg)
+func setupServers(ctx context.Context, cfg *config.Config, logger *zap.Logger) (service.StartFunc, service.CloseFunc, error) {
+	authStart, authClose, authErr := service.BuildAuthServer(cfg, logger)
 	if authErr != nil {
 		return nil, nil, authErr
 	}
-	matchmakingStart, matchmakingClose, matchmakingErr := service.BuildMatchmakingServer(cfg)
+	matchmakingStart, matchmakingClose, matchmakingErr := service.BuildMatchmakingServer(cfg, logger)
 	if matchmakingErr != nil {
 		return nil, nil, matchmakingErr
 	}
-	gameStart, gameClose, gameErr := service.BuildGameServer(cfg)
+	gameStart, gameClose, gameErr := service.BuildGameServer(cfg, logger)
 	if gameErr != nil {
 		return nil, nil, gameErr
 	}
-	httpStart, httpClose, httpErr := service.BuildHttpServer(cfg.HttpService.Port, http_service.InitRoutes(cfg))
+	httpStart, httpClose, httpErr := service.BuildHttpServer(logger, cfg.HttpService.Port, http_service.InitRoutes(cfg, logger))
 	if httpErr != nil {
 		return nil, nil, httpErr
 	}
-	websocketStart, websocketClose, websocketErr := service.BuildHttpServer(cfg.WebsocketService.Port, websocket_service.InitRoutes(ctx, cfg))
+	websocketStart, websocketClose, websocketErr := service.BuildHttpServer(logger, cfg.WebsocketService.Port, websocket_service.InitRoutes(ctx, cfg, logger))
 	if websocketErr != nil {
 		return nil, nil, websocketErr
 	}
@@ -56,6 +58,12 @@ func setupServers(ctx context.Context, cfg *config.Config) (service.StartFunc, s
 func TestFrontend(t *testing.T) {
 	ctx := context.Background()
 
+	logger, err := logger.NewDevelopmentSugaredLogger()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer logger.Sync()
+
 	cfg := config.GetDefault()
 	cfg.HttpService.Host = "localhost"
 	cfg.HttpService.Port = 8081
@@ -69,7 +77,7 @@ func TestFrontend(t *testing.T) {
 	cfg.GameService.Port = 50053
 	cfg.GracefulShutdown = false
 
-	start, close, err := setupServers(ctx, cfg)
+	start, close, err := setupServers(ctx, cfg, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,8 +86,8 @@ func TestFrontend(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
 	defer cancel()
-	player1 := newFrontendPlayer(ctx, cfg, "player_1")
-	player2 := newFrontendPlayer(ctx, cfg, "player_2")
+	player1 := newFrontendPlayer(ctx, cfg, logger, "player_1")
+	player2 := newFrontendPlayer(ctx, cfg, logger, "player_2")
 	go player1.Run(t)
 	go player2.Run(t)
 	player1.newStateQueue <- stateMainMenu

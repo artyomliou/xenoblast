@@ -7,10 +7,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"math/rand"
-	"os"
 	"strconv"
+
+	"go.uber.org/zap"
 )
 
 const maxRetries = 10
@@ -20,13 +20,13 @@ const accessPattern3 = "apiKey#%s#playerId"
 
 type AuthService struct {
 	storage storage.Storage
-	logger  *log.Logger
+	logger  *zap.Logger
 }
 
-func NewAuthService(storage storage.Storage) *AuthService {
+func NewAuthService(logger *zap.Logger, storage storage.Storage) *AuthService {
 	return &AuthService{
 		storage: storage,
-		logger:  log.New(os.Stdout, "[AuthService] ", log.LstdFlags),
+		logger:  logger,
 	}
 }
 
@@ -122,7 +122,7 @@ func (service *AuthService) GetNicknames(ctx context.Context, playerIds []int32)
 	for _, playerId := range playerIds {
 		nickname, err := service.storage.Get(ctx, fmt.Sprintf(accessPattern2, int(playerId)))
 		if err != nil {
-			service.logger.Printf("invalid player id %d", playerId)
+			service.logger.Error("invalid player id", zap.Int32("player", playerId))
 			nickname = "ERR"
 		}
 		idNicknameMap[playerId] = nickname

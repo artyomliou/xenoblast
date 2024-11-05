@@ -2,6 +2,7 @@ package game_service_test
 
 import (
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
+	"artyomliou/xenoblast-backend/internal/logger"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	gamelogic "artyomliou/xenoblast-backend/internal/service/game_service"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
@@ -32,6 +33,12 @@ func fillPlayerHelper(players *map[int32]*gamelogic.Player, count int) {
 }
 
 func TestGameSession(t *testing.T) {
+	logger, err := logger.NewDevelopmentSugaredLogger()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer logger.Sync()
+
 	mapLoader := maploader.NewYamlMapLoader()
 	fileContent, err := os.ReadFile(currentOnlyMap)
 	assert.NoError(t, err)
@@ -45,7 +52,7 @@ func TestGameSession(t *testing.T) {
 
 		// execute
 		fillPlayerHelper(&players, 1)
-		sess, err := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+		sess, err := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 
 		assert.Error(t, err)
 		assert.Nil(t, sess)
@@ -58,7 +65,7 @@ func TestGameSession(t *testing.T) {
 
 		// execute
 		fillPlayerHelper(&players, 5)
-		sess, err := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+		sess, err := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 
 		assert.Error(t, err)
 		assert.Nil(t, sess)
@@ -69,7 +76,7 @@ func TestGameSession(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
+		sess, _ := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 		go sess.Run(context.Background())
 
 		// execute
@@ -98,8 +105,7 @@ func TestGameSession(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
-		sess.TurnOnDebugMode()
+		sess, _ := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_WaitingReady)
 		go sess.Run(context.Background())
@@ -142,8 +148,7 @@ func TestGameSession(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
-		sess.TurnOnDebugMode()
+		sess, _ := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_Countdown)
 		go sess.Run(context.Background())
@@ -200,8 +205,7 @@ func TestGameSession(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
-		sess.TurnOnDebugMode()
+		sess, _ := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_Playing)
 		go sess.Run(context.Background())
@@ -242,8 +246,7 @@ func TestGameSession(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
-		sess.TurnOnDebugMode()
+		sess, _ := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_Playing)
 		go sess.Run(context.Background())
@@ -371,8 +374,7 @@ func TestGameSession(t *testing.T) {
 				state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 				fillPlayerHelper(&players, 4)
 
-				sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
-				sess.TurnOnDebugMode()
+				sess, _ := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 				sess.SetPowerupDropRate(c.PowerupDropRate)
 
 				sess.PrepareForTesting()
@@ -446,8 +448,7 @@ func TestGameSession(t *testing.T) {
 
 				state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 				fillPlayerHelper(&players, 4)
-				sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
-				sess.TurnOnDebugMode()
+				sess, _ := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 				sess.PrepareForTesting()
 				state.SetStateForTesting(pkg_proto.GameState_Playing)
 				go sess.Run(context.Background())
@@ -521,8 +522,7 @@ func TestGameSession(t *testing.T) {
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
 		fillPlayerHelper(&players, 4)
-		sess, _ := gamelogic.NewGameSession(1, state, eventBus, gameMap, players)
-		sess.TurnOnDebugMode()
+		sess, _ := gamelogic.NewGameSession(logger, 1, state, eventBus, gameMap, players)
 		sess.PrepareForTesting()
 		state.SetStateForTesting(pkg_proto.GameState_Playing)
 		go sess.Run(context.Background())

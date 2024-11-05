@@ -17,13 +17,14 @@ import (
 	"net/http"
 	"time"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
 type StartFunc func(context.Context) error
 type CloseFunc func()
 
-func BuildHttpServer(port int, mux http.Handler) (StartFunc, CloseFunc, error) {
+func BuildHttpServer(logger *zap.Logger, port int, mux http.Handler) (StartFunc, CloseFunc, error) {
 	addr := fmt.Sprintf(":%d", port)
 	server := &http.Server{
 		Addr:    addr,
@@ -47,7 +48,7 @@ func BuildHttpServer(port int, mux http.Handler) (StartFunc, CloseFunc, error) {
 	return start, close, nil
 }
 
-func BuildAuthServer(cfg *config.Config) (StartFunc, CloseFunc, error) {
+func BuildAuthServer(cfg *config.Config, logger *zap.Logger) (StartFunc, CloseFunc, error) {
 	addr := fmt.Sprintf(":%d", cfg.AuthService.Port)
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -55,8 +56,8 @@ func BuildAuthServer(cfg *config.Config) (StartFunc, CloseFunc, error) {
 	}
 
 	storage := inmemory.CreateInmemoryStorage()
-	service := auth_service.NewAuthService(storage)
-	server := auth_service.NewAuthServiceServer(cfg, service)
+	service := auth_service.NewAuthService(logger, storage)
+	server := auth_service.NewAuthServiceServer(cfg, logger, service)
 	grpcServer := grpc.NewServer()
 	auth.RegisterAuthServiceServer(grpcServer, server)
 
@@ -74,7 +75,7 @@ func BuildAuthServer(cfg *config.Config) (StartFunc, CloseFunc, error) {
 	return start, close, nil
 }
 
-func BuildMatchmakingServer(cfg *config.Config) (StartFunc, CloseFunc, error) {
+func BuildMatchmakingServer(cfg *config.Config, logger *zap.Logger) (StartFunc, CloseFunc, error) {
 	addr := fmt.Sprintf(":%d", cfg.MatchmakingService.Port)
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -83,8 +84,8 @@ func BuildMatchmakingServer(cfg *config.Config) (StartFunc, CloseFunc, error) {
 
 	storage := inmemory.CreateInmemoryStorage()
 	eventBus := eventbus.NewEventBus()
-	service := matchmaking_service.NewMatchmakingService(cfg, storage, eventBus)
-	server := matchmaking_service.NewMatchmakingServiceServer(cfg, service)
+	service := matchmaking_service.NewMatchmakingService(cfg, logger, storage, eventBus)
+	server := matchmaking_service.NewMatchmakingServiceServer(cfg, logger, service)
 	grpcServer := grpc.NewServer()
 	matchmaking.RegisterMatchmakingServiceServer(grpcServer, server)
 
@@ -103,7 +104,7 @@ func BuildMatchmakingServer(cfg *config.Config) (StartFunc, CloseFunc, error) {
 	return start, close, nil
 }
 
-func BuildGameServer(cfg *config.Config) (StartFunc, CloseFunc, error) {
+func BuildGameServer(cfg *config.Config, logger *zap.Logger) (StartFunc, CloseFunc, error) {
 	addr := fmt.Sprintf(":%d", cfg.GameService.Port)
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -111,8 +112,8 @@ func BuildGameServer(cfg *config.Config) (StartFunc, CloseFunc, error) {
 	}
 
 	storage := inmemory.CreateInmemoryStorage()
-	service := game_service.NewGameService(storage)
-	server := game_service.NewGameServiceServer(cfg, service)
+	service := game_service.NewGameService(logger, storage)
+	server := game_service.NewGameServiceServer(cfg, logger, service)
 	grpcServer := grpc.NewServer()
 	game.RegisterGameServiceServer(grpcServer, server)
 

@@ -12,16 +12,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"testing"
 	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -47,7 +46,7 @@ type frontendPlayer struct {
 	state         frontendState
 	errCh         chan error
 	completeCh    chan bool
-	logger        *log.Logger
+	logger        *zap.Logger
 
 	nickname       string
 	apiKey         string
@@ -57,7 +56,7 @@ type frontendPlayer struct {
 	conn           *websocket.Conn
 }
 
-func newFrontendPlayer(ctx context.Context, cfg *config.Config, nickname string) *frontendPlayer {
+func newFrontendPlayer(ctx context.Context, cfg *config.Config, logger *zap.Logger, nickname string) *frontendPlayer {
 	return &frontendPlayer{
 		ctx:           ctx,
 		cfg:           cfg,
@@ -65,7 +64,7 @@ func newFrontendPlayer(ctx context.Context, cfg *config.Config, nickname string)
 		state:         stateInit,
 		errCh:         make(chan error),
 		completeCh:    make(chan bool),
-		logger:        log.New(os.Stdout, fmt.Sprintf("[FrontendPlayer][%s] ", nickname), log.LstdFlags),
+		logger:        logger.With(zap.String("player_nickname", nickname)),
 		nickname:      nickname,
 	}
 }
@@ -74,12 +73,12 @@ func (player *frontendPlayer) Run(t *testing.T) {
 	for {
 		select {
 		case <-player.ctx.Done():
-			player.logger.Printf("terminated")
+			player.logger.Info("terminated")
 			return
 
 		case newState := <-player.newStateQueue:
 			player.state = newState
-			player.logger.Printf("new state: %d", newState)
+			player.logger.Sugar().Debugf("new state: %d", newState)
 
 			switch newState {
 			case stateMainMenu:
@@ -117,7 +116,7 @@ func (player *frontendPlayer) Run(t *testing.T) {
 				player.sendPlayerMoveOverWebsocket(t)
 				player.receivePlayerMovedFromWebsocket(t)
 				player.completeCh <- true
-				player.logger.Println("successfully exit")
+				player.logger.Info("successfully exit")
 				return
 			}
 		}

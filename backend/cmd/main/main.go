@@ -2,6 +2,7 @@ package main
 
 import (
 	"artyomliou/xenoblast-backend/internal/config"
+	"artyomliou/xenoblast-backend/internal/logger"
 	"artyomliou/xenoblast-backend/internal/service"
 	"artyomliou/xenoblast-backend/internal/service/http_service"
 	"artyomliou/xenoblast-backend/internal/service/websocket_service"
@@ -30,20 +31,28 @@ func main() {
 		log.Fatal(cfgErr)
 	}
 
+	logger, loggerErr := logger.NewLogger(cfg)
+	if loggerErr != nil {
+		log.Fatal(loggerErr)
+	}
+	defer logger.Sync()
+
 	var start service.StartFunc
 	var close service.CloseFunc
 	var err error
 	switch *serviceName {
 	case "http":
-		start, close, err = service.BuildHttpServer(cfg.HttpService.Port, http_service.InitRoutes(cfg))
+		mux := http_service.InitRoutes(cfg, logger)
+		start, close, err = service.BuildHttpServer(logger, cfg.HttpService.Port, mux)
 	case "websocket":
-		start, close, err = service.BuildHttpServer(cfg.WebsocketService.Port, websocket_service.InitRoutes(ctx, cfg))
+		mux := websocket_service.InitRoutes(ctx, cfg, logger)
+		start, close, err = service.BuildHttpServer(logger, cfg.WebsocketService.Port, mux)
 	case "auth":
-		start, close, err = service.BuildAuthServer(cfg)
+		start, close, err = service.BuildAuthServer(cfg, logger)
 	case "matchmaking":
-		start, close, err = service.BuildMatchmakingServer(cfg)
+		start, close, err = service.BuildMatchmakingServer(cfg, logger)
 	case "game":
-		start, close, err = service.BuildGameServer(cfg)
+		start, close, err = service.BuildGameServer(cfg, logger)
 	default:
 		log.Fatal("not valid service name")
 	}

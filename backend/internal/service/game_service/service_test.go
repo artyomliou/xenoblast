@@ -1,6 +1,7 @@
 package game_service_test
 
 import (
+	"artyomliou/xenoblast-backend/internal/logger"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	gamelogic "artyomliou/xenoblast-backend/internal/service/game_service"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
@@ -13,6 +14,12 @@ import (
 )
 
 func TestGameLogicService(t *testing.T) {
+	logger, err := logger.NewDevelopmentSugaredLogger()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer logger.Sync()
+
 	players := map[int32]string{
 		1: "1",
 		2: "2",
@@ -20,7 +27,7 @@ func TestGameLogicService(t *testing.T) {
 		4: "4",
 	}
 
-	service := gamelogic.NewGameService(inmemory.CreateInmemoryStorage())
+	service := gamelogic.NewGameService(logger, inmemory.CreateInmemoryStorage())
 	assert.NoError(t, service.NewGame(context.Background(), 1, players))
 
 	expectWaitingReadyEvent := make(chan bool)

@@ -10,11 +10,10 @@ import (
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"log"
-	"os"
 
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -24,27 +23,27 @@ type ClientHandler struct {
 	player         *auth.PlayerInfoDto
 	gameId         int32
 	gameServerAddr string
-	logger         *log.Logger
+	logger         *zap.Logger
 	msgCh          chan *messageContainer
 	gameClient     game.GameServiceClient
 }
 
-func NewClientHandler(cfg *config.Config, client *Client, player *auth.PlayerInfoDto) *ClientHandler {
+func NewClientHandler(cfg *config.Config, logger *zap.Logger, client *Client, player *auth.PlayerInfoDto) *ClientHandler {
 	return &ClientHandler{
 		cfg:            cfg,
 		client:         client,
 		player:         player,
 		gameId:         0,
 		gameServerAddr: "",
-		logger:         log.New(os.Stdout, fmt.Sprintf("[ClientHandler][%d] ", player.PlayerId), log.LstdFlags),
+		logger:         logger.With(zap.Int32("player", player.PlayerId)),
 		msgCh:          make(chan *messageContainer, 100),
 		gameClient:     nil,
 	}
 }
 
 func (h *ClientHandler) Run(ctx context.Context) {
-	h.logger.Print("Run()")
-	defer h.logger.Print("Run() exit")
+	h.logger.Debug("Run()")
+	defer h.logger.Debug("Run() exit")
 	defer h.client.Close()
 	defer close(h.msgCh)
 
@@ -56,7 +55,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			h.logger.Print("websocket handler receive termination signal")
+			h.logger.Info("websocket handler receive termination signal")
 			return
 
 		case msg, ok := <-h.msgCh:
@@ -65,27 +64,28 @@ func (h *ClientHandler) Run(ctx context.Context) {
 				return
 			}
 			if msg.err != nil {
-				h.logger.Print("Run(): ", msg.err)
+				h.logger.Error("error ", zap.Error(msg.err))
 				return
 			}
 
 			ev := msg.event
+
 			if msg.fromClient {
-				h.logger.Printf("client event: %s", ev.Type.String())
+				h.logger.Debug("client event", zap.String("type", ev.Type.String()))
 				switch ev.Type {
 				case pkg_proto.EventType_SubscribeNewMatch:
 					go h.recvMatchmakingEvent(ctx)
 
 					// Automatically enroll once connected
 					if err := h.sendEnrollMatchmakingOverHttp(ctx); err != nil {
-						h.logger.Print("Run(): ", err)
+						h.logger.Error("Run(): ", zap.Error(err))
 						return
 					}
 
 					// Cancel matchmaking when disconnecting
 					defer func() {
 						if err := h.sendCancelMatchmakingOverHttp(ctx); err != nil {
-							h.logger.Print("Run(): ", err)
+							h.logger.Error("Run(): ", zap.Error(err))
 							return
 						}
 					}()
@@ -104,20 +104,20 @@ func (h *ClientHandler) Run(ctx context.Context) {
 				}
 
 			} else if msg.fromMatchmaking {
-				h.logger.Printf("matchmaking event: %s", ev.Type.String())
+				h.logger.Debug("matchmaking event", zap.String("type", ev.Type.String()))
 
 				switch ev.Type {
 				case pkg_proto.EventType_NewMatch:
 					if err := h.HandleNewMatch(ev); err != nil {
-						h.logger.Print("Run() from matchmaking: ", err)
+						h.logger.Error("Run() from matchmaking: ", zap.Error(err))
 						return
 					}
 
 					// Open a connection to game service, must check before use
-					h.logger.Printf("opening game service client to %s", h.gameServerAddr)
+					h.logger.Sugar().Debugf("opening game service client to %s", h.gameServerAddr)
 					gameClient, close, err := game_service.NewGameServiceClient(h.cfg, h.gameServerAddr)
 					if err != nil {
-						h.logger.Print("recvGameEvent(): ", err)
+						h.logger.Error("recvGameEvent(): ", zap.Error(err))
 						return
 					}
 					defer close()
@@ -129,15 +129,15 @@ func (h *ClientHandler) Run(ctx context.Context) {
 					// All prepares done, send event to player
 					ev.GetNewMatch().GameServerAddr = "" // Delete this before sending it to client
 					if err := h.sendEvent(ev); err != nil {
-						h.logger.Print("failed to send NewMatch event", err)
+						h.logger.Error("failed to send NewMatch event", zap.Error(err))
 						break
 					}
 				}
 
 			} else if msg.fromGame {
-				h.logger.Printf("game event: %s", ev.Type.String())
+				h.logger.Debug("game event", zap.String("type", ev.Type.String()))
 				if err := h.sendEvent(ev); err != nil {
-					h.logger.Print("Run() fromGame: ", err)
+					h.logger.Error("Run() fromGame: ", zap.Error(err))
 					continue
 				}
 			}
@@ -146,7 +146,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 }
 
 func (h *ClientHandler) recvWebsocketEvent(ctx context.Context) {
-	defer h.logger.Print("recvWebsocketEvent() exit")
+	defer h.logger.Debug("recvWebsocketEvent() exit")
 	for {
 		message, err := h.client.ReadMessage()
 		if err != nil {
@@ -162,7 +162,7 @@ func (h *ClientHandler) recvWebsocketEvent(ctx context.Context) {
 		}
 		select {
 		case <-ctx.Done():
-			h.logger.Print("recvWebsocketEvent() Done")
+			h.logger.Debug("recvWebsocketEvent() Done")
 			return
 		case h.msgCh <- &messageContainer{event: ev, fromClient: true}:
 		}
@@ -170,11 +170,11 @@ func (h *ClientHandler) recvWebsocketEvent(ctx context.Context) {
 }
 
 func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
-	defer h.logger.Print("recvMatchmakingEvent() exit")
+	defer h.logger.Debug("recvMatchmakingEvent() exit")
 
 	matchmakingClient, close, err := matchmaking_service.NewMatchmakingServiceClient(h.cfg)
 	if err != nil {
-		h.logger.Print("recvMatchmakingEvent(): ", err)
+		h.logger.Error("recvMatchmakingEvent(): ", zap.Error(err))
 		return
 	}
 	defer close()
@@ -183,26 +183,26 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 		PlayerId: h.player.PlayerId,
 	})
 	if err != nil {
-		h.logger.Print("recvMatchmakingEvent(): ", err)
+		h.logger.Error("recvMatchmakingEvent(): ", zap.Error(err))
 		return
 	}
 	for {
 		ev, err := stream.Recv()
 		if err == io.EOF {
-			h.logger.Print("recvMatchmakingEvent(): EOF")
+			h.logger.Info("recvMatchmakingEvent(): EOF")
 			return
 		}
 		if err != nil {
-			h.logger.Print("recvMatchmakingEvent(): ", err)
+			h.logger.Error("recvMatchmakingEvent(): ", zap.Error(err))
 			return
 		}
 		if ev == nil {
-			h.logger.Print("recvMatchmakingEvent(): unexpected ev nil")
+			h.logger.Error("recvMatchmakingEvent(): unexpected ev nil")
 			return
 		}
 		select {
 		case <-ctx.Done():
-			h.logger.Print("recvMatchmakingEvent(): Done")
+			h.logger.Info("recvMatchmakingEvent(): Done")
 			return
 		case h.msgCh <- &messageContainer{event: ev, fromMatchmaking: true}:
 		}
@@ -258,10 +258,10 @@ func (h *ClientHandler) HandleNewMatch(ev *pkg_proto.Event) error {
 }
 
 func (h *ClientHandler) recvGameEvent(ctx context.Context) {
-	defer h.logger.Print("recvGameEvent(): exit")
+	defer h.logger.Debug("recvGameEvent(): exit")
 
 	if h.gameClient == nil {
-		h.logger.Print("recvGameEvent(): h.gameClient is nil")
+		h.logger.Error("recvGameEvent(): h.gameClient is nil")
 		return
 	}
 	stream, err := h.gameClient.Subscribe(ctx, &game.SubscribeRequest{
@@ -283,26 +283,26 @@ func (h *ClientHandler) recvGameEvent(ctx context.Context) {
 		},
 	})
 	if err != nil {
-		h.logger.Print("recvGameEvent(): ", err)
+		h.logger.Error("recvGameEvent(): ", zap.Error(err))
 		return
 	}
 	for {
 		ev, err := stream.Recv()
 		if err == io.EOF {
-			h.logger.Print("recvGameEvent(): EOF")
+			h.logger.Info("recvGameEvent(): EOF")
 			return
 		}
 		if err != nil {
-			h.logger.Print("recvGameEvent(): ", err)
+			h.logger.Error("recvGameEvent(): ", zap.Error(err))
 			return
 		}
 		if ev == nil {
-			h.logger.Print("recvGameEvent(): unexpected ev nil")
+			h.logger.Error("recvGameEvent(): unexpected ev nil")
 			return
 		}
 		select {
 		case <-ctx.Done():
-			h.logger.Print("recvGameEvent(): Done")
+			h.logger.Info("recvGameEvent(): Done")
 			return
 		case h.msgCh <- &messageContainer{event: ev, fromGame: true}:
 		}
@@ -324,20 +324,20 @@ func (h *ClientHandler) sendEvent(ev *pkg_proto.Event) error {
 func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 	data := msg.GetPlayerReady()
 	if data == nil {
-		h.logger.Print("HandlePlayerReadyEvent(): data is nil")
+		h.logger.Error("HandlePlayerReadyEvent(): data is nil")
 		return
 	}
 	if data.PlayerId != h.player.PlayerId {
-		h.logger.Print("HandlePlayerReadyEvent(): playerId unmatch")
+		h.logger.Error("HandlePlayerReadyEvent(): playerId unmatch")
 		return
 	}
 	if msg.GameId != h.gameId {
-		h.logger.Print("HandlePlayerReadyEvent(): gameId unmatch")
+		h.logger.Error("HandlePlayerReadyEvent(): gameId unmatch")
 		return
 	}
 
 	if h.gameClient == nil {
-		h.logger.Print("recvGameEvent(): h.gameClient is nil")
+		h.logger.Error("recvGameEvent(): h.gameClient is nil")
 		return
 	}
 	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
@@ -351,7 +351,7 @@ func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 		},
 	})
 	if err != nil {
-		h.logger.Print("HandlePlayerReadyEvent():", err)
+		h.logger.Error("HandlePlayerReadyEvent():", zap.Error(err))
 		return
 	}
 }
@@ -366,7 +366,7 @@ func (h *ClientHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 	}
 
 	if h.gameClient == nil {
-		h.logger.Print("recvGameEvent(): h.gameClient is nil")
+		h.logger.Error("recvGameEvent(): h.gameClient is nil")
 		return
 	}
 	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
@@ -382,7 +382,7 @@ func (h *ClientHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 		},
 	})
 	if err != nil {
-		h.logger.Print("HandlePlayerMoveEvent():", err)
+		h.logger.Error("HandlePlayerMoveEvent():", zap.Error(err))
 		return
 	}
 }
@@ -397,7 +397,7 @@ func (h *ClientHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
 	}
 
 	if h.gameClient == nil {
-		h.logger.Print("recvGameEvent(): h.gameClient is nil")
+		h.logger.Error("recvGameEvent(): h.gameClient is nil")
 		return
 	}
 	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
@@ -413,7 +413,7 @@ func (h *ClientHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
 		},
 	})
 	if err != nil {
-		h.logger.Print("HandlePlayerPlantBombEvent():", err)
+		h.logger.Error("HandlePlayerPlantBombEvent():", zap.Error(err))
 		return
 	}
 }
@@ -428,7 +428,7 @@ func (h *ClientHandler) HandlePlayerGetPowerupEvent(msg *pkg_proto.Event) {
 	}
 
 	if h.gameClient == nil {
-		h.logger.Print("recvGameEvent(): h.gameClient is nil")
+		h.logger.Error("recvGameEvent(): h.gameClient is nil")
 		return
 	}
 	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
@@ -444,7 +444,7 @@ func (h *ClientHandler) HandlePlayerGetPowerupEvent(msg *pkg_proto.Event) {
 		},
 	})
 	if err != nil {
-		h.logger.Print("HandlePlayerGetPowerupEvent():", err)
+		h.logger.Error("HandlePlayerGetPowerupEvent():", zap.Error(err))
 		return
 	}
 }

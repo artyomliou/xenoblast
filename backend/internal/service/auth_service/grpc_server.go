@@ -4,28 +4,25 @@ import (
 	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"context"
-	"log"
-	"os"
+
+	"go.uber.org/zap"
 )
 
 type authServiceServer struct {
 	auth.UnimplementedAuthServiceServer
 	cfg     *config.Config
 	service *AuthService
-	logger  *log.Logger
+	logger  *zap.Logger
 }
 
-func NewAuthServiceServer(cfg *config.Config, service *AuthService) *authServiceServer {
+func NewAuthServiceServer(cfg *config.Config, logger *zap.Logger, service *AuthService) *authServiceServer {
 	return &authServiceServer{
-		cfg:     cfg,
 		service: service,
-		logger:  log.New(os.Stderr, "[AuthServer] ", log.LstdFlags),
+		logger:  logger,
 	}
 }
 
 func (server *authServiceServer) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
-	server.logger.Printf("Register(): %s", req.Nickname)
-
 	apiKey, playerId, err := server.service.Register(ctx, req.Nickname)
 	if err != nil {
 		return nil, err
@@ -41,8 +38,6 @@ func (server *authServiceServer) Register(ctx context.Context, req *auth.Registe
 }
 
 func (server *authServiceServer) Validate(ctx context.Context, req *auth.ValidateRequest) (*auth.PlayerInfoDto, error) {
-	server.logger.Printf("Validate(): %s", req.ApiKey)
-
 	validated, dto, err := server.service.Validate(ctx, req.ApiKey)
 	if err != nil {
 		return nil, err
@@ -54,8 +49,6 @@ func (server *authServiceServer) Validate(ctx context.Context, req *auth.Validat
 }
 
 func (server *authServiceServer) GetNickname(ctx context.Context, req *auth.GetNicknameRequest) (*auth.GetNicknameResponse, error) {
-	server.logger.Printf("GetNickname(): %+v", req.Players)
-
 	nicknames, err := server.service.GetNicknames(ctx, req.Players)
 	if err != nil {
 		return nil, err

@@ -3,6 +3,7 @@ package matchmaking_service_test
 import (
 	"artyomliou/xenoblast-backend/internal/config"
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
+	"artyomliou/xenoblast-backend/internal/logger"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"artyomliou/xenoblast-backend/internal/storage/inmemory"
@@ -19,15 +20,21 @@ func TestMatchmakingService(t *testing.T) {
 	cfg := config.GetDefault()
 	cfg.GameService.Host = "localhost"
 
+	logger, err := logger.NewDevelopmentSugaredLogger()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer logger.Sync()
+
 	t.Run("Enroll", func(t *testing.T) {
 		ctx := context.Background()
-		service := matchmaking_service.NewMatchmakingService(cfg, inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
+		service := matchmaking_service.NewMatchmakingService(cfg, logger, inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
 		assert.NoError(t, service.Enroll(ctx, 1))
 	})
 
 	t.Run("Cancel", func(t *testing.T) {
 		ctx := context.Background()
-		service := matchmaking_service.NewMatchmakingService(cfg, inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
+		service := matchmaking_service.NewMatchmakingService(cfg, logger, inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
 		assert.NoError(t, service.Enroll(ctx, 1))
 		assert.NoError(t, service.Cancel(ctx, 1))
 	})
@@ -62,7 +69,7 @@ func TestMatchmakingService(t *testing.T) {
 
 				storage := inmemory.CreateInmemoryStorage()
 				eventBus := eventbus.NewEventBus()
-				service := matchmaking_service.NewMatchmakingService(cfg, storage, eventBus)
+				service := matchmaking_service.NewMatchmakingService(cfg, logger, storage, eventBus)
 
 				// execute
 				expectMatch := make(chan *pkg_proto.Event)
@@ -95,7 +102,7 @@ func TestMatchmakingService(t *testing.T) {
 
 	t.Run("Save GameServerAddr", func(t *testing.T) {
 		ctx := context.Background()
-		service := matchmaking_service.NewMatchmakingService(cfg, inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
+		service := matchmaking_service.NewMatchmakingService(cfg, logger, inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
 
 		playerId := int32(1)
 		gameId := int32(2)

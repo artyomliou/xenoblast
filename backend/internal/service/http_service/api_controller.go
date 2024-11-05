@@ -9,23 +9,22 @@ import (
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
-	"log"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
 type apiController struct {
 	cfg    *config.Config
-	logger *log.Logger
+	logger *zap.Logger
 }
 
-func NewApiController(cfg *config.Config) *apiController {
+func NewApiController(cfg *config.Config, logger *zap.Logger) *apiController {
 	return &apiController{
 		cfg:    cfg,
-		logger: log.New(os.Stdout, "[ApiController] ", log.LstdFlags),
+		logger: logger,
 	}
 }
 
@@ -38,7 +37,7 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 
 	authClient, close, err := auth_service.NewAuthServiceClient(ctl.cfg)
 	if err != nil {
-		ctl.logger.Print("Register(): ", err)
+		ctl.logger.Error("failed to create auth service client", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -47,7 +46,7 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 		Nickname: req.Nickname,
 	})
 	if err != nil {
-		ctl.logger.Print("Register(): ", err)
+		ctl.logger.Error("Register(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -66,7 +65,7 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 	}
 	authClient, close, err := auth_service.NewAuthServiceClient(ctl.cfg)
 	if err != nil {
-		ctl.logger.Print("Validate(): ", err)
+		ctl.logger.Error("Validate(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -75,7 +74,7 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Print("Validate(): ", err)
+		ctl.logger.Error("Validate(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -93,7 +92,7 @@ func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
 	}
 	authClient, close, err := auth_service.NewAuthServiceClient(ctl.cfg)
 	if err != nil {
-		ctl.logger.Print("GetWaitingPlayerCount(): ", err)
+		ctl.logger.Error("GetWaitingPlayerCount(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -102,21 +101,21 @@ func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Print("GetWaitingPlayerCount(): ", err)
+		ctl.logger.Error("GetWaitingPlayerCount(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
 	matchmakingClient, matchmakingClientClose, err := matchmaking_service.NewMatchmakingServiceClient(ctl.cfg)
 	if err != nil {
-		ctl.logger.Print("GetWaitingPlayerCount(): ", err)
+		ctl.logger.Error("GetWaitingPlayerCount(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 	defer matchmakingClientClose()
 	resp, err := matchmakingClient.GetWaitingPlayerCount(ctx, nil)
 	if err != nil {
-		ctl.logger.Print("GetWaitingPlayerCount(): ", err)
+		ctl.logger.Error("GetWaitingPlayerCount(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -135,7 +134,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	}
 	authClient, close, err := auth_service.NewAuthServiceClient(ctl.cfg)
 	if err != nil {
-		ctl.logger.Print("GetGameInfo(): ", err)
+		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -144,7 +143,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Print("GetGameInfo(): ", err)
+		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -152,14 +151,14 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	// Get gameServerAddr by playerId
 	matchmakingClient, close, err := matchmaking_service.NewMatchmakingServiceClient(ctl.cfg)
 	if err != nil {
-		ctl.logger.Print("GetGameInfo(): ", err)
+		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 	defer close()
 	resp1, err := matchmakingClient.GetGameServerAddr(ctx, &matchmaking.GetGameServerAddrRequest{PlayerId: player.PlayerId})
 	if err != nil {
-		ctl.logger.Print("GetGameInfo(): ", err)
+		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -168,14 +167,14 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	// Get gameInfo by gameId
 	var req http_api.GetGameInfoRequest
 	if err := ctx.BindQuery(&req); err != nil {
-		ctl.logger.Print("GetGameInfo(): ", err)
+		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
 	}
-	ctl.logger.Printf("opening game service client to %s", gameServerAddr)
+	ctl.logger.Debug("opening game service client", zap.String("addr", gameServerAddr))
 	gameClient, gameClientClose, err := game_service.NewGameServiceClient(ctl.cfg, gameServerAddr)
 	if err != nil {
-		ctl.logger.Print("GetGameInfo(): ", err)
+		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -184,7 +183,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 		GameId: req.GameId,
 	})
 	if err != nil {
-		ctl.logger.Print("GetGameInfo(): ", err)
+		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -192,7 +191,7 @@ func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
 	// Encode gameInfo into protobuf
 	protobufBytes, err := proto.Marshal(resp2)
 	if err != nil {
-		ctl.logger.Print("GetGameInfo(): ", err)
+		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}

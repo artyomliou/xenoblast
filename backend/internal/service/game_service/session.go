@@ -7,12 +7,12 @@ import (
 	"artyomliou/xenoblast-backend/internal/service/game_service/state"
 	"context"
 	"fmt"
-	"log"
 	"math/rand"
-	"os"
 	"sort"
 	"sync"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 const MinimumPlayer = 2
@@ -26,7 +26,7 @@ const PowerupDropRate = 0.3
 
 type gameSession struct {
 	id           int32
-	logger       *log.Logger
+	logger       *zap.Logger
 	state        *state.StateManager
 	eventBus     *eventbus.EventBus
 	eventCh      chan *pkg_proto.Event
@@ -38,10 +38,9 @@ type gameSession struct {
 	prepareOnce  sync.Once
 
 	powerupDropRate float32
-	debugMode       bool
 }
 
-func NewGameSession(id int32, state *state.StateManager, eventBus *eventbus.EventBus, gameMap *maploader.GameMap, players map[int32]*Player) (*gameSession, error) {
+func NewGameSession(logger *zap.Logger, id int32, state *state.StateManager, eventBus *eventbus.EventBus, gameMap *maploader.GameMap, players map[int32]*Player) (*gameSession, error) {
 	if len(players) < MinimumPlayer {
 		return nil, &NotEnoughPlayerError{id}
 	}
@@ -50,7 +49,7 @@ func NewGameSession(id int32, state *state.StateManager, eventBus *eventbus.Even
 	}
 	game := &gameSession{
 		id:           id,
-		logger:       log.New(os.Stderr, fmt.Sprintf("[GameSession][%d] ", id), log.LstdFlags),
+		logger:       logger.With(zap.Int32("game", id)),
 		state:        state,
 		eventBus:     eventBus,
 		eventCh:      make(chan *pkg_proto.Event, EventQueueLength),
@@ -61,7 +60,6 @@ func NewGameSession(id int32, state *state.StateManager, eventBus *eventbus.Even
 		prepareOnce:  sync.Once{},
 
 		powerupDropRate: PowerupDropRate,
-		debugMode:       false,
 	}
 	game.winCondition = &OnlyOnePlayerLeft{&game.alivePlayers}
 	game.setupSerializeEventChannel()
@@ -73,7 +71,7 @@ func (g *gameSession) setupSerializeEventChannel() {
 		select {
 		case g.eventCh <- ev:
 		default:
-			g.logger.Println("eventCh is full")
+			g.logger.Warn("eventCh is full")
 		}
 	}
 	g.eventBus.Subscribe(pkg_proto.EventType_StatePreparing, redirectEventToChannel)
@@ -92,10 +90,8 @@ func (g *gameSession) setupSerializeEventChannel() {
 }
 
 func (g *gameSession) Run(ctx context.Context) {
-	if g.debugMode {
-		g.logger.Print("Run(): start")
-		defer g.logger.Print("Run(): end")
-	}
+	g.logger.Debug("Run(): start")
+	defer g.logger.Debug("Run(): end")
 
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -109,17 +105,15 @@ func (g *gameSession) Run(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			g.logger.Printf("receive termination signal")
+			g.logger.Info("receive termination signal")
 			if err := g.state.Transition(pkg_proto.GameState_Crash); err != nil {
-				g.logger.Print("Run(): ", err)
+				g.logger.Error("Run(): ", zap.Error(err))
 			}
 			g.publishCrashEvent("server terminated")
 			return
 
 		case ev := <-g.eventCh:
-			if g.debugMode {
-				g.logger.Printf("eventCh %s", ev.Type.String())
-			}
+			g.logger.Debug("<-", zap.String("type", ev.Type.String()))
 			startExecutionTime := time.Now()
 			trace := true
 
@@ -162,8 +156,8 @@ func (g *gameSession) Run(ctx context.Context) {
 			case pkg_proto.EventType_StateGameover:
 				return
 			}
-			if trace && g.debugMode {
-				g.logger.Printf("event %s takes %s", ev.Type.String(), time.Since(startExecutionTime).String())
+			if trace {
+				g.logger.Debug("event execution time", zap.String("type", ev.Type.String()), zap.String("time", time.Since(startExecutionTime).String()))
 			}
 		}
 	}
@@ -171,7 +165,7 @@ func (g *gameSession) Run(ctx context.Context) {
 
 func (g *gameSession) TriggerPreparing() {
 	if err := g.state.Transition(pkg_proto.GameState_Preparing); err != nil {
-		g.logger.Print("TriggerPreparing(): ", err)
+		g.logger.Error("transition failed", zap.Error(err))
 		return
 	}
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -185,7 +179,7 @@ func (g *gameSession) HandlePreparing() {
 	g.prepare()
 
 	if err := g.state.Transition(pkg_proto.GameState_Prepared); err != nil {
-		g.logger.Print("HandlePreparing(): ", err)
+		g.logger.Error("transition failed", zap.Error(err))
 		return
 	}
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -201,10 +195,8 @@ func (g *gameSession) PrepareForTesting() {
 
 func (g *gameSession) prepare() {
 	g.prepareOnce.Do(func() {
-		if g.debugMode {
-			g.logger.Printf("prepare() start")
-			defer g.logger.Printf("prepare() end")
-		}
+		g.logger.Debug("prepare() start")
+		defer g.logger.Debug("prepare() end")
 		g.setupPlayerCoords()
 		g.setupPlayerAliveMap()
 		g.setupPlayerReadyMap()
@@ -227,7 +219,7 @@ func (g *gameSession) setupPlayerCoords() {
 		player.SetTile(g.gameMap.GetTile(x, y))
 		player.X = x
 		player.Y = y
-		g.logger.Printf("player %d coord x=%d y=%d\n", playerId, x, y)
+		g.logger.Sugar().Debugf("player %d coord x=%d y=%d", playerId, x, y)
 	}
 }
 
@@ -245,7 +237,7 @@ func (g *gameSession) setupPlayerReadyMap() {
 
 func (g *gameSession) HandlePrepared() {
 	if err := g.state.Transition(pkg_proto.GameState_WaitingReady); err != nil {
-		g.logger.Print("HandlePrepared(): ", err)
+		g.logger.Error("transition failed", zap.Error(err))
 		return
 	}
 
@@ -268,7 +260,7 @@ func (g *gameSession) HandlePrepared() {
 
 		reason := fmt.Sprintf("Some players are not ready in %d", MaxWaitingReadyRetry)
 		if err := g.state.Transition(pkg_proto.GameState_Crash); err != nil {
-			g.logger.Print("HandlePrepared(): ", reason)
+			g.logger.Error("transition failed", zap.Error(err))
 			return
 		}
 		g.publishCrashEvent(reason)
@@ -285,19 +277,15 @@ func (g *gameSession) HandlePlayerReady(ev *pkg_proto.Event) {
 	}
 
 	g.markPlayerReady(data.PlayerId)
-	if g.debugMode {
-		g.logger.Printf("player %d ready", data.PlayerId)
-	}
+	g.logger.Sugar().Debugf("player %d ready", data.PlayerId)
 
 	if !g.allPlayersReady() {
 		return
 	}
-	if g.debugMode {
-		g.logger.Printf("all players are ready")
-	}
+	g.logger.Debug("all players are ready")
 
 	if err := g.state.Transition(pkg_proto.GameState_Countdown); err != nil {
-		g.logger.Print("HandlePlayerReady(): ", err)
+		g.logger.Error("transition failed", zap.Error(err))
 		return
 	}
 	startTimestamp := time.Now()
@@ -340,7 +328,7 @@ func (g *gameSession) HandleCountdown(ev *pkg_proto.Event) {
 	<-time.After(time.Until(endTimestamp))
 
 	if err := g.state.Transition(pkg_proto.GameState_Playing); err != nil {
-		g.logger.Print("HandleCountdown(): ", err)
+		g.logger.Error("transition failed", zap.Error(err))
 		return
 	}
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -353,7 +341,7 @@ func (g *gameSession) HandleCountdown(ev *pkg_proto.Event) {
 func (g *gameSession) HandlePlaying(ev *pkg_proto.Event) {
 	<-time.After(GameMaxTime)
 	if err := g.state.Transition(pkg_proto.GameState_Gameover); err != nil {
-		g.logger.Print("HandlePlaying(): ", err)
+		g.logger.Error("transition failed", zap.Error(err))
 		return
 	}
 	g.publishGameoverEvent(pkg_proto.GameOverReason_Reason_TimesUp, 0)
@@ -388,9 +376,7 @@ func (g *gameSession) HandlePlayerMove(ev *pkg_proto.Event) {
 			},
 		},
 	})
-	if g.debugMode {
-		g.logger.Printf("player %d move to X=%d Y=%d", player.playerId, data.X, data.Y)
-	}
+	g.logger.Sugar().Debugf("player %d move to X=%d Y=%d", player.playerId, data.X, data.Y)
 }
 
 func (g *gameSession) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
@@ -407,7 +393,7 @@ func (g *gameSession) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 	}
 
 	if player.BombCount <= 0 {
-		g.logger.Printf("player %d BombCount less than or equal to 0", data.PlayerId)
+		g.logger.Sugar().Warnf("player %d BombCount less than or equal to 0", data.PlayerId)
 		return
 	}
 	player.BombCount--
@@ -431,9 +417,7 @@ func (g *gameSession) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 			},
 		},
 	})
-	if g.debugMode {
-		g.logger.Printf("player %d plant bomb at X=%d Y=%d exploded at %d", player.playerId, data.X, data.Y, explodedAt.Unix())
-	}
+	g.logger.Sugar().Debugf("player %d plant bomb at X=%d Y=%d exploded at %d", player.playerId, data.X, data.Y, explodedAt.Unix())
 
 	go func() {
 		<-time.After(BombBeforeExplodeDuration)
@@ -470,7 +454,7 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 		return
 	}
 	g.gameMap.ClearObstacle(data.X, data.Y)
-	g.logger.Printf("bomb removed x=%d y=%d", data.X, data.Y)
+	g.logger.Sugar().Debugf("bomb removed x=%d y=%d", data.X, data.Y)
 
 	player.BombCount++
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -487,15 +471,11 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 			},
 		},
 	})
-	if g.debugMode {
-		g.logger.Printf("bomb removed at X=%d Y=%d ", data.X, data.Y)
-	}
+	g.logger.Sugar().Debugf("bomb removed at X=%d Y=%d ", data.X, data.Y)
 
 	for _, bombedBoxCoord := range g.findBombedBoxCoords(data) {
 		g.replaceTileBoxWithPowerup(bombedBoxCoord[0], bombedBoxCoord[1])
-		if g.debugMode {
-			g.logger.Printf("box was bombed at x=%d y=%d", data.X, data.Y)
-		}
+		g.logger.Sugar().Debugf("box was bombed at x=%d y=%d", data.X, data.Y)
 	}
 	for _, bombedPlayerId := range g.findBombedPlayers(data) {
 		g.alivePlayers[bombedPlayerId] = false
@@ -509,9 +489,7 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 				},
 			},
 		})
-		if g.debugMode {
-			g.logger.Printf("player %d was bombed at x=%d y=%d", bombedPlayerId, data.X, data.Y)
-		}
+		g.logger.Sugar().Debugf("player %d was bombed at x=%d y=%d", bombedPlayerId, data.X, data.Y)
 	}
 }
 
@@ -589,9 +567,7 @@ func (g *gameSession) replaceTileBoxWithPowerup(x, y int32) {
 			},
 		},
 	})
-	if g.debugMode {
-		g.logger.Printf("powerup(%s) dropped at x=%d y=%d", powerupType.String(), x, y)
-	}
+	g.logger.Sugar().Debugf("powerup(%s) dropped at x=%d y=%d", powerupType.String(), x, y)
 }
 
 func (g *gameSession) rollPowerup() *pkg_proto.PowerupType {
@@ -654,9 +630,7 @@ func (g *gameSession) HandleGetPowerup(ev *pkg_proto.Event) {
 			},
 		},
 	})
-	if g.debugMode {
-		g.logger.Printf("player %d got powerup(%s)at x=%d y=%d", player.playerId, powerup.Type.String(), data.X, data.Y)
-	}
+	g.logger.Sugar().Debugf("player %d got powerup(%s)at x=%d y=%d", player.playerId, powerup.Type.String(), data.X, data.Y)
 }
 
 func (g *gameSession) HandlePlayerDead(ev *pkg_proto.Event) {
@@ -680,14 +654,12 @@ func (g *gameSession) HandlePlayerDead(ev *pkg_proto.Event) {
 		Timestamp: time.Now().Unix(),
 		GameId:    g.id,
 	})
-	if g.debugMode {
-		g.logger.Printf("player %d dead", player.playerId)
-	}
+	g.logger.Sugar().Debugf("player %d dead", player.playerId)
 }
 
 func (g *gameSession) HandleWinConditionSatisfied(ev *pkg_proto.Event) {
 	if err := g.state.Transition(pkg_proto.GameState_Gameover); err != nil {
-		g.logger.Print("HandleWinConditionSatisfied(): ", err)
+		g.logger.Error("transition failed", zap.Error(err))
 		return
 	}
 
@@ -723,8 +695,4 @@ func (g *gameSession) publishCrashEvent(reason string) {
 
 func (g *gameSession) SetPowerupDropRate(rate float32) {
 	g.powerupDropRate = rate
-}
-
-func (g *gameSession) TurnOnDebugMode() {
-	g.debugMode = true
 }

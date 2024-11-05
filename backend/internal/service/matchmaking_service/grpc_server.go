@@ -7,11 +7,10 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"context"
-	"log"
-	"os"
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
@@ -19,16 +18,16 @@ type matchmakingServiceServer struct {
 	matchmaking.UnimplementedMatchmakingServiceServer
 	cfg          *config.Config
 	service      *MatchmakingService
-	logger       *log.Logger
+	logger       *zap.Logger
 	mutex        sync.Mutex
 	createdGames map[int32]bool
 }
 
-func NewMatchmakingServiceServer(cfg *config.Config, service *MatchmakingService) *matchmakingServiceServer {
+func NewMatchmakingServiceServer(cfg *config.Config, logger *zap.Logger, service *MatchmakingService) *matchmakingServiceServer {
 	return &matchmakingServiceServer{
 		cfg:          cfg,
 		service:      service,
-		logger:       log.New(os.Stderr, "[MatchmakingServer] ", log.LstdFlags),
+		logger:       logger,
 		mutex:        sync.Mutex{},
 		createdGames: map[int32]bool{},
 	}
@@ -39,14 +38,10 @@ func (server *matchmakingServiceServer) Run(ctx context.Context) {
 }
 
 func (server *matchmakingServiceServer) Enroll(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
-	server.logger.Printf("Enroll(): %d", req.PlayerId)
-
 	return nil, server.service.Enroll(ctx, req.PlayerId)
 }
 
 func (server *matchmakingServiceServer) Cancel(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
-	server.logger.Printf("Cancel(): %d", req.PlayerId)
-
 	return nil, server.service.Cancel(ctx, req.PlayerId)
 }
 
@@ -57,8 +52,8 @@ func (server *matchmakingServiceServer) GetWaitingPlayerCount(ctx context.Contex
 }
 
 func (server *matchmakingServiceServer) SubscribeMatch(req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
-	server.logger.Printf("SubscribeMatch(): %d", req.PlayerId)
-	defer server.logger.Printf("SubscribeMatch(): %d, exit", req.PlayerId)
+	server.logger.Debug("SubscribeMatch()", zap.Int32("player", req.PlayerId))
+	defer server.logger.Debug("SubscribeMatch() exit", zap.Int32("player", req.PlayerId))
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -74,17 +69,17 @@ func (server *matchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 
 		// Bind this game to specific game service instance
 		if err := server.service.SetGameIdForPlayer(ctx, event.GameId, req.PlayerId); err != nil {
-			server.logger.Println("SetGameIdForPlayer(): ", err)
+			server.logger.Error("SetGameIdForPlayer(): ", zap.Error(err))
 			return
 		}
 		if err := server.service.SetGameServerAddrForGameId(ctx, event.GetNewMatch().GetGameServerAddr(), event.GameId); err != nil {
-			server.logger.Println("SetGameIdForPlayer(): ", err)
+			server.logger.Error("SetGameIdForPlayer(): ", zap.Error(err))
 			return
 		}
 
 		// The NewGame request should be sent to specific IP.
 		if err := server.sendNewGameRequest(event); err != nil {
-			server.logger.Printf("sendNewGameRequest() err: %s, skip sending NewMatch event to player", err)
+			server.logger.Error("sendNewGameRequest() err: %s, skip sending NewMatch event to player", zap.Error(err))
 			return
 		}
 		server.HandleNewMatchEvent(event, req, stream)
@@ -97,7 +92,7 @@ func (server *matchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 func (server *matchmakingServiceServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) {
 	data := ev.GetNewMatch()
 	if data == nil {
-		server.logger.Printf("unexpected nil from GetNewMatch()")
+		server.logger.Error("unexpected nil from GetNewMatch()")
 		return
 	}
 
@@ -105,10 +100,10 @@ func (server *matchmakingServiceServer) HandleNewMatchEvent(ev *pkg_proto.Event,
 	for _, playerId := range data.Players {
 		if playerId == req.PlayerId {
 			if err := stream.Send(ev); err != nil {
-				server.logger.Print("HandleNewMatchEvent(): ", err)
+				server.logger.Error("HandleNewMatchEvent(): ", zap.Error(err))
 				return
 			}
-			server.logger.Printf("send new match to player %d", playerId)
+			server.logger.Debug("->", zap.Int32("player", playerId), zap.String("type", "NewMatch"))
 			return
 		}
 	}
@@ -126,7 +121,7 @@ func (server *matchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) 
 		return &EventDataNilError{Event: ev}
 	}
 
-	server.logger.Printf("opening game service client to %s", data.GameServerAddr)
+	server.logger.Sugar().Debugf("opening game service client to %s", data.GameServerAddr)
 	gameClient, close, err := game_service.NewGameServiceClient(server.cfg, data.GameServerAddr)
 	if err != nil {
 		return err
@@ -141,7 +136,7 @@ func (server *matchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) 
 		return err
 	}
 
-	server.logger.Printf("game %d is created", ev.GameId)
+	server.logger.Sugar().Infof("game %d is created", ev.GameId)
 	server.createdGames[ev.GameId] = true
 	return nil
 }

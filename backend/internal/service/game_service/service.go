@@ -10,19 +10,23 @@ import (
 	"context"
 
 	_ "embed"
+
+	"go.uber.org/zap"
 )
 
 //go:embed map_loader/map_0.yaml
 var currentOnlyMapContent string
 
 type GameService struct {
+	logger    *zap.Logger
 	mapLoader maploader.MapLoader
 	storage   storage.Storage
 	sessions  map[int32]*gameSession
 }
 
-func NewGameService(storage storage.Storage) *GameService {
+func NewGameService(logger *zap.Logger, storage storage.Storage) *GameService {
 	return &GameService{
+		logger:    logger,
 		mapLoader: maploader.NewYamlMapLoader(),
 		storage:   storage,
 		sessions:  map[int32]*gameSession{},
@@ -47,7 +51,7 @@ func (service *GameService) NewGame(ctx context.Context, gameId int32, idNicknam
 		players[playerId] = NewPlayer(playerId, nickname, nil)
 	}
 
-	sess, err := NewGameSession(gameId, state, eventBus, gameMap, players)
+	sess, err := NewGameSession(service.logger, gameId, state, eventBus, gameMap, players)
 	if err != nil {
 		return err
 	}

@@ -7,11 +7,10 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"context"
-	"log"
-	"os"
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
@@ -19,15 +18,15 @@ type gameServiceServer struct {
 	game.UnimplementedGameServiceServer
 	cfg     *config.Config
 	service *GameService
-	logger  *log.Logger
+	logger  *zap.Logger
 	mutex   sync.Mutex
 }
 
-func NewGameServiceServer(cfg *config.Config, service *GameService) *gameServiceServer {
+func NewGameServiceServer(cfg *config.Config, logger *zap.Logger, service *GameService) *gameServiceServer {
 	return &gameServiceServer{
 		cfg:     cfg,
 		service: service,
-		logger:  log.New(os.Stderr, "[GameServer] ", log.LstdFlags),
+		logger:  logger,
 		mutex:   sync.Mutex{},
 	}
 }
@@ -35,7 +34,6 @@ func NewGameServiceServer(cfg *config.Config, service *GameService) *gameService
 func (server *gameServiceServer) NewGame(ctx context.Context, req *game.NewGameRequest) (*empty.Empty, error) {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
-	server.logger.Printf("NewGame(): %d", req.GameId)
 
 	authClient, close, err := auth_service.NewAuthServiceClient(server.cfg)
 	if err != nil {
@@ -51,7 +49,7 @@ func (server *gameServiceServer) NewGame(ctx context.Context, req *game.NewGameR
 	idNicknameMap := resp.Nicknames
 
 	if _, ok := server.service.sessions[req.GameId]; ok {
-		server.logger.Printf("skip created session %d", req.GameId)
+		server.logger.Warn("skip created session", zap.Int32("game", req.GameId))
 		return nil, nil
 	}
 	if err := server.service.NewGame(context.TODO(), req.GameId, idNicknameMap); err != nil {
@@ -65,12 +63,10 @@ func (server *gameServiceServer) NewGame(ctx context.Context, req *game.NewGameR
 }
 
 func (server *gameServiceServer) GetGameInfo(ctx context.Context, req *game.GetGameInfoRequest) (*game.GetGameInfoResponse, error) {
-	server.logger.Printf("GetGameInfo(): %d", req.GameId)
 	return server.service.GetGameInfo(ctx, req.GameId)
 }
 
 func (server *gameServiceServer) PlayerPublish(ctx context.Context, ev *pkg_proto.Event) (*empty.Empty, error) {
-	server.logger.Printf("PlayerPublish(): %d", ev.GameId)
 	err := server.service.PlayerPublish(context.Background(), ev.GameId, ev)
 	if err != nil {
 		return nil, err
@@ -79,8 +75,8 @@ func (server *gameServiceServer) PlayerPublish(ctx context.Context, ev *pkg_prot
 }
 
 func (server *gameServiceServer) Subscribe(req *game.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
-	server.logger.Printf("Subscribe(): game %d", req.GameId)
-	defer server.logger.Printf("Subscribe(): game %d exit", req.GameId)
+	server.logger.Debug("Subscribe()", zap.Int32("game", req.GameId))
+	defer server.logger.Debug("Subscribe() exit", zap.Int32("game", req.GameId))
 
 	eventCh := make(chan *pkg_proto.Event, 30)
 	for _, eventType := range req.Types {
@@ -88,20 +84,20 @@ func (server *gameServiceServer) Subscribe(req *game.SubscribeRequest, stream gr
 			select {
 			case eventCh <- event:
 			default:
-				server.logger.Println("eventCh is full")
+				server.logger.Warn("eventCh is full")
 			}
 		})
 		if err != nil {
-			server.logger.Printf("Subscribe(): %s", err)
+			server.logger.Error("Subscribe()", zap.Error(err))
 			return err
 		}
 	}
 
 	// TODO cancel subscription
 	for ev := range eventCh {
-		server.logger.Printf("eventCh %s", ev.Type.String())
+		server.logger.Debug("<-", zap.String("type", ev.Type.String()))
 		if err := stream.Send(ev); err != nil {
-			server.logger.Printf("Send(ev) failed: %s", err)
+			server.logger.Error("Send(ev) failed", zap.Error(err))
 			return err
 		}
 	}
