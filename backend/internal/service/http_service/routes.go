@@ -1,6 +1,7 @@
 package http_service
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -9,7 +10,7 @@ import (
 
 const ApiKeyHeader = "X-API-KEY"
 
-func InitRoutes() http.Handler {
+func InitRoutes(cfg *config.Config) http.Handler {
 	r := gin.Default()
 
 	cors.Default()
@@ -20,7 +21,7 @@ func InitRoutes() http.Handler {
 
 	apiGroup := r.Group("api")
 	{
-		ctl := NewApiController()
+		ctl := NewApiController(cfg)
 		apiGroup.POST("/auth/register", ctl.Register)
 		apiGroup.GET("/auth/validate", ctl.Validate)
 		apiGroup.GET("/matchmaking/get_waiting_player_count", ctl.GetWaitingPlayerCount)

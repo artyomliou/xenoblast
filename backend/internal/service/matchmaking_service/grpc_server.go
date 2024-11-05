@@ -1,6 +1,7 @@
 package matchmaking_service
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
@@ -14,19 +15,18 @@ import (
 	"google.golang.org/grpc"
 )
 
-var GrpcServerHost = "matchmaking_service"
-var GrpcServerPort = 50051
-
-type matchmakingServer struct {
+type matchmakingServiceServer struct {
 	matchmaking.UnimplementedMatchmakingServiceServer
+	cfg          *config.Config
 	service      *MatchmakingService
 	logger       *log.Logger
 	mutex        sync.Mutex
 	createdGames map[int32]bool
 }
 
-func NewMatchmakingServer(service *MatchmakingService) *matchmakingServer {
-	return &matchmakingServer{
+func NewMatchmakingServiceServer(cfg *config.Config, service *MatchmakingService) *matchmakingServiceServer {
+	return &matchmakingServiceServer{
+		cfg:          cfg,
 		service:      service,
 		logger:       log.New(os.Stderr, "[MatchmakingServer] ", log.LstdFlags),
 		mutex:        sync.Mutex{},
@@ -34,25 +34,29 @@ func NewMatchmakingServer(service *MatchmakingService) *matchmakingServer {
 	}
 }
 
-func (server *matchmakingServer) Enroll(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
+func (server *matchmakingServiceServer) Run(ctx context.Context) {
+	server.service.StartMatchmaking(ctx)
+}
+
+func (server *matchmakingServiceServer) Enroll(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
 	server.logger.Printf("Enroll(): %d", req.PlayerId)
 
 	return nil, server.service.Enroll(ctx, req.PlayerId)
 }
 
-func (server *matchmakingServer) Cancel(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
+func (server *matchmakingServiceServer) Cancel(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
 	server.logger.Printf("Cancel(): %d", req.PlayerId)
 
 	return nil, server.service.Cancel(ctx, req.PlayerId)
 }
 
-func (server *matchmakingServer) GetWaitingPlayerCount(ctx context.Context, req *empty.Empty) (*matchmaking.GetWaitingPlayerCountResponse, error) {
+func (server *matchmakingServiceServer) GetWaitingPlayerCount(ctx context.Context, req *empty.Empty) (*matchmaking.GetWaitingPlayerCountResponse, error) {
 	return &matchmaking.GetWaitingPlayerCountResponse{
 		Count: int32(server.service.waitingPlayerCount),
 	}, nil
 }
 
-func (server *matchmakingServer) SubscribeMatch(req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
+func (server *matchmakingServiceServer) SubscribeMatch(req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	server.logger.Printf("SubscribeMatch(): %d", req.PlayerId)
 	defer server.logger.Printf("SubscribeMatch(): %d, exit", req.PlayerId)
 
@@ -90,7 +94,7 @@ func (server *matchmakingServer) SubscribeMatch(req *matchmaking.MatchmakingRequ
 	return nil
 }
 
-func (server *matchmakingServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) {
+func (server *matchmakingServiceServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) {
 	data := ev.GetNewMatch()
 	if data == nil {
 		server.logger.Printf("unexpected nil from GetNewMatch()")
@@ -110,7 +114,7 @@ func (server *matchmakingServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *m
 	}
 }
 
-func (server *matchmakingServer) sendNewGameRequest(ev *pkg_proto.Event) error {
+func (server *matchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) error {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 	if _, ok := server.createdGames[ev.GameId]; ok {
@@ -123,7 +127,7 @@ func (server *matchmakingServer) sendNewGameRequest(ev *pkg_proto.Event) error {
 	}
 
 	server.logger.Printf("opening game service client to %s", data.GameServerAddr)
-	gameClient, close, err := game_service.NewGrpcClient(data.GameServerAddr)
+	gameClient, close, err := game_service.NewGameServiceClient(server.cfg, data.GameServerAddr)
 	if err != nil {
 		return err
 	}
@@ -142,7 +146,7 @@ func (server *matchmakingServer) sendNewGameRequest(ev *pkg_proto.Event) error {
 	return nil
 }
 
-func (server *matchmakingServer) GetGameServerAddr(ctx context.Context, req *matchmaking.GetGameServerAddrRequest) (*matchmaking.GetGameServerAddrResponse, error) {
+func (server *matchmakingServiceServer) GetGameServerAddr(ctx context.Context, req *matchmaking.GetGameServerAddrRequest) (*matchmaking.GetGameServerAddrResponse, error) {
 	gameServerAddr, err := server.service.GetGameServerAddrForPlayer(ctx, req.PlayerId)
 	if err != nil {
 		return nil, err

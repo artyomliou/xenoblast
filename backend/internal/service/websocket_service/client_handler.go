@@ -1,6 +1,7 @@
 package websocket_service
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
@@ -18,6 +19,7 @@ import (
 )
 
 type ClientHandler struct {
+	cfg            *config.Config
 	client         *Client
 	player         *auth.PlayerInfoDto
 	gameId         int32
@@ -27,8 +29,9 @@ type ClientHandler struct {
 	gameClient     game.GameServiceClient
 }
 
-func NewClientHandler(client *Client, player *auth.PlayerInfoDto) *ClientHandler {
+func NewClientHandler(cfg *config.Config, client *Client, player *auth.PlayerInfoDto) *ClientHandler {
 	return &ClientHandler{
+		cfg:            cfg,
 		client:         client,
 		player:         player,
 		gameId:         0,
@@ -112,7 +115,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 
 					// Open a connection to game service, must check before use
 					h.logger.Printf("opening game service client to %s", h.gameServerAddr)
-					gameClient, close, err := game_service.NewGrpcClient(h.gameServerAddr)
+					gameClient, close, err := game_service.NewGameServiceClient(h.cfg, h.gameServerAddr)
 					if err != nil {
 						h.logger.Print("recvGameEvent(): ", err)
 						return
@@ -169,7 +172,7 @@ func (h *ClientHandler) recvWebsocketEvent(ctx context.Context) {
 func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 	defer h.logger.Print("recvMatchmakingEvent() exit")
 
-	matchmakingClient, close, err := matchmaking_service.NewGrpcClient()
+	matchmakingClient, close, err := matchmaking_service.NewMatchmakingServiceClient(h.cfg)
 	if err != nil {
 		h.logger.Print("recvMatchmakingEvent(): ", err)
 		return
@@ -207,7 +210,7 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 }
 
 func (h *ClientHandler) sendEnrollMatchmakingOverHttp(ctx context.Context) error {
-	matchmakingClient, close, err := matchmaking_service.NewGrpcClient()
+	matchmakingClient, close, err := matchmaking_service.NewMatchmakingServiceClient(h.cfg)
 	if err != nil {
 		return err
 	}
@@ -223,7 +226,7 @@ func (h *ClientHandler) sendEnrollMatchmakingOverHttp(ctx context.Context) error
 }
 
 func (h *ClientHandler) sendCancelMatchmakingOverHttp(ctx context.Context) error {
-	matchmakingClient, close, err := matchmaking_service.NewGrpcClient()
+	matchmakingClient, close, err := matchmaking_service.NewMatchmakingServiceClient(h.cfg)
 	if err != nil {
 		return err
 	}

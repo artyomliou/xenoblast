@@ -1,6 +1,7 @@
 package game_service
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
@@ -14,30 +15,29 @@ import (
 	"google.golang.org/grpc"
 )
 
-var GrpcServerHost = "game_service"
-var GrpcServerPort = 50051
-
-type gameServer struct {
+type gameServiceServer struct {
 	game.UnimplementedGameServiceServer
+	cfg     *config.Config
 	service *GameService
 	logger  *log.Logger
 	mutex   sync.Mutex
 }
 
-func NewGameServer(service *GameService) *gameServer {
-	return &gameServer{
+func NewGameServiceServer(cfg *config.Config, service *GameService) *gameServiceServer {
+	return &gameServiceServer{
+		cfg:     cfg,
 		service: service,
 		logger:  log.New(os.Stderr, "[GameServer] ", log.LstdFlags),
 		mutex:   sync.Mutex{},
 	}
 }
 
-func (server *gameServer) NewGame(ctx context.Context, req *game.NewGameRequest) (*empty.Empty, error) {
+func (server *gameServiceServer) NewGame(ctx context.Context, req *game.NewGameRequest) (*empty.Empty, error) {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 	server.logger.Printf("NewGame(): %d", req.GameId)
 
-	authClient, close, err := auth_service.NewGrpcClient()
+	authClient, close, err := auth_service.NewAuthServiceClient(server.cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -64,12 +64,12 @@ func (server *gameServer) NewGame(ctx context.Context, req *game.NewGameRequest)
 	return nil, nil
 }
 
-func (server *gameServer) GetGameInfo(ctx context.Context, req *game.GetGameInfoRequest) (*game.GetGameInfoResponse, error) {
+func (server *gameServiceServer) GetGameInfo(ctx context.Context, req *game.GetGameInfoRequest) (*game.GetGameInfoResponse, error) {
 	server.logger.Printf("GetGameInfo(): %d", req.GameId)
 	return server.service.GetGameInfo(ctx, req.GameId)
 }
 
-func (server *gameServer) PlayerPublish(ctx context.Context, ev *pkg_proto.Event) (*empty.Empty, error) {
+func (server *gameServiceServer) PlayerPublish(ctx context.Context, ev *pkg_proto.Event) (*empty.Empty, error) {
 	server.logger.Printf("PlayerPublish(): %d", ev.GameId)
 	err := server.service.PlayerPublish(context.Background(), ev.GameId, ev)
 	if err != nil {
@@ -78,7 +78,7 @@ func (server *gameServer) PlayerPublish(ctx context.Context, ev *pkg_proto.Event
 	return nil, nil
 }
 
-func (server *gameServer) Subscribe(req *game.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
+func (server *gameServiceServer) Subscribe(req *game.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	server.logger.Printf("Subscribe(): game %d", req.GameId)
 	defer server.logger.Printf("Subscribe(): game %d exit", req.GameId)
 

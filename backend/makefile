@@ -33,7 +33,10 @@ clean:
 
 .PHONY: setup
 setup: check-tools proto
-	@echo "Environment setup complete!"
+	@if [ ! -f "config.yaml" ]; then \
+		cp config.example.yaml config.yaml; \
+	fi
+	@echo "Environment setup complete!"; \
 
 .PHONY: test
 test: setup

@@ -1,15 +1,12 @@
 package main
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/service"
-	"artyomliou/xenoblast-backend/internal/service/auth_service"
-	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/http_service"
-	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"artyomliou/xenoblast-backend/internal/service/websocket_service"
 	"artyomliou/xenoblast-backend/pkg/utils"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 )
@@ -28,51 +25,33 @@ func main() {
 	}
 
 	ctx := utils.SetupTerminableContext()
+	cfg, cfgErr := config.Load()
+	if cfgErr != nil {
+		log.Fatal(cfgErr)
+	}
 
+	var start service.StartFunc
+	var close service.CloseFunc
+	var err error
 	switch *serviceName {
 	case "http":
-		addr := fmt.Sprintf(":%d", websocket_service.HttpServerPort)
-		go utils.StartHttpServer(ctx, nil, addr, http_service.InitRoutes())
-		<-ctx.Done()
-
+		start, close, err = service.BuildHttpServer(cfg.HttpService.Port, http_service.InitRoutes(cfg))
 	case "websocket":
-		addr := fmt.Sprintf(":%d", websocket_service.HttpServerPort)
-		go utils.StartHttpServer(ctx, nil, addr, websocket_service.InitRoutes(ctx))
-		<-ctx.Done()
-
+		start, close, err = service.BuildHttpServer(cfg.WebsocketService.Port, websocket_service.InitRoutes(ctx, cfg))
 	case "auth":
-		addr := fmt.Sprintf(":%d", auth_service.GrpcServerPort)
-		authServerListener, authServer, err := service.BuildAuthServer(addr)
-		if err != nil {
-			log.Fatalf("failed to listen: %v", err)
-		}
-		go authServer.Serve(authServerListener)
-
-		<-ctx.Done()
-		authServer.GracefulStop()
-
+		start, close, err = service.BuildAuthServer(cfg)
 	case "matchmaking":
-		addr := fmt.Sprintf(":%d", matchmaking_service.GrpcServerPort)
-		matchmakingServerListener, matchmakingService, matchmakingServer, err := service.BuildMatchmakingServer(addr)
-		if err != nil {
-			log.Fatal(err)
-		}
-		go matchmakingService.StartMatchmaking(ctx)
-		go matchmakingServer.Serve(matchmakingServerListener)
-
-		<-ctx.Done()
-		matchmakingServer.GracefulStop()
-
+		start, close, err = service.BuildMatchmakingServer(cfg)
 	case "game":
-		addr := fmt.Sprintf(":%d", game_service.GrpcServerPort)
-		gameServerListener, gameServer, err := service.BuildGameServer(addr)
-		if err != nil {
-			log.Fatal(err)
-		}
-		go gameServer.Serve(gameServerListener)
-
-		<-ctx.Done()
-		gameServer.GracefulStop()
-
+		start, close, err = service.BuildGameServer(cfg)
+	default:
+		log.Fatal("not valid service name")
 	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	go start(ctx)
+	<-ctx.Done()
+	close()
 }

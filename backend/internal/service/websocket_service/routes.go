@@ -1,6 +1,7 @@
 package websocket_service
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"artyomliou/xenoblast-backend/internal/service/http_service"
@@ -17,15 +18,15 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func InitRoutes(ctx context.Context) http.Handler {
+func InitRoutes(ctx context.Context, cfg *config.Config) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /ws/", func(w http.ResponseWriter, r *http.Request) {
-		handleWebsocketRequest(ctx, w, r)
+		handleWebsocketRequest(ctx, cfg, w, r)
 	})
 	return mux
 }
 
-func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func handleWebsocketRequest(ctx context.Context, cfg *config.Config, w http.ResponseWriter, r *http.Request) {
 	// workaround: The WebSocket() API in JS does not accept custom headers
 	apiKey := r.URL.Query().Get(http_service.ApiKeyHeader)
 	if apiKey == "" {
@@ -34,7 +35,7 @@ func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.
 		return
 	}
 
-	authClient, close, err := auth_service.NewGrpcClient()
+	authClient, close, err := auth_service.NewAuthServiceClient(cfg)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Internal server error"))
@@ -56,6 +57,6 @@ func handleWebsocketRequest(ctx context.Context, w http.ResponseWriter, r *http.
 	}
 
 	client := NewClient(conn)
-	clientHandler := NewClientHandler(client, player)
+	clientHandler := NewClientHandler(cfg, client, player)
 	go clientHandler.Run(ctx)
 }

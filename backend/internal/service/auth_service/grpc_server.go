@@ -1,29 +1,29 @@
 package auth_service
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"context"
 	"log"
 	"os"
 )
 
-var GrpcServerHost = "auth_service"
-var GrpcServerPort = 50051
-
-type authServer struct {
+type authServiceServer struct {
 	auth.UnimplementedAuthServiceServer
+	cfg     *config.Config
 	service *AuthService
 	logger  *log.Logger
 }
 
-func NewAuthServer(service *AuthService) *authServer {
-	return &authServer{
+func NewAuthServiceServer(cfg *config.Config, service *AuthService) *authServiceServer {
+	return &authServiceServer{
+		cfg:     cfg,
 		service: service,
 		logger:  log.New(os.Stderr, "[AuthServer] ", log.LstdFlags),
 	}
 }
 
-func (server *authServer) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
+func (server *authServiceServer) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
 	server.logger.Printf("Register(): %s", req.Nickname)
 
 	apiKey, playerId, err := server.service.Register(ctx, req.Nickname)
@@ -40,7 +40,7 @@ func (server *authServer) Register(ctx context.Context, req *auth.RegisterReques
 	}, nil
 }
 
-func (server *authServer) Validate(ctx context.Context, req *auth.ValidateRequest) (*auth.PlayerInfoDto, error) {
+func (server *authServiceServer) Validate(ctx context.Context, req *auth.ValidateRequest) (*auth.PlayerInfoDto, error) {
 	server.logger.Printf("Validate(): %s", req.ApiKey)
 
 	validated, dto, err := server.service.Validate(ctx, req.ApiKey)
@@ -53,7 +53,7 @@ func (server *authServer) Validate(ctx context.Context, req *auth.ValidateReques
 	return dto, nil
 }
 
-func (server *authServer) GetNickname(ctx context.Context, req *auth.GetNicknameRequest) (*auth.GetNicknameResponse, error) {
+func (server *authServiceServer) GetNickname(ctx context.Context, req *auth.GetNicknameRequest) (*auth.GetNicknameResponse, error) {
 	server.logger.Printf("GetNickname(): %+v", req.Players)
 
 	nicknames, err := server.service.GetNicknames(ctx, req.Players)

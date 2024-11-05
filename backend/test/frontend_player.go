@@ -1,12 +1,12 @@
 package test
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/http_api"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
 	"artyomliou/xenoblast-backend/internal/service/http_service"
-	"artyomliou/xenoblast-backend/internal/service/websocket_service"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -42,6 +42,7 @@ const (
 
 type frontendPlayer struct {
 	ctx           context.Context
+	cfg           *config.Config
 	newStateQueue chan frontendState
 	state         frontendState
 	errCh         chan error
@@ -56,9 +57,10 @@ type frontendPlayer struct {
 	conn           *websocket.Conn
 }
 
-func newFrontendPlayer(ctx context.Context, nickname string) *frontendPlayer {
+func newFrontendPlayer(ctx context.Context, cfg *config.Config, nickname string) *frontendPlayer {
 	return &frontendPlayer{
 		ctx:           ctx,
+		cfg:           cfg,
 		newStateQueue: make(chan frontendState, 1),
 		state:         stateInit,
 		errCh:         make(chan error),
@@ -139,7 +141,9 @@ func (player *frontendPlayer) sendRegisterOverHttp(t *testing.T) {
 }
 
 func (player *frontendPlayer) startWebsocketConnection(t *testing.T) {
-	wsUrl := fmt.Sprintf("ws://%s:%d/%s?%s=%s", websocket_service.HttpServerHost, websocket_service.HttpServerPort, "ws/", http_service.ApiKeyHeader, player.apiKey)
+	host := player.cfg.WebsocketService.Host
+	port := player.cfg.WebsocketService.Port
+	wsUrl := fmt.Sprintf("ws://%s:%d/%s?%s=%s", host, port, "ws/", http_service.ApiKeyHeader, player.apiKey)
 	conn, _, err := websocket.DefaultDialer.DialContext(player.ctx, wsUrl, nil)
 	assert.NoError(t, err)
 	assert.NotNil(t, conn)
@@ -300,7 +304,9 @@ func (player *frontendPlayer) receivePlayerMovedFromWebsocket(t *testing.T) {
 }
 
 func (player *frontendPlayer) sendHttpRequest(method string, path string, newQueries *map[string]string, body any, apiKey *string) ([]byte, error) {
-	apiUrl, err := url.Parse(fmt.Sprintf("http://%s:%d/%s", http_service.HttpServerHost, http_service.HttpServerPort, path))
+	host := player.cfg.HttpService.Host
+	port := player.cfg.HttpService.Port
+	apiUrl, err := url.Parse(fmt.Sprintf("http://%s:%d/%s", host, port, path))
 	if err != nil {
 		return nil, err
 	}

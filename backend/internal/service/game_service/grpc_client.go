@@ -1,6 +1,7 @@
 package game_service
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	"fmt"
 
@@ -8,7 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewGrpcClient(customAddr string) (game.GameServiceClient, func() error, error) {
+func NewGameServiceClient(cfg *config.Config, customAddr string) (game.GameServiceClient, func() error, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -16,7 +17,7 @@ func NewGrpcClient(customAddr string) (game.GameServiceClient, func() error, err
 	if customAddr != "" {
 		addr = customAddr
 	} else {
-		addr = fmt.Sprintf("%s:%d", GrpcServerHost, GrpcServerPort)
+		addr = fmt.Sprintf("%s:%d", cfg.GameService.Host, cfg.GameService.Port)
 	}
 
 	conn, err := grpc.NewClient(addr, opts...)

@@ -1,0 +1,22 @@
+environment: dev
+graceful_shutdown: true
+
+http_service:
+  host: http_service
+  port: 8080
+
+websocket_service:
+  host: websocket_service
+  port: 8080
+
+auth_service:
+  host: auth_service
+  port: 50051
+
+matchmaking_service:
+  host: matchmaking_service
+  port: 50051
+
+game_service:
+  host: game_service
+  port: 50051

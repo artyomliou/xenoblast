@@ -1,9 +1,9 @@
 package matchmaking_service
 
 import (
+	"artyomliou/xenoblast-backend/internal/config"
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
-	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/storage"
 	"context"
 	"fmt"
@@ -22,6 +22,7 @@ const maximumPlayer = 4
 const MatchmakingInterval = time.Second
 
 type MatchmakingService struct {
+	cfg                *config.Config
 	storage            storage.Storage
 	eventBus           *eventbus.EventBus
 	logger             *log.Logger
@@ -30,8 +31,9 @@ type MatchmakingService struct {
 	mutex              sync.Mutex
 }
 
-func NewMatchmakingService(storage storage.Storage, eventBus *eventbus.EventBus) *MatchmakingService {
+func NewMatchmakingService(cfg *config.Config, storage storage.Storage, eventBus *eventbus.EventBus) *MatchmakingService {
 	return &MatchmakingService{
+		cfg:           cfg,
 		storage:       storage,
 		eventBus:      eventBus,
 		logger:        log.New(os.Stdout, "[MatchmakingService] ", log.LstdFlags),
@@ -105,12 +107,12 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 	gameId := rand.Int31() // TODO definitely introduce some bug here
 
 	// Get a specfic game server IP for this game
-	gameServerIp, err := net.ResolveIPAddr("ip", game_service.GrpcServerHost)
+	gameServerIp, err := net.ResolveIPAddr("ip", service.cfg.GameService.Host)
 	if err != nil {
 		service.logger.Println("cannot resolve ip of game service: ", err)
 		return
 	}
-	gameServerAddr := fmt.Sprintf("%s:%d", gameServerIp.String(), game_service.GrpcServerPort)
+	gameServerAddr := fmt.Sprintf("%s:%d", gameServerIp.String(), service.cfg.GameService.Port)
 
 	service.logger.Printf("new match gameId=%d players=%+v", gameId, playerIds)
 	go service.eventBus.Publish(&pkg_proto.Event{
