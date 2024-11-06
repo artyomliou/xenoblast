@@ -26,6 +26,7 @@ func TestMain(m *testing.M) {
 
 func setup() {
 	cfg = config.GetDefault()
+	cfg.Environment = config.TestingEnvironment
 	cfg.HttpService.Host = "localhost"
 	cfg.HttpService.Port = 8081
 	cfg.WebsocketService.Host = "localhost"

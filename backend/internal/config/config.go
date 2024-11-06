@@ -15,13 +15,15 @@ type Config struct {
 	AuthService        Service `yaml:"auth_service" env-required:"true"`
 	MatchmakingService Service `yaml:"matchmaking_service" env-required:"true"`
 	GameService        Service `yaml:"game_service" env-required:"true"`
+	Collector          `yaml:"collector" env-required:"true"`
 }
 
 type Environment string
 
 const (
-	DevEnvironment  Environment = "dev"
-	ProdEnvironment Environment = "prod"
+	DevEnvironment     Environment = "dev"
+	TestingEnvironment Environment = "testing"
+	ProdEnvironment    Environment = "prod"
 )
 
 type LoggerOutput string
@@ -31,6 +33,11 @@ const (
 )
 
 type Service struct {
+	Host string `yaml:"host" env-required:"true"`
+	Port int    `yaml:"port" env-required:"true"`
+}
+
+type Collector struct {
 	Host string `yaml:"host" env-required:"true"`
 	Port int    `yaml:"port" env-required:"true"`
 }
@@ -59,6 +66,10 @@ func GetDefault() *Config {
 		GameService: Service{
 			Host: "game_service",
 			Port: 50051,
+		},
+		Collector: Collector{
+			Host: "collector",
+			Port: 4317,
 		},
 	}
 }

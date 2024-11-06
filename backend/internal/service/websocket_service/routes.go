@@ -5,8 +5,10 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"artyomliou/xenoblast-backend/internal/service/http_service"
+	"artyomliou/xenoblast-backend/internal/telemetry"
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
@@ -26,18 +28,26 @@ func NewHttpHandler(cfg *config.Config, logger *zap.Logger, ctl *WebsocketContro
 }
 
 type WebsocketController struct {
-	cfg    *config.Config
-	logger *zap.Logger
+	cfg     *config.Config
+	logger  *zap.Logger
+	metrics *telemetry.WebsocketMetrics
 }
 
-func NewWebsocketController(cfg *config.Config, logger *zap.Logger) *WebsocketController {
+func NewWebsocketController(cfg *config.Config, logger *zap.Logger, metrics *telemetry.WebsocketMetrics) (*WebsocketController, error) {
 	return &WebsocketController{
-		cfg:    cfg,
-		logger: logger,
-	}
+		cfg:     cfg,
+		logger:  logger,
+		metrics: metrics,
+	}, nil
 }
 
 func (ctl *WebsocketController) Handle(w http.ResponseWriter, r *http.Request) {
+	ctl.metrics.TotalRequests.Add(r.Context(), 1)
+	requestStartTime := time.Now()
+	defer func() {
+		ctl.metrics.RequestDuration.Record(r.Context(), time.Since(requestStartTime).Milliseconds())
+	}()
+
 	// workaround: The WebSocket() API in JS does not accept custom headers
 	apiKey := r.URL.Query().Get(http_service.ApiKeyHeader)
 	if apiKey == "" {
@@ -68,6 +78,6 @@ func (ctl *WebsocketController) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := NewClient(conn)
-	clientHandler := NewClientHandler(ctl.cfg, ctl.logger, client, player)
+	clientHandler := NewClientHandler(ctl.cfg, ctl.logger, ctl.metrics, client, player)
 	go clientHandler.Run(context.Background())
 }

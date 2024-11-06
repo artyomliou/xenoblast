@@ -8,9 +8,11 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
+	"artyomliou/xenoblast-backend/internal/telemetry"
 	"context"
 	"errors"
 	"io"
+	"time"
 
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -18,29 +20,39 @@ import (
 
 type ClientHandler struct {
 	cfg            *config.Config
+	logger         *zap.Logger
+	metrics        *telemetry.WebsocketMetrics
 	client         *Client
 	player         *auth.PlayerInfoDto
+	msgCh          chan *messageContainer
 	gameId         int32
 	gameServerAddr string
-	logger         *zap.Logger
-	msgCh          chan *messageContainer
 	gameClient     game.GameServiceClient
 }
 
-func NewClientHandler(cfg *config.Config, logger *zap.Logger, client *Client, player *auth.PlayerInfoDto) *ClientHandler {
+func NewClientHandler(cfg *config.Config, logger *zap.Logger, metrics *telemetry.WebsocketMetrics, client *Client, player *auth.PlayerInfoDto) *ClientHandler {
 	return &ClientHandler{
 		cfg:            cfg,
+		logger:         logger.With(zap.Int32("player", player.PlayerId)),
+		metrics:        metrics,
 		client:         client,
 		player:         player,
+		msgCh:          make(chan *messageContainer, 100),
 		gameId:         0,
 		gameServerAddr: "",
-		logger:         logger.With(zap.Int32("player", player.PlayerId)),
-		msgCh:          make(chan *messageContainer, 100),
 		gameClient:     nil,
 	}
 }
 
 func (h *ClientHandler) Run(ctx context.Context) {
+	h.metrics.TotalConnections.Add(ctx, 1)
+	h.metrics.ActiveConnections.Add(ctx, 1)
+	connectionStartTime := time.Now()
+	defer func() {
+		h.metrics.ConnectionDuration.Record(ctx, time.Since(connectionStartTime).Milliseconds())
+		h.metrics.ActiveConnections.Add(ctx, -1)
+	}()
+
 	h.logger.Debug("Run()")
 	defer h.logger.Debug("Run() exit")
 	defer h.client.Close()
@@ -64,6 +76,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 			}
 			if msg.err != nil {
 				h.logger.Error("error ", zap.Error(msg.err))
+				h.metrics.Errors.Add(ctx, 1)
 				return
 			}
 
@@ -71,6 +84,9 @@ func (h *ClientHandler) Run(ctx context.Context) {
 
 			if msg.fromClient {
 				h.logger.Debug("client event", zap.String("type", ev.Type.String()))
+				h.metrics.MessageReceived.Add(ctx, 1)
+
+				messageStartTime := time.Now()
 				switch ev.Type {
 				case pkg_proto.EventType_SubscribeNewMatch:
 					go h.recvMatchmakingEvent(ctx)
@@ -78,6 +94,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 					// Automatically enroll once connected
 					if err := h.sendEnrollMatchmakingOverHttp(ctx); err != nil {
 						h.logger.Error("Run(): ", zap.Error(err))
+						h.metrics.Errors.Add(ctx, 1)
 						return
 					}
 
@@ -85,6 +102,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 					defer func() {
 						if err := h.sendCancelMatchmakingOverHttp(ctx); err != nil {
 							h.logger.Error("Run(): ", zap.Error(err))
+							h.metrics.Errors.Add(ctx, 1)
 							return
 						}
 					}()
@@ -100,15 +118,21 @@ func (h *ClientHandler) Run(ctx context.Context) {
 
 				case pkg_proto.EventType_PlayerGetPowerup:
 					h.HandlePlayerGetPowerupEvent(ev)
+
+				default:
+					break
 				}
+				h.metrics.MessageDuration.Record(ctx, time.Since(messageStartTime).Milliseconds())
 
 			} else if msg.fromMatchmaking {
 				h.logger.Debug("matchmaking event", zap.String("type", ev.Type.String()))
+				h.metrics.ServerEventReceived.Add(ctx, 1)
 
 				switch ev.Type {
 				case pkg_proto.EventType_NewMatch:
 					if err := h.HandleNewMatch(ev); err != nil {
 						h.logger.Error("Run() from matchmaking: ", zap.Error(err))
+						h.metrics.Errors.Add(ctx, 1)
 						return
 					}
 
@@ -117,6 +141,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 					gameClient, close, err := game_service.NewGameServiceClient(h.cfg, h.gameServerAddr)
 					if err != nil {
 						h.logger.Error("recvGameEvent(): ", zap.Error(err))
+						h.metrics.Errors.Add(ctx, 1)
 						return
 					}
 					defer close()
@@ -127,16 +152,20 @@ func (h *ClientHandler) Run(ctx context.Context) {
 
 					// All prepares done, send event to player
 					ev.GetNewMatch().GameServerAddr = "" // Delete this before sending it to client
-					if err := h.sendEvent(ev); err != nil {
+					if err := h.sendEvent(ctx, ev); err != nil {
 						h.logger.Error("failed to send NewMatch event", zap.Error(err))
+						h.metrics.Errors.Add(ctx, 1)
 						break
 					}
 				}
 
 			} else if msg.fromGame {
 				h.logger.Debug("game event", zap.String("type", ev.Type.String()))
-				if err := h.sendEvent(ev); err != nil {
+				h.metrics.ServerEventReceived.Add(ctx, 1)
+
+				if err := h.sendEvent(ctx, ev); err != nil {
 					h.logger.Error("Run() fromGame: ", zap.Error(err))
+					h.metrics.Errors.Add(ctx, 1)
 					continue
 				}
 			}
@@ -308,7 +337,7 @@ func (h *ClientHandler) recvGameEvent(ctx context.Context) {
 	}
 }
 
-func (h *ClientHandler) sendEvent(ev *pkg_proto.Event) error {
+func (h *ClientHandler) sendEvent(ctx context.Context, ev *pkg_proto.Event) error {
 	bytes, err := proto.Marshal(ev)
 	if err != nil {
 		return err
@@ -317,6 +346,7 @@ func (h *ClientHandler) sendEvent(ev *pkg_proto.Event) error {
 	if err != nil {
 		return err
 	}
+	h.metrics.MessageSent.Add(ctx, 1)
 	return nil
 }
 

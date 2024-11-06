@@ -18,6 +18,7 @@ import (
 func TestMatchmakingService(t *testing.T) {
 	// otherwise, test will fail
 	cfg := config.GetDefault()
+	cfg.Environment = config.TestingEnvironment
 	cfg.GameService.Host = "localhost"
 
 	logger, err := zap.NewDevelopment()

@@ -13,6 +13,7 @@ import (
 	"artyomliou/xenoblast-backend/internal/service/websocket_service"
 	"artyomliou/xenoblast-backend/internal/storage"
 	"artyomliou/xenoblast-backend/internal/storage/inmemory"
+	"artyomliou/xenoblast-backend/internal/telemetry"
 	"context"
 	"fmt"
 	"net"
@@ -59,6 +60,11 @@ var Module = fx.Options(
 
 		NewLogger,
 		NewStorage,
+
+		telemetry.NewMeterProvider,
+		telemetry.NewWebsocketMetrics,
+		telemetry.NewTraceProvider,
+		telemetry.NewPropagator,
 	),
 	fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 		return &fxevent.ZapLogger{Logger: log}
