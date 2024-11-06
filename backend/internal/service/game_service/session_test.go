@@ -2,7 +2,6 @@ package game_service_test
 
 import (
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
-	"artyomliou/xenoblast-backend/internal/logger"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	gamelogic "artyomliou/xenoblast-backend/internal/service/game_service"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
@@ -14,6 +13,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
 const currentOnlyMap = "./map_loader/map_0.yaml"
@@ -33,7 +33,7 @@ func fillPlayerHelper(players *map[int32]*gamelogic.Player, count int) {
 }
 
 func TestGameSession(t *testing.T) {
-	logger, err := logger.NewDevelopmentSugaredLogger()
+	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}

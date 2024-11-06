@@ -2,69 +2,30 @@ package test
 
 import (
 	"artyomliou/xenoblast-backend/internal/config"
-	"artyomliou/xenoblast-backend/internal/logger"
-	"artyomliou/xenoblast-backend/internal/service"
-	"artyomliou/xenoblast-backend/internal/service/http_service"
-	"artyomliou/xenoblast-backend/internal/service/websocket_service"
+	"artyomliou/xenoblast-backend/internal/dependency_injection"
+	"artyomliou/xenoblast-backend/internal/service/auth_service"
+	"artyomliou/xenoblast-backend/internal/service/game_service"
+	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"context"
+	"net/http"
 	"sync/atomic"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-func setupServers(ctx context.Context, cfg *config.Config, logger *zap.Logger) (service.StartFunc, service.CloseFunc, error) {
-	authStart, authClose, authErr := service.BuildAuthServer(cfg, logger)
-	if authErr != nil {
-		return nil, nil, authErr
-	}
-	matchmakingStart, matchmakingClose, matchmakingErr := service.BuildMatchmakingServer(cfg, logger)
-	if matchmakingErr != nil {
-		return nil, nil, matchmakingErr
-	}
-	gameStart, gameClose, gameErr := service.BuildGameServer(cfg, logger)
-	if gameErr != nil {
-		return nil, nil, gameErr
-	}
-	httpStart, httpClose, httpErr := service.BuildHttpServer(logger, cfg.HttpService.Port, http_service.InitRoutes(cfg, logger))
-	if httpErr != nil {
-		return nil, nil, httpErr
-	}
-	websocketStart, websocketClose, websocketErr := service.BuildHttpServer(logger, cfg.WebsocketService.Port, websocket_service.InitRoutes(ctx, cfg, logger))
-	if websocketErr != nil {
-		return nil, nil, websocketErr
-	}
+var cfg *config.Config
 
-	start := func(ctx context.Context) error {
-		go authStart(ctx)
-		go matchmakingStart(ctx)
-		go gameStart(ctx)
-		go httpStart(ctx)
-		go websocketStart(ctx)
-		return nil
-	}
-	close := func() {
-		websocketClose()
-		httpClose()
-		gameClose()
-		matchmakingClose()
-		authClose()
-	}
-	return start, close, nil
+func TestMain(m *testing.M) {
+	setup()
+	m.Run()
 }
 
-func TestFrontend(t *testing.T) {
-	ctx := context.Background()
-
-	logger, err := logger.NewDevelopmentSugaredLogger()
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer logger.Sync()
-
-	cfg := config.GetDefault()
+func setup() {
+	cfg = config.GetDefault()
 	cfg.HttpService.Host = "localhost"
 	cfg.HttpService.Port = 8081
 	cfg.WebsocketService.Host = "localhost"
@@ -77,12 +38,30 @@ func TestFrontend(t *testing.T) {
 	cfg.GameService.Port = 50053
 	cfg.GracefulShutdown = false
 
-	start, close, err := setupServers(ctx, cfg, logger)
+	go fx.New(
+		fx.Supply(cfg),
+		dependency_injection.Module,
+		fx.Invoke(func(params TestAppParams) {
+			//
+		}),
+	).Run()
+}
+
+type TestAppParams struct {
+	fx.In
+	S1 *http.Server `name:"HttpServiceServer"`
+	S2 *http.Server `name:"WebsocketServiceServer"`
+	S3 *auth_service.AuthServiceServer
+	S4 *matchmaking_service.MatchmakingServiceServer
+	S5 *game_service.GameServiceServer
+}
+
+func TestFrontend(t *testing.T) {
+	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer close()
-	go start(ctx)
+	defer logger.Sync()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
 	defer cancel()

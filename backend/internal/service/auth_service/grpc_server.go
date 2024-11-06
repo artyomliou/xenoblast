@@ -8,21 +8,21 @@ import (
 	"go.uber.org/zap"
 )
 
-type authServiceServer struct {
+type AuthServiceServer struct {
 	auth.UnimplementedAuthServiceServer
 	cfg     *config.Config
 	service *AuthService
 	logger  *zap.Logger
 }
 
-func NewAuthServiceServer(cfg *config.Config, logger *zap.Logger, service *AuthService) *authServiceServer {
-	return &authServiceServer{
+func NewAuthServiceServer(cfg *config.Config, logger *zap.Logger, service *AuthService) *AuthServiceServer {
+	return &AuthServiceServer{
 		service: service,
 		logger:  logger,
 	}
 }
 
-func (server *authServiceServer) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
+func (server *AuthServiceServer) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
 	apiKey, playerId, err := server.service.Register(ctx, req.Nickname)
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (server *authServiceServer) Register(ctx context.Context, req *auth.Registe
 	}, nil
 }
 
-func (server *authServiceServer) Validate(ctx context.Context, req *auth.ValidateRequest) (*auth.PlayerInfoDto, error) {
+func (server *AuthServiceServer) Validate(ctx context.Context, req *auth.ValidateRequest) (*auth.PlayerInfoDto, error) {
 	validated, dto, err := server.service.Validate(ctx, req.ApiKey)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (server *authServiceServer) Validate(ctx context.Context, req *auth.Validat
 	return dto, nil
 }
 
-func (server *authServiceServer) GetNickname(ctx context.Context, req *auth.GetNicknameRequest) (*auth.GetNicknameResponse, error) {
+func (server *AuthServiceServer) GetNickname(ctx context.Context, req *auth.GetNicknameRequest) (*auth.GetNicknameResponse, error) {
 	nicknames, err := server.service.GetNicknames(ctx, req.Players)
 	if err != nil {
 		return nil, err

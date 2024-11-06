@@ -1,17 +1,17 @@
 package auth_service_test
 
 import (
-	"artyomliou/xenoblast-backend/internal/logger"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"artyomliou/xenoblast-backend/internal/storage/inmemory"
 	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
 func TestAuthService(t *testing.T) {
-	logger, err := logger.NewDevelopmentSugaredLogger()
+	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}

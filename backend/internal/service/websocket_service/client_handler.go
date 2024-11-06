@@ -11,7 +11,6 @@ import (
 	"context"
 	"errors"
 	"io"
-	"log"
 
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -60,7 +59,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 
 		case msg, ok := <-h.msgCh:
 			if !ok {
-				log.Println("channel closed")
+				h.logger.Debug("channel closed")
 				return
 			}
 			if msg.err != nil {

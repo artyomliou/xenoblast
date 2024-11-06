@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type gameServiceServer struct {
+type GameServiceServer struct {
 	game.UnimplementedGameServiceServer
 	cfg     *config.Config
 	service *GameService
@@ -22,8 +22,8 @@ type gameServiceServer struct {
 	mutex   sync.Mutex
 }
 
-func NewGameServiceServer(cfg *config.Config, logger *zap.Logger, service *GameService) *gameServiceServer {
-	return &gameServiceServer{
+func NewGameServiceServer(cfg *config.Config, logger *zap.Logger, service *GameService) *GameServiceServer {
+	return &GameServiceServer{
 		cfg:     cfg,
 		service: service,
 		logger:  logger,
@@ -31,7 +31,7 @@ func NewGameServiceServer(cfg *config.Config, logger *zap.Logger, service *GameS
 	}
 }
 
-func (server *gameServiceServer) NewGame(ctx context.Context, req *game.NewGameRequest) (*empty.Empty, error) {
+func (server *GameServiceServer) NewGame(ctx context.Context, req *game.NewGameRequest) (*empty.Empty, error) {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -62,11 +62,11 @@ func (server *gameServiceServer) NewGame(ctx context.Context, req *game.NewGameR
 	return nil, nil
 }
 
-func (server *gameServiceServer) GetGameInfo(ctx context.Context, req *game.GetGameInfoRequest) (*game.GetGameInfoResponse, error) {
+func (server *GameServiceServer) GetGameInfo(ctx context.Context, req *game.GetGameInfoRequest) (*game.GetGameInfoResponse, error) {
 	return server.service.GetGameInfo(ctx, req.GameId)
 }
 
-func (server *gameServiceServer) PlayerPublish(ctx context.Context, ev *pkg_proto.Event) (*empty.Empty, error) {
+func (server *GameServiceServer) PlayerPublish(ctx context.Context, ev *pkg_proto.Event) (*empty.Empty, error) {
 	err := server.service.PlayerPublish(context.Background(), ev.GameId, ev)
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (server *gameServiceServer) PlayerPublish(ctx context.Context, ev *pkg_prot
 	return nil, nil
 }
 
-func (server *gameServiceServer) Subscribe(req *game.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
+func (server *GameServiceServer) Subscribe(req *game.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	server.logger.Debug("Subscribe()", zap.Int32("game", req.GameId))
 	defer server.logger.Debug("Subscribe() exit", zap.Int32("game", req.GameId))
 

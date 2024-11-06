@@ -2,14 +2,16 @@ package main
 
 import (
 	"artyomliou/xenoblast-backend/internal/config"
-	"artyomliou/xenoblast-backend/internal/logger"
-	"artyomliou/xenoblast-backend/internal/service"
-	"artyomliou/xenoblast-backend/internal/service/http_service"
-	"artyomliou/xenoblast-backend/internal/service/websocket_service"
-	"artyomliou/xenoblast-backend/pkg/utils"
+	"artyomliou/xenoblast-backend/internal/dependency_injection"
+	"artyomliou/xenoblast-backend/internal/service/auth_service"
+	"artyomliou/xenoblast-backend/internal/service/game_service"
+	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"flag"
 	"log"
+	"net/http"
 	"os"
+
+	"go.uber.org/fx"
 )
 
 var serviceName *string
@@ -25,42 +27,56 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctx := utils.SetupTerminableContext()
 	cfg, cfgErr := config.Load()
 	if cfgErr != nil {
 		log.Fatal(cfgErr)
 	}
 
-	logger, loggerErr := logger.NewLogger(cfg)
-	if loggerErr != nil {
-		log.Fatal(loggerErr)
-	}
-	defer logger.Sync()
-
-	var start service.StartFunc
-	var close service.CloseFunc
-	var err error
 	switch *serviceName {
 	case "http":
-		mux := http_service.InitRoutes(cfg, logger)
-		start, close, err = service.BuildHttpServer(logger, cfg.HttpService.Port, mux)
+		type HttpServiceServerParams struct {
+			fx.In
+			Server *http.Server `name:"HttpServiceServer"`
+		}
+		fx.New(
+			fx.Supply(cfg),
+			dependency_injection.Module,
+			fx.Invoke(func(params HttpServiceServerParams) {}),
+		).Run()
+
 	case "websocket":
-		mux := websocket_service.InitRoutes(ctx, cfg, logger)
-		start, close, err = service.BuildHttpServer(logger, cfg.WebsocketService.Port, mux)
+		type WebsocketServiceServerParams struct {
+			fx.In
+			Server *http.Server `name:"WebsocketServiceServer"`
+		}
+		fx.New(
+			fx.Supply(cfg),
+			dependency_injection.Module,
+			fx.Invoke(func(params WebsocketServiceServerParams) {}),
+		).Run()
+
 	case "auth":
-		start, close, err = service.BuildAuthServer(cfg, logger)
+		fx.New(
+			fx.Supply(cfg),
+			dependency_injection.Module,
+			fx.Invoke(func(params *auth_service.AuthServiceServer) {}),
+		).Run()
+
 	case "matchmaking":
-		start, close, err = service.BuildMatchmakingServer(cfg, logger)
+		fx.New(
+			fx.Supply(cfg),
+			dependency_injection.Module,
+			fx.Invoke(func(params *matchmaking_service.MatchmakingServiceServer) {}),
+		).Run()
+
 	case "game":
-		start, close, err = service.BuildGameServer(cfg, logger)
+		fx.New(
+			fx.Supply(cfg),
+			dependency_injection.Module,
+			fx.Invoke(func(params *game_service.GameServiceServer) {}),
+		).Run()
+
 	default:
 		log.Fatal("not valid service name")
 	}
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	go start(ctx)
-	<-ctx.Done()
-	close()
 }

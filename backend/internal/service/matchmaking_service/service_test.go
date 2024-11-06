@@ -3,7 +3,6 @@ package matchmaking_service_test
 import (
 	"artyomliou/xenoblast-backend/internal/config"
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
-	"artyomliou/xenoblast-backend/internal/logger"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"artyomliou/xenoblast-backend/internal/storage/inmemory"
@@ -13,6 +12,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
 func TestMatchmakingService(t *testing.T) {
@@ -20,7 +20,7 @@ func TestMatchmakingService(t *testing.T) {
 	cfg := config.GetDefault()
 	cfg.GameService.Host = "localhost"
 
-	logger, err := logger.NewDevelopmentSugaredLogger()
+	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,7 +82,7 @@ func TestMatchmakingService(t *testing.T) {
 				for _, playerId := range c.playerIds {
 					assert.NoError(t, service.Enroll(ctx, playerId))
 				}
-				go service.StartMatchmaking(ctx)
+				go service.StartMatchmaking()
 
 				matched := false
 				select {

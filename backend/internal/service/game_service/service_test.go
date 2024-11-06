@@ -1,7 +1,6 @@
 package game_service_test
 
 import (
-	"artyomliou/xenoblast-backend/internal/logger"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	gamelogic "artyomliou/xenoblast-backend/internal/service/game_service"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
@@ -11,10 +10,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
 func TestGameLogicService(t *testing.T) {
-	logger, err := logger.NewDevelopmentSugaredLogger()
+	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type matchmakingServiceServer struct {
+type MatchmakingServiceServer struct {
 	matchmaking.UnimplementedMatchmakingServiceServer
 	cfg          *config.Config
 	service      *MatchmakingService
@@ -23,8 +23,8 @@ type matchmakingServiceServer struct {
 	createdGames map[int32]bool
 }
 
-func NewMatchmakingServiceServer(cfg *config.Config, logger *zap.Logger, service *MatchmakingService) *matchmakingServiceServer {
-	return &matchmakingServiceServer{
+func NewMatchmakingServiceServer(cfg *config.Config, logger *zap.Logger, service *MatchmakingService) *MatchmakingServiceServer {
+	return &MatchmakingServiceServer{
 		cfg:          cfg,
 		service:      service,
 		logger:       logger,
@@ -33,25 +33,21 @@ func NewMatchmakingServiceServer(cfg *config.Config, logger *zap.Logger, service
 	}
 }
 
-func (server *matchmakingServiceServer) Run(ctx context.Context) {
-	server.service.StartMatchmaking(ctx)
-}
-
-func (server *matchmakingServiceServer) Enroll(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
+func (server *MatchmakingServiceServer) Enroll(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
 	return nil, server.service.Enroll(ctx, req.PlayerId)
 }
 
-func (server *matchmakingServiceServer) Cancel(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
+func (server *MatchmakingServiceServer) Cancel(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
 	return nil, server.service.Cancel(ctx, req.PlayerId)
 }
 
-func (server *matchmakingServiceServer) GetWaitingPlayerCount(ctx context.Context, req *empty.Empty) (*matchmaking.GetWaitingPlayerCountResponse, error) {
+func (server *MatchmakingServiceServer) GetWaitingPlayerCount(ctx context.Context, req *empty.Empty) (*matchmaking.GetWaitingPlayerCountResponse, error) {
 	return &matchmaking.GetWaitingPlayerCountResponse{
 		Count: int32(server.service.waitingPlayerCount),
 	}, nil
 }
 
-func (server *matchmakingServiceServer) SubscribeMatch(req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
+func (server *MatchmakingServiceServer) SubscribeMatch(req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
 	server.logger.Debug("SubscribeMatch()", zap.Int32("player", req.PlayerId))
 	defer server.logger.Debug("SubscribeMatch() exit", zap.Int32("player", req.PlayerId))
 
@@ -89,7 +85,7 @@ func (server *matchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 	return nil
 }
 
-func (server *matchmakingServiceServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) {
+func (server *MatchmakingServiceServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) {
 	data := ev.GetNewMatch()
 	if data == nil {
 		server.logger.Error("unexpected nil from GetNewMatch()")
@@ -109,7 +105,7 @@ func (server *matchmakingServiceServer) HandleNewMatchEvent(ev *pkg_proto.Event,
 	}
 }
 
-func (server *matchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) error {
+func (server *MatchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) error {
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 	if _, ok := server.createdGames[ev.GameId]; ok {
@@ -141,7 +137,7 @@ func (server *matchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) 
 	return nil
 }
 
-func (server *matchmakingServiceServer) GetGameServerAddr(ctx context.Context, req *matchmaking.GetGameServerAddrRequest) (*matchmaking.GetGameServerAddrResponse, error) {
+func (server *MatchmakingServiceServer) GetGameServerAddr(ctx context.Context, req *matchmaking.GetGameServerAddrRequest) (*matchmaking.GetGameServerAddrResponse, error) {
 	gameServerAddr, err := server.service.GetGameServerAddrForPlayer(ctx, req.PlayerId)
 	if err != nil {
 		return nil, err

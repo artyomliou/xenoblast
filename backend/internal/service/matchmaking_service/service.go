@@ -7,7 +7,6 @@ import (
 	"artyomliou/xenoblast-backend/internal/storage"
 	"context"
 	"fmt"
-	"log"
 	"math/rand"
 	"net"
 	"strconv"
@@ -30,9 +29,12 @@ type MatchmakingService struct {
 	waitingPlayerCount int
 	nextTickQueue      []int32
 	mutex              sync.Mutex
+	ctx                context.Context
+	cancel             context.CancelFunc
 }
 
 func NewMatchmakingService(cfg *config.Config, logger *zap.Logger, storage storage.Storage, eventBus *eventbus.EventBus) *MatchmakingService {
+	ctx, cancel := context.WithCancel(context.Background())
 	return &MatchmakingService{
 		cfg:           cfg,
 		storage:       storage,
@@ -40,6 +42,8 @@ func NewMatchmakingService(cfg *config.Config, logger *zap.Logger, storage stora
 		logger:        logger,
 		nextTickQueue: []int32{},
 		mutex:         sync.Mutex{},
+		ctx:           ctx,
+		cancel:        cancel,
 	}
 }
 
@@ -54,23 +58,27 @@ func (service *MatchmakingService) Cancel(ctx context.Context, playerId int32) e
 	return service.storage.SortedSetRemove(ctx, sortedSetKey, strconv.Itoa(int(playerId)))
 }
 
-func (service *MatchmakingService) StartMatchmaking(ctx context.Context) {
+func (service *MatchmakingService) StartMatchmaking() {
 	service.logger.Info("Start matchmaking")
 	ticker := time.NewTicker(MatchmakingInterval)
 	for {
 		select {
-		case <-ctx.Done():
-			log.Println("Matchmaking exited properly")
+		case <-service.ctx.Done():
+			service.logger.Info("Matchmaking exited properly")
 			return
 		case <-ticker.C:
-			service.matchmaking(ctx)
-			service.clearNextTickQueue(ctx)
+			service.matchmaking()
+			service.clearNextTickQueue()
 		}
 	}
 }
 
-func (service *MatchmakingService) matchmaking(ctx context.Context) {
-	count, err := service.storage.SortedSetLen(ctx, sortedSetKey)
+func (service *MatchmakingService) StopMatchmaking() {
+	service.cancel()
+}
+
+func (service *MatchmakingService) matchmaking() {
+	count, err := service.storage.SortedSetLen(service.ctx, sortedSetKey)
 	if err != nil {
 		service.logger.Error("cannot get length of sorted set: ", zap.Error(err))
 		return
@@ -83,13 +91,13 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 		return
 	}
 
-	playerIdStrings, err := service.storage.SortedSetGetN(ctx, sortedSetKey, maximumPlayer)
+	playerIdStrings, err := service.storage.SortedSetGetN(service.ctx, sortedSetKey, maximumPlayer)
 	if err != nil {
 		service.logger.Error("cannot getN from sorted set: ", zap.Error(err))
 		return
 	}
 	for _, playerIdString := range playerIdStrings {
-		if err := service.storage.SortedSetRemove(ctx, sortedSetKey, playerIdString); err != nil {
+		if err := service.storage.SortedSetRemove(service.ctx, sortedSetKey, playerIdString); err != nil {
 			service.logger.Error("cannot remove from sorted set: ", zap.Error(err))
 			return
 		}
@@ -129,12 +137,12 @@ func (service *MatchmakingService) matchmaking(ctx context.Context) {
 	})
 }
 
-func (service *MatchmakingService) clearNextTickQueue(ctx context.Context) {
+func (service *MatchmakingService) clearNextTickQueue() {
 	service.mutex.Lock()
 	defer service.mutex.Unlock()
 
 	for _, playerId := range service.nextTickQueue {
-		err := service.storage.SortedSetAdd(ctx, sortedSetKey, strconv.Itoa(int(playerId)), int(time.Now().Unix()))
+		err := service.storage.SortedSetAdd(service.ctx, sortedSetKey, strconv.Itoa(int(playerId)), int(time.Now().Unix()))
 		if err != nil {
 			service.logger.Error("clearNextTickQueue(): ", zap.Error(err))
 		}

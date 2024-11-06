@@ -11,7 +11,7 @@ import (
 
 const ApiKeyHeader = "X-API-KEY"
 
-func InitRoutes(cfg *config.Config, logger *zap.Logger) http.Handler {
+func NewHttpHandler(cfg *config.Config, logger *zap.Logger) http.Handler {
 	r := gin.Default()
 
 	cors.Default()
