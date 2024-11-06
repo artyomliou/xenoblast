@@ -28,19 +28,33 @@ var Module = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			NewHttpServer,
+			fx.ParamTags("", "", "", `name:"HttpServiceHandler"`),
 			fx.ResultTags(`name:"HttpServiceServer"`),
 		),
 		fx.Annotate(
+			http_service.NewHttpHandler,
+			fx.ResultTags(`name:"HttpServiceHandler"`),
+		),
+		http_service.NewApiController,
+
+		fx.Annotate(
 			NewWebsocketServer,
+			fx.ParamTags("", "", "", `name:"WebsocketServiceHandler"`),
 			fx.ResultTags(`name:"WebsocketServiceServer"`),
 		),
+		fx.Annotate(
+			websocket_service.NewHttpHandler,
+			fx.ResultTags(`name:"WebsocketServiceHandler"`),
+		),
+		websocket_service.NewWebsocketController,
 
 		NewAuthServer,
-		NewMatchmakingServer,
-		NewGameServer,
-
 		auth_service.NewAuthService,
+
+		NewMatchmakingServer,
 		NewMatchmakingService,
+
+		NewGameServer,
 		game_service.NewGameService,
 
 		NewLogger,
@@ -51,21 +65,21 @@ var Module = fx.Options(
 	}),
 )
 
-func NewHttpServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger) (*http.Server, error) {
+func NewHttpServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, handler http.Handler) (*http.Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.HttpService.Port)
 	server := &http.Server{
 		Addr:    addr,
-		Handler: http_service.NewHttpHandler(cfg, logger),
+		Handler: handler,
 	}
 	appendHttpServerLifecycle(lc, logger, server)
 	return server, nil
 }
 
-func NewWebsocketServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger) (*http.Server, error) {
+func NewWebsocketServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, handler http.Handler) (*http.Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.WebsocketService.Port)
 	server := &http.Server{
 		Addr:    addr,
-		Handler: websocket_service.NewHttpHandler(cfg, logger),
+		Handler: handler,
 	}
 	appendHttpServerLifecycle(lc, logger, server)
 	return server, nil

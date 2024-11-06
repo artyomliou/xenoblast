@@ -16,19 +16,19 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type apiController struct {
+type ApiController struct {
 	cfg    *config.Config
 	logger *zap.Logger
 }
 
-func NewApiController(cfg *config.Config, logger *zap.Logger) *apiController {
-	return &apiController{
+func NewApiController(cfg *config.Config, logger *zap.Logger) *ApiController {
+	return &ApiController{
 		cfg:    cfg,
 		logger: logger,
 	}
 }
 
-func (ctl *apiController) Register(ctx *gin.Context) {
+func (ctl *ApiController) Register(ctx *gin.Context) {
 	var req http_api.RegisterRequest
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
@@ -57,7 +57,7 @@ func (ctl *apiController) Register(ctx *gin.Context) {
 	})
 }
 
-func (ctl *apiController) Validate(ctx *gin.Context) {
+func (ctl *ApiController) Validate(ctx *gin.Context) {
 	apiKey := ctx.Request.Header.Get(ApiKeyHeader)
 	if apiKey == "" {
 		ctx.String(http.StatusInternalServerError, "Unauthorized")
@@ -84,7 +84,7 @@ func (ctl *apiController) Validate(ctx *gin.Context) {
 	})
 }
 
-func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
+func (ctl *ApiController) GetWaitingPlayerCount(ctx *gin.Context) {
 	apiKey := ctx.Request.Header.Get(ApiKeyHeader)
 	if apiKey == "" {
 		ctx.String(http.StatusInternalServerError, "Unauthorized")
@@ -125,7 +125,7 @@ func (ctl *apiController) GetWaitingPlayerCount(ctx *gin.Context) {
 	})
 }
 
-func (ctl *apiController) GetGameInfo(ctx *gin.Context) {
+func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 	// Get player by api key
 	apiKey := ctx.Request.Header.Get(ApiKeyHeader)
 	if apiKey == "" {

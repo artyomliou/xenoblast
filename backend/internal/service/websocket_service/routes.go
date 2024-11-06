@@ -18,10 +18,8 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func NewHttpHandler(cfg *config.Config, logger *zap.Logger) http.Handler {
+func NewHttpHandler(cfg *config.Config, logger *zap.Logger, ctl *WebsocketController) http.Handler {
 	mux := http.NewServeMux()
-
-	ctl := NewWebsocketController(cfg, logger)
 	mux.HandleFunc("GET /ws/", ctl.Handle)
 
 	return mux

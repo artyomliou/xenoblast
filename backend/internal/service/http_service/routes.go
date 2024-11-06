@@ -11,7 +11,7 @@ import (
 
 const ApiKeyHeader = "X-API-KEY"
 
-func NewHttpHandler(cfg *config.Config, logger *zap.Logger) http.Handler {
+func NewHttpHandler(cfg *config.Config, logger *zap.Logger, ctl *ApiController) http.Handler {
 	r := gin.Default()
 
 	cors.Default()
@@ -22,7 +22,6 @@ func NewHttpHandler(cfg *config.Config, logger *zap.Logger) http.Handler {
 
 	apiGroup := r.Group("api")
 	{
-		ctl := NewApiController(cfg, logger)
 		apiGroup.POST("/auth/register", ctl.Register)
 		apiGroup.GET("/auth/validate", ctl.Validate)
 		apiGroup.GET("/matchmaking/get_waiting_player_count", ctl.GetWaitingPlayerCount)
