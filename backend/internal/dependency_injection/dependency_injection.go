@@ -62,6 +62,7 @@ var Module = fx.Options(
 		NewStorage,
 
 		telemetry.NewMeterProvider,
+		telemetry.NewHttpMetrics,
 		telemetry.NewWebsocketMetrics,
 		telemetry.NewTraceProvider,
 		telemetry.NewPropagator,

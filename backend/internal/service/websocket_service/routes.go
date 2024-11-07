@@ -20,9 +20,21 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func NewHttpHandler(cfg *config.Config, logger *zap.Logger, ctl *WebsocketController) http.Handler {
+func NewHttpHandler(cfg *config.Config, logger *zap.Logger, ctl *WebsocketController, metrics *telemetry.WebsocketMetrics) http.Handler {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /ws/", ctl.Handle)
+	mux.HandleFunc("GET /ws/", func(w http.ResponseWriter, r *http.Request) {
+		metrics.RequestTotal.Add(r.Context(), 1)
+
+		requestStartTime := time.Now()
+		ctl.Handle(w, r)
+		requestDuration := time.Since(requestStartTime).Milliseconds()
+		metrics.RequestDurationMillisecond.Record(r.Context(), requestDuration)
+
+		status := r.Response.StatusCode
+		if status >= http.StatusBadRequest {
+			metrics.ErrorTotal.Add(r.Context(), 1)
+		}
+	})
 
 	return mux
 }
@@ -42,12 +54,6 @@ func NewWebsocketController(cfg *config.Config, logger *zap.Logger, metrics *tel
 }
 
 func (ctl *WebsocketController) Handle(w http.ResponseWriter, r *http.Request) {
-	ctl.metrics.TotalRequests.Add(r.Context(), 1)
-	requestStartTime := time.Now()
-	defer func() {
-		ctl.metrics.RequestDuration.Record(r.Context(), time.Since(requestStartTime).Milliseconds())
-	}()
-
 	// workaround: The WebSocket() API in JS does not accept custom headers
 	apiKey := r.URL.Query().Get(http_service.ApiKeyHeader)
 	if apiKey == "" {

@@ -6,16 +6,16 @@ import (
 )
 
 type WebsocketMetrics struct {
-	TotalRequests       metric.Int64Counter
-	RequestDuration     metric.Int64Histogram
-	TotalConnections    metric.Int64Counter
-	ActiveConnections   metric.Int64UpDownCounter
-	ConnectionDuration  metric.Int64Histogram
-	MessageReceived     metric.Int64Counter
-	MessageSent         metric.Int64Counter
-	MessageDuration     metric.Int64Histogram
-	ServerEventReceived metric.Int64Counter
-	Errors              metric.Int64Counter
+	RequestTotal                  metric.Int64Counter
+	RequestDurationMillisecond    metric.Int64Histogram
+	ConnectionTotal               metric.Int64Counter
+	ConnectionActive              metric.Int64UpDownCounter
+	ConnectionDurationMillisecond metric.Int64Histogram
+	MessageReceived               metric.Int64Counter
+	MessageSent                   metric.Int64Counter
+	MessageDurationMillisecond    metric.Int64Histogram
+	ServerEventReceived           metric.Int64Counter
+	ErrorTotal                    metric.Int64Counter
 }
 
 func NewWebsocketMetrics(mp *sdkmetric.MeterProvider) (metrics *WebsocketMetrics, err error) {
@@ -23,23 +23,23 @@ func NewWebsocketMetrics(mp *sdkmetric.MeterProvider) (metrics *WebsocketMetrics
 	meter := mp.Meter(name)
 
 	newMetrics := &WebsocketMetrics{}
-	newMetrics.TotalRequests, err = meter.Int64Counter("websocket_total_requests")
+	newMetrics.RequestTotal, err = meter.Int64Counter("websocket_request_total")
 	if err != nil {
 		return
 	}
-	newMetrics.RequestDuration, err = meter.Int64Histogram("websocket_request_duration")
+	newMetrics.RequestDurationMillisecond, err = meter.Int64Histogram("websocket_request_duration_millisecond")
 	if err != nil {
 		return
 	}
-	newMetrics.TotalConnections, err = meter.Int64Counter("websocket_total_connections")
+	newMetrics.ConnectionTotal, err = meter.Int64Counter("websocket_connection_total")
 	if err != nil {
 		return
 	}
-	newMetrics.ActiveConnections, err = meter.Int64UpDownCounter("websocket_active_connections")
+	newMetrics.ConnectionActive, err = meter.Int64UpDownCounter("websocket_connection_active")
 	if err != nil {
 		return
 	}
-	newMetrics.ConnectionDuration, err = meter.Int64Histogram("websocket_connection_duration")
+	newMetrics.ConnectionDurationMillisecond, err = meter.Int64Histogram("websocket_connection_duration_millisecond")
 	if err != nil {
 		return
 	}
@@ -51,15 +51,15 @@ func NewWebsocketMetrics(mp *sdkmetric.MeterProvider) (metrics *WebsocketMetrics
 	if err != nil {
 		return
 	}
-	newMetrics.MessageDuration, err = meter.Int64Histogram("websocket_message_duration")
+	newMetrics.MessageDurationMillisecond, err = meter.Int64Histogram("websocket_message_duration_millisecond")
 	if err != nil {
 		return
 	}
-	newMetrics.ServerEventReceived, err = meter.Int64Counter("server_event_received")
+	newMetrics.ServerEventReceived, err = meter.Int64Counter("websocket_server_event_received")
 	if err != nil {
 		return
 	}
-	newMetrics.Errors, err = meter.Int64Counter("websocket_errors")
+	newMetrics.ErrorTotal, err = meter.Int64Counter("websocket_error_total")
 	if err != nil {
 		return
 	}
