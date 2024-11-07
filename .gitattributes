@@ -1,0 +1,2 @@
+backend/internal/pkg_proto/* linguist-vendored
+frontend/src/pkg_proto/* linguist-vendored
