@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -35,6 +36,15 @@ func NewApiController(cfg *config.Config, logger *zap.Logger, authServiceClient 
 func (ctl *ApiController) Register(ctx *gin.Context) {
 	var req http_api.RegisterRequest
 	if err := ctx.BindJSON(&req); err != nil {
+		ctx.String(http.StatusBadRequest, "Invalid request")
+		return
+	}
+
+	err := validation.ValidateStruct(
+		&req,
+		validation.Field(&req.Nickname, validation.Required, validation.Length(1, 100)),
+	)
+	if err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
 	}
@@ -133,6 +143,15 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 	var req http_api.GetGameInfoRequest
 	if err := ctx.BindQuery(&req); err != nil {
 		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
+		ctx.String(http.StatusBadRequest, "Invalid request")
+		return
+	}
+
+	err = validation.ValidateStruct(
+		&req,
+		validation.Field(&req.GameId, validation.Required),
+	)
+	if err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
 	}
