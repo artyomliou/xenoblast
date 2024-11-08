@@ -38,14 +38,7 @@ func (server *AuthServiceServer) Register(ctx context.Context, req *auth.Registe
 }
 
 func (server *AuthServiceServer) Validate(ctx context.Context, req *auth.ValidateRequest) (*auth.PlayerInfoDto, error) {
-	validated, dto, err := server.service.Validate(ctx, req.ApiKey)
-	if err != nil {
-		return nil, err
-	}
-	if !validated {
-		return nil, &NotValidatedError{ApiKey: req.ApiKey}
-	}
-	return dto, nil
+	return server.service.Validate(ctx, req.ApiKey)
 }
 
 func (server *AuthServiceServer) GetNickname(ctx context.Context, req *auth.GetNicknameRequest) (*auth.GetNicknameResponse, error) {

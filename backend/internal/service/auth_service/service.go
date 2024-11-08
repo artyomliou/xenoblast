@@ -2,125 +2,80 @@ package auth_service
 
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
-	"artyomliou/xenoblast-backend/internal/storage"
-	"artyomliou/xenoblast-backend/pkg/utils"
+	"artyomliou/xenoblast-backend/internal/repository"
+	"artyomliou/xenoblast-backend/internal/repository/auth_repository"
 	"context"
 	"errors"
-	"fmt"
-	"math/rand"
-	"strconv"
 
 	"go.uber.org/zap"
 )
 
-const maxRetries = 10
-const accessPattern1 = "nickname#%s#playerId"
-const accessPattern2 = "player#%d#nickname"
-const accessPattern3 = "apiKey#%s#playerId"
-
 type AuthService struct {
-	storage storage.Storage
-	logger  *zap.Logger
+	logger *zap.Logger
+	repo   auth_repository.AuthRepository
 }
 
-func NewAuthService(logger *zap.Logger, storage storage.Storage) *AuthService {
+func NewAuthService(logger *zap.Logger, repo auth_repository.AuthRepository) *AuthService {
 	return &AuthService{
-		storage: storage,
-		logger:  logger,
+		logger: logger,
+		repo:   repo,
 	}
 }
 
 // always generate new api key
-func (service *AuthService) Register(ctx context.Context, nickname string) (apiKey string, playerId int32, err error) {
-	var playerIdInt int
-	var selected bool
-
+func (service *AuthService) Register(ctx context.Context, nickname string) (string, int32, error) {
 	// Ensure nickname has associated playerId
-	key1 := fmt.Sprintf(accessPattern1, nickname)
-	playerIdString, err := service.storage.Get(ctx, key1)
-	if err != nil && !errors.Is(err, storage.ErrKeyNotFound) {
-		return
+	var playerId int
+	var err error
+	playerId, err = service.repo.GetPlayerIdByNickname(ctx, nickname)
+	if err != nil && !errors.Is(err, repository.ErrNotFound) {
+		return "", 0, err
 	}
-	if playerIdString != "" {
-		playerIdInt, err = strconv.Atoi(playerIdString)
+	if errors.Is(err, repository.ErrNotFound) {
+		playerId, err = service.repo.GeneratePlayerIdByNickname(ctx, nickname)
 		if err != nil {
-			return
-		}
-		playerId = int32(playerIdInt)
-	}
-	if playerId == 0 {
-		playerId = rand.Int31() // TODO increment in storage
-		if err = service.storage.Set(ctx, key1, strconv.Itoa(int(playerId))); err != nil {
-			return
+			return "", 0, err
 		}
 	}
 
 	// For GetNickname()
-	key2 := fmt.Sprintf(accessPattern2, playerId)
-	if err = service.storage.Set(ctx, key2, nickname); err != nil {
-		return
+	err = service.repo.SetNicknameByPlayerId(ctx, nickname, playerId)
+	if err != nil {
+		return "", 0, err
 	}
 
 	// Generate api key for Validate()
-	var key3 string
-	for i := 0; i < maxRetries; i++ {
-		apiKey = utils.RandStringRunes(40)
-		key3 = fmt.Sprintf(accessPattern3, apiKey)
-		exists, err := service.storage.Has(ctx, key3)
-		if err != nil {
-			return "", 0, err
-		}
-		if !exists {
-			selected = true
-		}
-	}
-	if !selected {
-		return "", 0, fmt.Errorf("cannot generate api key in %d rounds", maxRetries)
-	}
-	if err := service.storage.Set(ctx, key3, strconv.Itoa(int(playerId))); err != nil {
+	var apiKey string
+	apiKey, err = service.repo.GenerateApiKeyByPlayerId(ctx, playerId)
+	if err != nil {
 		return "", 0, err
 	}
-	return apiKey, playerId, nil
+
+	return apiKey, int32(playerId), nil
 }
 
-func (service *AuthService) Validate(ctx context.Context, apiKey string) (validated bool, dto *auth.PlayerInfoDto, err error) {
-	validated, err = service.storage.Has(ctx, fmt.Sprintf(accessPattern3, apiKey))
-	if err != nil && !errors.Is(err, storage.ErrKeyNotFound) {
-		return
-	}
-	if !validated {
-		return
-	}
-	var playerIdString string
-	playerIdString, err = service.storage.Get(ctx, fmt.Sprintf(accessPattern3, apiKey))
+func (service *AuthService) Validate(ctx context.Context, apiKey string) (*auth.PlayerInfoDto, error) {
+	playerId, err := service.repo.GetPlayerIdByApiKey(ctx, apiKey)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	var playerIdInt int
-	playerIdInt, err = strconv.Atoi(playerIdString)
+	nickname, err := service.repo.GetNicknameByPlayerId(ctx, playerId)
 	if err != nil {
-		return
-	}
-	playerId := int32(playerIdInt)
-
-	var nickname string
-	nickname, err = service.storage.Get(ctx, fmt.Sprintf(accessPattern2, playerId))
-	if err != nil {
-		return
+		return nil, err
 	}
 
-	dto = &auth.PlayerInfoDto{
-		PlayerId: playerId,
+	dto := &auth.PlayerInfoDto{
+		PlayerId: int32(playerId),
 		Nickname: nickname,
 	}
-	return
+	return dto, nil
 }
 
 func (service *AuthService) GetNicknames(ctx context.Context, playerIds []int32) (map[int32]string, error) {
 	idNicknameMap := map[int32]string{}
 	for _, playerId := range playerIds {
-		nickname, err := service.storage.Get(ctx, fmt.Sprintf(accessPattern2, int(playerId)))
+		nickname, err := service.repo.GetNicknameByPlayerId(ctx, int(playerId))
 		if err != nil {
 			service.logger.Error("invalid player id", zap.Int32("player", playerId))
 			nickname = "ERR"

@@ -6,6 +6,7 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
+	"artyomliou/xenoblast-backend/internal/repository/auth_repository"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/http_service"
@@ -51,6 +52,7 @@ var Module = fx.Options(
 
 		NewAuthServer,
 		auth_service.NewAuthService,
+		auth_repository.NewAuthRepository,
 
 		NewMatchmakingServer,
 		NewMatchmakingService,
