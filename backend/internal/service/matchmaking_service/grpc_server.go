@@ -63,16 +63,6 @@ func (server *MatchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 		}
 		defer cancel()
 
-		// Bind this game to specific game service instance
-		if err := server.service.SetGameIdForPlayer(ctx, event.GameId, req.PlayerId); err != nil {
-			server.logger.Error("SetGameIdForPlayer(): ", zap.Error(err))
-			return
-		}
-		if err := server.service.SetGameServerAddrForGameId(ctx, event.GetNewMatch().GetGameServerAddr(), event.GameId); err != nil {
-			server.logger.Error("SetGameIdForPlayer(): ", zap.Error(err))
-			return
-		}
-
 		// The NewGame request should be sent to specific IP.
 		if err := server.sendNewGameRequest(event); err != nil {
 			server.logger.Error("sendNewGameRequest() err: %s, skip sending NewMatch event to player", zap.Error(err))

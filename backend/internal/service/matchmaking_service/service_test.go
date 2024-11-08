@@ -4,8 +4,8 @@ import (
 	"artyomliou/xenoblast-backend/internal/config"
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
+	"artyomliou/xenoblast-backend/internal/repository/matchmaking_repository"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
-	"artyomliou/xenoblast-backend/internal/storage/inmemory"
 	"context"
 	"fmt"
 	"testing"
@@ -15,12 +15,15 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestMatchmakingService(t *testing.T) {
-	// otherwise, test will fail
+// otherwise, test will fail
+func getTestConfig() *config.Config {
 	cfg := config.GetDefault()
 	cfg.Environment = config.TestingEnvironment
 	cfg.GameService.Host = "localhost"
+	return cfg
+}
 
+func TestMatchmakingService(t *testing.T) {
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		t.Fatal(err)
@@ -29,13 +32,17 @@ func TestMatchmakingService(t *testing.T) {
 
 	t.Run("Enroll", func(t *testing.T) {
 		ctx := context.Background()
-		service := matchmaking_service.NewMatchmakingService(cfg, logger, inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
+		cfg := getTestConfig()
+		repo := matchmaking_repository.NewMatchmakingRepository(cfg)
+		service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventbus.NewEventBus())
 		assert.NoError(t, service.Enroll(ctx, 1))
 	})
 
 	t.Run("Cancel", func(t *testing.T) {
 		ctx := context.Background()
-		service := matchmaking_service.NewMatchmakingService(cfg, logger, inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
+		cfg := getTestConfig()
+		repo := matchmaking_repository.NewMatchmakingRepository(cfg)
+		service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventbus.NewEventBus())
 		assert.NoError(t, service.Enroll(ctx, 1))
 		assert.NoError(t, service.Cancel(ctx, 1))
 	})
@@ -68,9 +75,10 @@ func TestMatchmakingService(t *testing.T) {
 			t.Run(title, func(t *testing.T) {
 				t.Parallel()
 
-				storage := inmemory.CreateInmemoryStorage()
+				cfg := getTestConfig()
+				repo := matchmaking_repository.NewMatchmakingRepository(cfg)
 				eventBus := eventbus.NewEventBus()
-				service := matchmaking_service.NewMatchmakingService(cfg, logger, storage, eventBus)
+				service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventBus)
 
 				// execute
 				expectMatch := make(chan *pkg_proto.Event)
@@ -103,15 +111,18 @@ func TestMatchmakingService(t *testing.T) {
 
 	t.Run("Save GameServerAddr", func(t *testing.T) {
 		ctx := context.Background()
-		service := matchmaking_service.NewMatchmakingService(cfg, logger, inmemory.CreateInmemoryStorage(), eventbus.NewEventBus())
+		cfg := getTestConfig()
+		repo := matchmaking_repository.NewMatchmakingRepository(cfg)
+		service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventbus.NewEventBus())
 
-		playerId := int32(1)
-		gameId := int32(2)
-		gameServerAddr := "127.0.0.1:12345"
-		assert.NoError(t, service.SetGameIdForPlayer(ctx, gameId, playerId))
-		assert.NoError(t, service.SetGameServerAddrForGameId(ctx, gameServerAddr, gameId))
-		actualGameServerAddr, err := service.GetGameServerAddrForPlayer(ctx, playerId)
+		playerId := 1
+		game := &matchmaking_repository.AssociatedGame{
+			Id:         2,
+			ServerAddr: "127.0.0.1:12345",
+		}
+		assert.NoError(t, repo.SetAssociatedGameByPlayerId(ctx, game, playerId))
+		actualGameServerAddr, err := service.GetGameServerAddrForPlayer(ctx, int32(playerId))
 		assert.NoError(t, err)
-		assert.Equal(t, gameServerAddr, actualGameServerAddr)
+		assert.Equal(t, game.ServerAddr, actualGameServerAddr)
 	})
 }

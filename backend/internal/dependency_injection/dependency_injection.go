@@ -7,6 +7,7 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 	"artyomliou/xenoblast-backend/internal/repository/auth_repository"
+	"artyomliou/xenoblast-backend/internal/repository/matchmaking_repository"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"artyomliou/xenoblast-backend/internal/service/http_service"
@@ -56,6 +57,7 @@ var Module = fx.Options(
 
 		NewMatchmakingServer,
 		NewMatchmakingService,
+		matchmaking_repository.NewMatchmakingRepository,
 
 		NewGameServer,
 		game_service.NewGameService,
@@ -161,8 +163,8 @@ func appendGrpcServerLifecycle(lc fx.Lifecycle, cfg *config.Config, logger *zap.
 	})
 }
 
-func NewMatchmakingService(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, storage storage.Storage) *matchmaking_service.MatchmakingService {
-	service := matchmaking_service.NewMatchmakingService(cfg, logger, storage, eventbus.NewEventBus())
+func NewMatchmakingService(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, repo matchmaking_repository.MatchmakingRepository) *matchmaking_service.MatchmakingService {
+	service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventbus.NewEventBus())
 
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
