@@ -50,19 +50,12 @@ export class WaitingRoom extends BaseScene {
           case STATE_INIT:
             this.text.setText(`Welcome ${this.session.nickname}`);
             await this.startWebsocketConnection();
-
-            this.waitingPlayerCount = await this.sendGetWaitingPlayerCountOverHttp();
-            if (this.waitingPlayerCount > 0) {
-              this.text.setText(`Waiting matchmaking...\nWaiting players: ${this.waitingPlayerCount}`);
-            } else {
-              this.text.setText(`Waiting matchmaking...`);
-            }
-
             await this.sendStartSubscribeOverWebsocket();
             this.newStateQueue.push(STATE_SUBSCRIBED);
             break;
 
           case STATE_SUBSCRIBED:
+            this.startPollingWaitingPlayerCountUntilStateNewMatch();
             await this.receiveNewMatchFromWebsocket();
             this.newStateQueue.push(STATE_NEW_MATCH);
             break;
@@ -108,6 +101,27 @@ export class WaitingRoom extends BaseScene {
     await this.wsClient.open(this.session.apiKey, (ev: MessageEvent<any>) => {
       this.messageBox.handleMessageEvent(ev);
     });
+  }
+
+  async startPollingWaitingPlayerCountUntilStateNewMatch() {
+    let intervalID: any;
+
+    const interval = 1000;
+    const callback = async () => {
+      this.waitingPlayerCount = await this.sendGetWaitingPlayerCountOverHttp();
+      if (this.waitingPlayerCount > 0) {
+        this.text.setText(`Waiting matchmaking...\nWaiting players: ${this.waitingPlayerCount}`);
+      } else {
+        this.text.setText(`Waiting matchmaking...`);
+      }
+    }
+    intervalID = setInterval(() => {
+      if (this.state >= STATE_NEW_MATCH) {
+        clearInterval(intervalID);
+        return;
+      }
+      callback();
+    }, interval);
   }
 
   async sendGetWaitingPlayerCountOverHttp() {

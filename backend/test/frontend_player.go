@@ -87,11 +87,11 @@ func (player *frontendPlayer) Run(t *testing.T) {
 
 			case stateWaitingRoomInit:
 				player.startWebsocketConnection(t)
-				player.sendGetWaitingPlayerCountOverHttp(t)
 				player.sendStartSubscribeOverWebsocket(t)
 				player.newStateQueue <- stateWaitingRoomSubscribed
 
 			case stateWaitingRoomSubscribed:
+				player.sendGetWaitingPlayerCountOverHttp(t)
 				player.receiveNewMatchFromWebsocket(t)
 				player.newStateQueue <- stateWaitingRoomNewMatch
 
