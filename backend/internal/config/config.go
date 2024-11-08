@@ -7,39 +7,17 @@ import (
 )
 
 type Config struct {
-	Environment        `yaml:"environment" env-required:"true"`
-	GracefulShutdown   bool `yaml:"graceful_shutdown" env-required:"true"`
-	LoggerOutput       `yaml:"logger_output" env-required:"true"`
-	HttpService        Service `yaml:"http_service" env-required:"true"`
-	WebsocketService   Service `yaml:"websocket_service" env-required:"true"`
-	AuthService        Service `yaml:"auth_service" env-required:"true"`
-	MatchmakingService Service `yaml:"matchmaking_service" env-required:"true"`
-	GameService        Service `yaml:"game_service" env-required:"true"`
-	Collector          `yaml:"collector" env-required:"true"`
-}
-
-type Environment string
-
-const (
-	DevEnvironment     Environment = "dev"
-	TestingEnvironment Environment = "testing"
-	ProdEnvironment    Environment = "prod"
-)
-
-type LoggerOutput string
-
-const (
-	LoggerStdout LoggerOutput = "stdout"
-)
-
-type Service struct {
-	Host string `yaml:"host" env-required:"true"`
-	Port int    `yaml:"port" env-required:"true"`
-}
-
-type Collector struct {
-	Host string `yaml:"host" env-required:"true"`
-	Port int    `yaml:"port" env-required:"true"`
+	Environment           `yaml:"environment" env-required:"true"`
+	GracefulShutdown      bool `yaml:"graceful_shutdown" env-required:"true"`
+	LoggerOutput          `yaml:"logger_output" env-required:"true"`
+	HttpService           Service    `yaml:"http_service" env-required:"true"`
+	WebsocketService      Service    `yaml:"websocket_service" env-required:"true"`
+	AuthService           Service    `yaml:"auth_service" env-required:"true"`
+	AuthRepository        Repository `yaml:"auth_repository" env-required:"true"`
+	MatchmakingService    Service    `yaml:"matchmaking_service" env-required:"true"`
+	MatchmakingRepository Repository `yaml:"matchmaking_repository" env-required:"true"`
+	GameService           Service    `yaml:"game_service" env-required:"true"`
+	Collector             `yaml:"collector" env-required:"true"`
 }
 
 func GetDefault() *Config {
@@ -59,9 +37,15 @@ func GetDefault() *Config {
 			Host: "auth_service",
 			Port: 50051,
 		},
+		AuthRepository: Repository{
+			Driver: InmemoryRepositoryDriver,
+		},
 		MatchmakingService: Service{
 			Host: "matchmaking_service",
 			Port: 50051,
+		},
+		MatchmakingRepository: Repository{
+			Driver: InmemoryRepositoryDriver,
 		},
 		GameService: Service{
 			Host: "game_service",

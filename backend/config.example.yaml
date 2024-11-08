@@ -14,9 +14,21 @@ auth_service:
   host: auth_service
   port: 50051
 
+auth_repository:
+  driver: redis
+  redis_config:
+    host: redis
+    port: 6379
+
 matchmaking_service:
   host: matchmaking_service
   port: 50051
+
+matchmaking_repository:
+  driver: redis
+  redis_config:
+    host: redis
+    port: 6379
 
 game_service:
   host: game_service

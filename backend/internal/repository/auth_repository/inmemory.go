@@ -9,11 +9,6 @@ import (
 	"sync"
 )
 
-const accessPattern1 = "nickname#%s#playerId"
-const accessPattern2 = "player#%d#nickname"
-const accessPattern3 = "apiKey#%s#playerId"
-const maxRetries = 10
-
 type InmemoryAuthRepository struct {
 	storage         map[string]string
 	mutex           sync.Mutex

@@ -3,6 +3,9 @@ package matchmaking_repository
 import (
 	"artyomliou/xenoblast-backend/internal/config"
 	"context"
+	"fmt"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type MatchmakingRepository interface {
@@ -20,6 +23,14 @@ type AssociatedGame struct {
 	ServerAddr string
 }
 
-func NewMatchmakingRepository(cfg *config.Config) MatchmakingRepository {
-	return NewInmemoryMatchmakingRepository()
+func NewMatchmakingRepository(cfg *config.Config) (MatchmakingRepository, error) {
+	if cfg.MatchmakingRepository.Driver == config.RedisRepositoryDriver {
+		redisCfg := cfg.MatchmakingRepository.RedisConfig
+		redisOpt := &redis.Options{
+			Addr: fmt.Sprintf("%s:%d", redisCfg.Host, redisCfg.Port),
+		}
+		client := redis.NewClient(redisOpt)
+		return NewRedisMatchmakingRepository(client), nil
+	}
+	return NewInmemoryMatchmakingRepository(), nil
 }

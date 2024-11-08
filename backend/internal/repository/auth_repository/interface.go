@@ -3,7 +3,15 @@ package auth_repository
 import (
 	"artyomliou/xenoblast-backend/internal/config"
 	"context"
+	"fmt"
+
+	"github.com/redis/go-redis/v9"
 )
+
+const accessPattern1 = "nickname#%s#playerId"
+const accessPattern2 = "player#%d#nickname"
+const accessPattern3 = "apiKey#%s#playerId"
+const maxRetries = 10
 
 type AuthRepository interface {
 	GetPlayerIdByNickname(ctx context.Context, nickname string) (int, error)
@@ -15,6 +23,14 @@ type AuthRepository interface {
 	GetPlayerIdByApiKey(ctx context.Context, apiKey string) (int, error)
 }
 
-func NewAuthRepository(cfg *config.Config) AuthRepository {
-	return NewInmemoryAuthRepository()
+func NewAuthRepository(cfg *config.Config) (AuthRepository, error) {
+	if cfg.MatchmakingRepository.Driver == config.RedisRepositoryDriver {
+		redisCfg := cfg.AuthRepository.RedisConfig
+		redisOpt := &redis.Options{
+			Addr: fmt.Sprintf("%s:%d", redisCfg.Host, redisCfg.Port),
+		}
+		client := redis.NewClient(redisOpt)
+		return NewRedisAuthRepository(client), nil
+	}
+	return NewInmemoryAuthRepository(), nil
 }

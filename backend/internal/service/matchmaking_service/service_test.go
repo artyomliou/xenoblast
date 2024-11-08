@@ -33,7 +33,10 @@ func TestMatchmakingService(t *testing.T) {
 	t.Run("Enroll", func(t *testing.T) {
 		ctx := context.Background()
 		cfg := getTestConfig()
-		repo := matchmaking_repository.NewMatchmakingRepository(cfg)
+		repo, err := matchmaking_repository.NewMatchmakingRepository(cfg)
+		if err != nil {
+			t.Fatal(err)
+		}
 		service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventbus.NewEventBus())
 		assert.NoError(t, service.Enroll(ctx, 1))
 	})
@@ -41,7 +44,10 @@ func TestMatchmakingService(t *testing.T) {
 	t.Run("Cancel", func(t *testing.T) {
 		ctx := context.Background()
 		cfg := getTestConfig()
-		repo := matchmaking_repository.NewMatchmakingRepository(cfg)
+		repo, err := matchmaking_repository.NewMatchmakingRepository(cfg)
+		if err != nil {
+			t.Fatal(err)
+		}
 		service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventbus.NewEventBus())
 		assert.NoError(t, service.Enroll(ctx, 1))
 		assert.NoError(t, service.Cancel(ctx, 1))
@@ -76,7 +82,10 @@ func TestMatchmakingService(t *testing.T) {
 				t.Parallel()
 
 				cfg := getTestConfig()
-				repo := matchmaking_repository.NewMatchmakingRepository(cfg)
+				repo, err := matchmaking_repository.NewMatchmakingRepository(cfg)
+				if err != nil {
+					t.Fatal(err)
+				}
 				eventBus := eventbus.NewEventBus()
 				service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventBus)
 
@@ -112,7 +121,10 @@ func TestMatchmakingService(t *testing.T) {
 	t.Run("Save GameServerAddr", func(t *testing.T) {
 		ctx := context.Background()
 		cfg := getTestConfig()
-		repo := matchmaking_repository.NewMatchmakingRepository(cfg)
+		repo, err := matchmaking_repository.NewMatchmakingRepository(cfg)
+		if err != nil {
+			t.Fatal(err)
+		}
 		service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventbus.NewEventBus())
 
 		playerId := 1

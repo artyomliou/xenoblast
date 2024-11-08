@@ -67,6 +67,14 @@ services:
       replicas: 2
       endpoint_mode: dnsrr
 
+  redis:
+    container_name: redis
+    image: redis:latest
+    expose:
+      - 6379
+    volumes:
+      - redis_data:/data
+
   collector:
     image: otel/opentelemetry-collector-contrib:0.112.0
     container_name: collector
@@ -94,3 +102,6 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_SECURITY_ADMIN_USER=admin
+
+volumes:
+  redis_data:
