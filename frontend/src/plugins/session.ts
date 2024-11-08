@@ -7,9 +7,6 @@ export class Session extends Plugins.BasePlugin {
   nickname = "";
 
   clean() {
-    this.apiKey = "";
-    this.playerId = 0;
     this.gameId = 0;
-    this.nickname = "";
   }
 }

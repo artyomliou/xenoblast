@@ -1,5 +1,6 @@
 import { BaseScene } from "./base_scene";
 import { Game } from "./game";
+import { WaitingRoom } from "./waiting_room";
 
 export class GameOver extends BaseScene {
   reason: string = "";
@@ -31,7 +32,7 @@ export class GameOver extends BaseScene {
       .setOrigin(0.5);
 
     this.input.once("pointerdown", () => {
-      this.scene.start("MainMenu");
+      this.scene.start("WaitingRoom");
     });
 
     this.clean();
@@ -74,6 +75,10 @@ export class GameOver extends BaseScene {
 
     this.session.clean();
     console.debug("cleaned session");
+
+    this.scene.remove("WaitingRoom");
+    this.scene.add("WaitingRoom", WaitingRoom, false);
+    console.debug("cleaned WaitingRoom scene");
 
     this.scene.remove("Game");
     this.scene.add("Game", Game, false);
