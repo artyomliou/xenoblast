@@ -15,7 +15,7 @@ import (
 
 const minimumPlayer = 2
 const maximumPlayer = 4
-const MatchmakingInterval = time.Second
+const MatchmakingInterval = 3 * time.Second
 
 type MatchmakingService struct {
 	cfg                *config.Config
