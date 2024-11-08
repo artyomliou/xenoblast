@@ -51,14 +51,17 @@ var Module = fx.Options(
 
 		NewAuthServer,
 		auth_service.NewAuthService,
+		auth_service.NewAuthServiceClient,
 		auth_repository.NewAuthRepository,
 
 		NewMatchmakingServer,
 		NewMatchmakingService,
+		matchmaking_service.NewMatchmakingServiceClient,
 		matchmaking_repository.NewMatchmakingRepository,
 
 		NewGameServer,
 		game_service.NewGameService,
+		game_service.NewGameServiceClientFactory,
 
 		NewLogger,
 
@@ -119,19 +122,19 @@ func NewAuthServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, serv
 	return server, nil
 }
 
-func NewMatchmakingServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, service *matchmaking_service.MatchmakingService) (*matchmaking_service.MatchmakingServiceServer, error) {
+func NewMatchmakingServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, service *matchmaking_service.MatchmakingService, gameServiceFactory game_service.GameServiceClientFactory) (*matchmaking_service.MatchmakingServiceServer, error) {
 	addr := fmt.Sprintf(":%d", cfg.MatchmakingService.Port)
 	grpcServer := grpc.NewServer()
-	server := matchmaking_service.NewMatchmakingServiceServer(cfg, logger, service)
+	server := matchmaking_service.NewMatchmakingServiceServer(cfg, logger, service, gameServiceFactory)
 	matchmaking.RegisterMatchmakingServiceServer(grpcServer, server)
 	appendGrpcServerLifecycle(lc, cfg, logger, addr, grpcServer)
 	return server, nil
 }
 
-func NewGameServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, service *game_service.GameService) (*game_service.GameServiceServer, error) {
+func NewGameServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, service *game_service.GameService, authServiceClient auth.AuthServiceClient) (*game_service.GameServiceServer, error) {
 	addr := fmt.Sprintf(":%d", cfg.GameService.Port)
 	grpcServer := grpc.NewServer()
-	server := game_service.NewGameServiceServer(cfg, logger, service)
+	server := game_service.NewGameServiceServer(cfg, logger, service, authServiceClient)
 	game.RegisterGameServiceServer(grpcServer, server)
 	appendGrpcServerLifecycle(lc, cfg, logger, addr, grpcServer)
 	return server, nil

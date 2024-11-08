@@ -7,7 +7,6 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
-	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"artyomliou/xenoblast-backend/internal/telemetry"
 	"context"
 	"errors"
@@ -19,28 +18,32 @@ import (
 )
 
 type ClientHandler struct {
-	cfg            *config.Config
-	logger         *zap.Logger
-	metrics        *telemetry.WebsocketMetrics
-	client         *Client
-	player         *auth.PlayerInfoDto
-	msgCh          chan *messageContainer
-	gameId         int32
-	gameServerAddr string
-	gameClient     game.GameServiceClient
+	cfg                      *config.Config
+	logger                   *zap.Logger
+	metrics                  *telemetry.WebsocketMetrics
+	matchmakingServiceClient matchmaking.MatchmakingServiceClient
+	gameServiceClientFactory game_service.GameServiceClientFactory
+	gameServiceClient        game.GameServiceClient
+	client                   *Client
+	player                   *auth.PlayerInfoDto
+	msgCh                    chan *messageContainer
+	gameId                   int32
+	gameServerAddr           string
 }
 
-func NewClientHandler(cfg *config.Config, logger *zap.Logger, metrics *telemetry.WebsocketMetrics, client *Client, player *auth.PlayerInfoDto) *ClientHandler {
+func NewClientHandler(cfg *config.Config, logger *zap.Logger, metrics *telemetry.WebsocketMetrics, matchmakingServiceClient matchmaking.MatchmakingServiceClient, gameServiceClientFactory game_service.GameServiceClientFactory, client *Client, player *auth.PlayerInfoDto) *ClientHandler {
 	return &ClientHandler{
-		cfg:            cfg,
-		logger:         logger.With(zap.Int32("player", player.PlayerId)),
-		metrics:        metrics,
-		client:         client,
-		player:         player,
-		msgCh:          make(chan *messageContainer, 100),
-		gameId:         0,
-		gameServerAddr: "",
-		gameClient:     nil,
+		cfg:                      cfg,
+		logger:                   logger.With(zap.Int32("player", player.PlayerId)),
+		metrics:                  metrics,
+		client:                   client,
+		matchmakingServiceClient: matchmakingServiceClient,
+		gameServiceClientFactory: gameServiceClientFactory,
+		gameServiceClient:        nil,
+		player:                   player,
+		msgCh:                    make(chan *messageContainer, 100),
+		gameId:                   0,
+		gameServerAddr:           "",
 	}
 }
 
@@ -138,14 +141,14 @@ func (h *ClientHandler) Run(ctx context.Context) {
 
 					// Open a connection to game service, must check before use
 					h.logger.Sugar().Debugf("opening game service client to %s", h.gameServerAddr)
-					gameClient, close, err := game_service.NewGameServiceClient(h.cfg, h.gameServerAddr)
+					gameServiceClient, connClose, err := h.gameServiceClientFactory.NewClient(h.gameServerAddr)
 					if err != nil {
 						h.logger.Error("recvGameEvent(): ", zap.Error(err))
 						h.metrics.ErrorTotal.Add(ctx, 1)
 						return
 					}
-					defer close()
-					h.gameClient = gameClient
+					defer connClose()
+					h.gameServiceClient = gameServiceClient
 
 					// Start subscribing all game events
 					go h.recvGameEvent(ctx)
@@ -200,14 +203,7 @@ func (h *ClientHandler) recvWebsocketEvent(ctx context.Context) {
 func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 	defer h.logger.Debug("recvMatchmakingEvent() exit")
 
-	matchmakingClient, close, err := matchmaking_service.NewMatchmakingServiceClient(h.cfg)
-	if err != nil {
-		h.logger.Error("recvMatchmakingEvent(): ", zap.Error(err))
-		return
-	}
-	defer close()
-
-	stream, err := matchmakingClient.SubscribeMatch(ctx, &matchmaking.MatchmakingRequest{
+	stream, err := h.matchmakingServiceClient.SubscribeMatch(ctx, &matchmaking.MatchmakingRequest{
 		PlayerId: h.player.PlayerId,
 	})
 	if err != nil {
@@ -238,13 +234,7 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 }
 
 func (h *ClientHandler) sendEnrollMatchmakingOverHttp(ctx context.Context) error {
-	matchmakingClient, close, err := matchmaking_service.NewMatchmakingServiceClient(h.cfg)
-	if err != nil {
-		return err
-	}
-	defer close()
-
-	_, err = matchmakingClient.Enroll(ctx, &matchmaking.MatchmakingRequest{
+	_, err := h.matchmakingServiceClient.Enroll(ctx, &matchmaking.MatchmakingRequest{
 		PlayerId: h.player.PlayerId,
 	})
 	if err != nil {
@@ -254,13 +244,7 @@ func (h *ClientHandler) sendEnrollMatchmakingOverHttp(ctx context.Context) error
 }
 
 func (h *ClientHandler) sendCancelMatchmakingOverHttp(ctx context.Context) error {
-	matchmakingClient, close, err := matchmaking_service.NewMatchmakingServiceClient(h.cfg)
-	if err != nil {
-		return err
-	}
-	defer close()
-
-	_, err = matchmakingClient.Cancel(ctx, &matchmaking.MatchmakingRequest{
+	_, err := h.matchmakingServiceClient.Cancel(ctx, &matchmaking.MatchmakingRequest{
 		PlayerId: h.player.PlayerId,
 	})
 	if err != nil {
@@ -288,11 +272,7 @@ func (h *ClientHandler) HandleNewMatch(ev *pkg_proto.Event) error {
 func (h *ClientHandler) recvGameEvent(ctx context.Context) {
 	defer h.logger.Debug("recvGameEvent(): exit")
 
-	if h.gameClient == nil {
-		h.logger.Error("recvGameEvent(): h.gameClient is nil")
-		return
-	}
-	stream, err := h.gameClient.Subscribe(ctx, &game.SubscribeRequest{
+	stream, err := h.gameServiceClient.Subscribe(ctx, &game.SubscribeRequest{
 		GameId: h.gameId,
 		Types: []pkg_proto.EventType{
 			pkg_proto.EventType_StateWaitingReady,
@@ -365,11 +345,7 @@ func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 		return
 	}
 
-	if h.gameClient == nil {
-		h.logger.Error("recvGameEvent(): h.gameClient is nil")
-		return
-	}
-	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
+	_, err := h.gameServiceClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
 		Type:      msg.Type,
 		Timestamp: msg.Timestamp,
 		GameId:    h.gameId,
@@ -394,11 +370,7 @@ func (h *ClientHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 		return
 	}
 
-	if h.gameClient == nil {
-		h.logger.Error("recvGameEvent(): h.gameClient is nil")
-		return
-	}
-	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
+	_, err := h.gameServiceClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
 		Type:      msg.Type,
 		Timestamp: msg.Timestamp,
 		GameId:    h.gameId,
@@ -425,11 +397,7 @@ func (h *ClientHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
 		return
 	}
 
-	if h.gameClient == nil {
-		h.logger.Error("recvGameEvent(): h.gameClient is nil")
-		return
-	}
-	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
+	_, err := h.gameServiceClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
 		Type:      msg.Type,
 		Timestamp: msg.Timestamp,
 		GameId:    h.gameId,
@@ -456,11 +424,7 @@ func (h *ClientHandler) HandlePlayerGetPowerupEvent(msg *pkg_proto.Event) {
 		return
 	}
 
-	if h.gameClient == nil {
-		h.logger.Error("recvGameEvent(): h.gameClient is nil")
-		return
-	}
-	_, err := h.gameClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
+	_, err := h.gameServiceClient.PlayerPublish(context.TODO(), &pkg_proto.Event{
 		Type:      msg.Type,
 		Timestamp: msg.Timestamp,
 		GameId:    h.gameId,

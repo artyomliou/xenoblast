@@ -6,9 +6,7 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/http_api"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
-	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
-	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,14 +15,20 @@ import (
 )
 
 type ApiController struct {
-	cfg    *config.Config
-	logger *zap.Logger
+	cfg                      *config.Config
+	logger                   *zap.Logger
+	authServiceClient        auth.AuthServiceClient
+	matchmakingServiceClient matchmaking.MatchmakingServiceClient
+	gameServiceClientFactory game_service.GameServiceClientFactory
 }
 
-func NewApiController(cfg *config.Config, logger *zap.Logger) *ApiController {
+func NewApiController(cfg *config.Config, logger *zap.Logger, authServiceClient auth.AuthServiceClient, matchmakingServiceClient matchmaking.MatchmakingServiceClient, gameServiceClientFactory game_service.GameServiceClientFactory) *ApiController {
 	return &ApiController{
-		cfg:    cfg,
-		logger: logger,
+		cfg:                      cfg,
+		logger:                   logger,
+		authServiceClient:        authServiceClient,
+		matchmakingServiceClient: matchmakingServiceClient,
+		gameServiceClientFactory: gameServiceClientFactory,
 	}
 }
 
@@ -35,14 +39,7 @@ func (ctl *ApiController) Register(ctx *gin.Context) {
 		return
 	}
 
-	authClient, close, err := auth_service.NewAuthServiceClient(ctl.cfg)
-	if err != nil {
-		ctl.logger.Error("failed to create auth service client", zap.Error(err))
-		ctx.String(http.StatusInternalServerError, "Internal server error")
-		return
-	}
-	defer close()
-	resp, err := authClient.Register(ctx, &auth.RegisterRequest{
+	resp, err := ctl.authServiceClient.Register(ctx, &auth.RegisterRequest{
 		Nickname: req.Nickname,
 	})
 	if err != nil {
@@ -63,14 +60,8 @@ func (ctl *ApiController) Validate(ctx *gin.Context) {
 		ctx.String(http.StatusInternalServerError, "Unauthorized")
 		return
 	}
-	authClient, close, err := auth_service.NewAuthServiceClient(ctl.cfg)
-	if err != nil {
-		ctl.logger.Error("Validate(): ", zap.Error(err))
-		ctx.String(http.StatusInternalServerError, "Internal server error")
-		return
-	}
-	defer close()
-	player, err := authClient.Validate(ctx, &auth.ValidateRequest{
+
+	player, err := ctl.authServiceClient.Validate(ctx, &auth.ValidateRequest{
 		ApiKey: apiKey,
 	})
 	if err != nil {
@@ -90,14 +81,8 @@ func (ctl *ApiController) GetWaitingPlayerCount(ctx *gin.Context) {
 		ctx.String(http.StatusInternalServerError, "Unauthorized")
 		return
 	}
-	authClient, close, err := auth_service.NewAuthServiceClient(ctl.cfg)
-	if err != nil {
-		ctl.logger.Error("GetWaitingPlayerCount(): ", zap.Error(err))
-		ctx.String(http.StatusInternalServerError, "Internal server error")
-		return
-	}
-	defer close()
-	_, err = authClient.Validate(ctx, &auth.ValidateRequest{
+
+	_, err := ctl.authServiceClient.Validate(ctx, &auth.ValidateRequest{
 		ApiKey: apiKey,
 	})
 	if err != nil {
@@ -106,14 +91,7 @@ func (ctl *ApiController) GetWaitingPlayerCount(ctx *gin.Context) {
 		return
 	}
 
-	matchmakingClient, matchmakingClientClose, err := matchmaking_service.NewMatchmakingServiceClient(ctl.cfg)
-	if err != nil {
-		ctl.logger.Error("GetWaitingPlayerCount(): ", zap.Error(err))
-		ctx.String(http.StatusInternalServerError, "Internal server error")
-		return
-	}
-	defer matchmakingClientClose()
-	resp, err := matchmakingClient.GetWaitingPlayerCount(ctx, nil)
+	resp, err := ctl.matchmakingServiceClient.GetWaitingPlayerCount(ctx, nil)
 	if err != nil {
 		ctl.logger.Error("GetWaitingPlayerCount(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -132,14 +110,8 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 		ctx.String(http.StatusInternalServerError, "Unauthorized")
 		return
 	}
-	authClient, close, err := auth_service.NewAuthServiceClient(ctl.cfg)
-	if err != nil {
-		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
-		ctx.String(http.StatusInternalServerError, "Internal server error")
-		return
-	}
-	defer close()
-	player, err := authClient.Validate(ctx, &auth.ValidateRequest{
+
+	player, err := ctl.authServiceClient.Validate(ctx, &auth.ValidateRequest{
 		ApiKey: apiKey,
 	})
 	if err != nil {
@@ -149,14 +121,7 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 	}
 
 	// Get gameServerAddr by playerId
-	matchmakingClient, close, err := matchmaking_service.NewMatchmakingServiceClient(ctl.cfg)
-	if err != nil {
-		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
-		ctx.String(http.StatusInternalServerError, "Internal server error")
-		return
-	}
-	defer close()
-	resp1, err := matchmakingClient.GetGameServerAddr(ctx, &matchmaking.GetGameServerAddrRequest{PlayerId: player.PlayerId})
+	resp1, err := ctl.matchmakingServiceClient.GetGameServerAddr(ctx, &matchmaking.GetGameServerAddrRequest{PlayerId: player.PlayerId})
 	if err != nil {
 		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
@@ -171,15 +136,17 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
 	}
+
 	ctl.logger.Debug("opening game service client", zap.String("addr", gameServerAddr))
-	gameClient, gameClientClose, err := game_service.NewGameServiceClient(ctl.cfg, gameServerAddr)
+	gameServiceClient, close, err := ctl.gameServiceClientFactory.NewClient(gameServerAddr)
 	if err != nil {
 		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
-	defer gameClientClose()
-	resp2, err := gameClient.GetGameInfo(ctx, &game.GetGameInfoRequest{
+	defer close()
+
+	resp2, err := gameServiceClient.GetGameInfo(ctx, &game.GetGameInfoRequest{
 		GameId: req.GameId,
 	})
 	if err != nil {

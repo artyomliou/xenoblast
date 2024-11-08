@@ -5,7 +5,6 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
-	"artyomliou/xenoblast-backend/internal/service/auth_service"
 	"context"
 	"sync"
 
@@ -16,18 +15,20 @@ import (
 
 type GameServiceServer struct {
 	game.UnimplementedGameServiceServer
-	cfg     *config.Config
-	service *GameService
-	logger  *zap.Logger
-	mutex   sync.Mutex
+	cfg               *config.Config
+	logger            *zap.Logger
+	service           *GameService
+	authServiceClient auth.AuthServiceClient
+	mutex             sync.Mutex
 }
 
-func NewGameServiceServer(cfg *config.Config, logger *zap.Logger, service *GameService) *GameServiceServer {
+func NewGameServiceServer(cfg *config.Config, logger *zap.Logger, service *GameService, authServiceClient auth.AuthServiceClient) *GameServiceServer {
 	return &GameServiceServer{
-		cfg:     cfg,
-		service: service,
-		logger:  logger,
-		mutex:   sync.Mutex{},
+		cfg:               cfg,
+		logger:            logger,
+		service:           service,
+		authServiceClient: authServiceClient,
+		mutex:             sync.Mutex{},
 	}
 }
 
@@ -35,12 +36,7 @@ func (server *GameServiceServer) NewGame(ctx context.Context, req *game.NewGameR
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
-	authClient, close, err := auth_service.NewAuthServiceClient(server.cfg)
-	if err != nil {
-		return nil, err
-	}
-	defer close()
-	resp, err := authClient.GetNickname(ctx, &auth.GetNicknameRequest{
+	resp, err := server.authServiceClient.GetNickname(ctx, &auth.GetNicknameRequest{
 		Players: req.GetPlayers(),
 	})
 	if err != nil {

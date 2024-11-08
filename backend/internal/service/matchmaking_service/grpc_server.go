@@ -16,20 +16,22 @@ import (
 
 type MatchmakingServiceServer struct {
 	matchmaking.UnimplementedMatchmakingServiceServer
-	cfg          *config.Config
-	service      *MatchmakingService
-	logger       *zap.Logger
-	mutex        sync.Mutex
-	createdGames map[int32]bool
+	cfg                      *config.Config
+	logger                   *zap.Logger
+	service                  *MatchmakingService
+	gameServiceClientFactory game_service.GameServiceClientFactory
+	mutex                    sync.Mutex
+	createdGames             map[int32]bool
 }
 
-func NewMatchmakingServiceServer(cfg *config.Config, logger *zap.Logger, service *MatchmakingService) *MatchmakingServiceServer {
+func NewMatchmakingServiceServer(cfg *config.Config, logger *zap.Logger, service *MatchmakingService, gameServiceClientFactory game_service.GameServiceClientFactory) *MatchmakingServiceServer {
 	return &MatchmakingServiceServer{
-		cfg:          cfg,
-		service:      service,
-		logger:       logger,
-		mutex:        sync.Mutex{},
-		createdGames: map[int32]bool{},
+		cfg:                      cfg,
+		logger:                   logger,
+		service:                  service,
+		gameServiceClientFactory: gameServiceClientFactory,
+		mutex:                    sync.Mutex{},
+		createdGames:             map[int32]bool{},
 	}
 }
 
@@ -108,13 +110,13 @@ func (server *MatchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) 
 	}
 
 	server.logger.Sugar().Debugf("opening game service client to %s", data.GameServerAddr)
-	gameClient, close, err := game_service.NewGameServiceClient(server.cfg, data.GameServerAddr)
+	gameServiceClient, close, err := server.gameServiceClientFactory.NewClient(data.GameServerAddr)
 	if err != nil {
 		return err
 	}
 	defer close()
 
-	_, err = gameClient.NewGame(context.Background(), &game.NewGameRequest{
+	_, err = gameServiceClient.NewGame(context.Background(), &game.NewGameRequest{
 		GameId:  ev.GameId,
 		Players: data.Players,
 	})

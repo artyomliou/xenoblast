@@ -2,22 +2,24 @@ package matchmaking_service
 
 import (
 	"artyomliou/xenoblast-backend/internal/config"
+	"artyomliou/xenoblast-backend/internal/grpc_connection"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
+	"context"
 	"fmt"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"go.uber.org/fx"
 )
 
-func NewMatchmakingServiceClient(cfg *config.Config) (matchmaking.MatchmakingServiceClient, func() error, error) {
-	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
+func NewMatchmakingServiceClient(lc fx.Lifecycle, cfg *config.Config) (matchmaking.MatchmakingServiceClient, error) {
 	addr := fmt.Sprintf("%s:%d", cfg.MatchmakingService.Host, cfg.MatchmakingService.Port)
-	conn, err := grpc.NewClient(addr, opts...)
+	conn, err := grpc_connection.NewGrpcConnection(addr)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-
-	return matchmaking.NewMatchmakingServiceClient(conn), conn.Close, nil
+	lc.Append(fx.Hook{
+		OnStop: func(ctx context.Context) error {
+			return conn.Close()
+		},
+	})
+	return matchmaking.NewMatchmakingServiceClient(conn), nil
 }
