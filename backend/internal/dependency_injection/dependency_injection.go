@@ -13,8 +13,6 @@ import (
 	"artyomliou/xenoblast-backend/internal/service/http_service"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
 	"artyomliou/xenoblast-backend/internal/service/websocket_service"
-	"artyomliou/xenoblast-backend/internal/storage"
-	"artyomliou/xenoblast-backend/internal/storage/inmemory"
 	"artyomliou/xenoblast-backend/internal/telemetry"
 	"context"
 	"fmt"
@@ -63,7 +61,6 @@ var Module = fx.Options(
 		game_service.NewGameService,
 
 		NewLogger,
-		NewStorage,
 
 		telemetry.NewMeterProvider,
 		telemetry.NewHttpMetrics,
@@ -198,8 +195,4 @@ func NewLogger(lc fx.Lifecycle, cfg *config.Config) (*zap.Logger, error) {
 		},
 	})
 	return logger, nil
-}
-
-func NewStorage() (storage.Storage, error) {
-	return inmemory.CreateInmemoryStorage(), nil
 }

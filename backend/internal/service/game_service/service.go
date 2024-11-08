@@ -6,7 +6,6 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/game"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
 	"artyomliou/xenoblast-backend/internal/service/game_service/state"
-	"artyomliou/xenoblast-backend/internal/storage"
 	"context"
 
 	_ "embed"
@@ -20,15 +19,13 @@ var currentOnlyMapContent string
 type GameService struct {
 	logger    *zap.Logger
 	mapLoader maploader.MapLoader
-	storage   storage.Storage
 	sessions  map[int32]*gameSession
 }
 
-func NewGameService(logger *zap.Logger, storage storage.Storage) *GameService {
+func NewGameService(logger *zap.Logger) *GameService {
 	return &GameService{
 		logger:    logger,
 		mapLoader: maploader.NewYamlMapLoader(),
-		storage:   storage,
 		sessions:  map[int32]*gameSession{},
 	}
 }

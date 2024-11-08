@@ -4,7 +4,6 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	gamelogic "artyomliou/xenoblast-backend/internal/service/game_service"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
-	"artyomliou/xenoblast-backend/internal/storage/inmemory"
 	"context"
 	"testing"
 	"time"
@@ -27,7 +26,7 @@ func TestGameLogicService(t *testing.T) {
 		4: "4",
 	}
 
-	service := gamelogic.NewGameService(logger, inmemory.CreateInmemoryStorage())
+	service := gamelogic.NewGameService(logger)
 	assert.NoError(t, service.NewGame(context.Background(), 1, players))
 
 	expectWaitingReadyEvent := make(chan bool)
