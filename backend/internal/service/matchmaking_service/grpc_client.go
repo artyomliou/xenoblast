@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/stretchr/testify/mock"
 	"go.uber.org/fx"
 )
 
@@ -22,4 +23,9 @@ func NewMatchmakingServiceClient(lc fx.Lifecycle, cfg *config.Config) (matchmaki
 		},
 	})
 	return matchmaking.NewMatchmakingServiceClient(conn), nil
+}
+
+type MockMatchmakingServiceClient struct {
+	matchmaking.MatchmakingServiceClient
+	mock.Mock
 }

@@ -17,6 +17,12 @@ check-tools:
 	else \
 		echo "protoc-gen-go-grpc already installed."; \
 	fi
+	@if [ ! -x "$(GO_BIN)/mockery" ]; then \
+		echo "Installing mockery..."; \
+		go install github.com/vektra/mockery/v2@latest; \
+	else \
+		echo "mockery already installed."; \
+	fi
 
 .PHONY: proto
 proto: check-tools
@@ -27,12 +33,14 @@ proto: check-tools
 		--proto_path=. \
     ./common.proto ./auth.proto ./matchmaking.proto ./game.proto ./http_api.proto
 
-.PHONY: clean
-clean:
-	rm -rf ./internal/pkg_proto/*.pb.go
+.PHONY: mock
+mock: check-tools
+	@mockery --name=AuthServiceClient --dir=./internal/pkg_proto/auth --output=./mocks --outpkg=mocks
+	@mockery --name=MatchmakingServiceClient --dir=./internal/pkg_proto/matchmaking --output=./mocks --outpkg=mocks
+	@mockery --name=GameServiceClient --dir=./internal/pkg_proto/game --output=./mocks --outpkg=mocks
 
 .PHONY: setup
-setup: check-tools proto
+setup: 
 	@if [ ! -f "config.yaml" ]; then \
 		cp config.example.yaml config.yaml; \
 	fi
