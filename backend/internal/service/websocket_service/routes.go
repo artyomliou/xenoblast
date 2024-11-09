@@ -26,6 +26,9 @@ func NewHttpHandler(cfg *config.Config, logger *zap.Logger, ctl *WebsocketContro
 		requestDuration := time.Since(requestStartTime).Milliseconds()
 		metrics.RequestDurationMillisecond.Record(r.Context(), requestDuration)
 
+		if r.Response == nil {
+			return
+		}
 		status := r.Response.StatusCode
 		if status >= http.StatusBadRequest {
 			metrics.ErrorTotal.Add(r.Context(), 1)

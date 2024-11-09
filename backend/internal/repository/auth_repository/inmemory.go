@@ -24,6 +24,9 @@ func NewInmemoryAuthRepository() *InmemoryAuthRepository {
 }
 
 func (repo *InmemoryAuthRepository) GetPlayerIdByNickname(ctx context.Context, nickname string) (int, error) {
+	repo.mutex.Lock()
+	defer repo.mutex.Unlock()
+
 	key := fmt.Sprintf(accessPattern1, nickname)
 	if playerIdString, ok := repo.storage[key]; ok {
 		return strconv.Atoi(playerIdString)
@@ -54,6 +57,9 @@ func (repo *InmemoryAuthRepository) SetNicknameByPlayerId(ctx context.Context, n
 }
 
 func (repo *InmemoryAuthRepository) GetNicknameByPlayerId(ctx context.Context, playerId int) (string, error) {
+	repo.mutex.Lock()
+	defer repo.mutex.Unlock()
+
 	key := fmt.Sprintf(accessPattern2, playerId)
 	if nickname, ok := repo.storage[key]; ok {
 		return nickname, nil
@@ -87,6 +93,9 @@ func (repo *InmemoryAuthRepository) GenerateApiKeyByPlayerId(ctx context.Context
 }
 
 func (repo *InmemoryAuthRepository) GetPlayerIdByApiKey(ctx context.Context, apiKey string) (int, error) {
+	repo.mutex.Lock()
+	defer repo.mutex.Unlock()
+
 	key := fmt.Sprintf(accessPattern3, apiKey)
 	if playerIdString, ok := repo.storage[key]; ok {
 		return strconv.Atoi(playerIdString)
