@@ -9,3 +9,10 @@ datasources:
     isDefault: true
     uid: "P1809F7CD0C75ACF3"
     version: 2
+
+  - name: loki
+    type: loki
+    url: http://loki:3100
+    access: proxy
+    orgId: 1
+    version: 1

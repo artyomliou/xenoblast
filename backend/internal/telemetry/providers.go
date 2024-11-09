@@ -6,70 +6,81 @@ import (
 	"fmt"
 	"time"
 
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
-	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	"go.opentelemetry.io/otel/log"
+	otellognoop "go.opentelemetry.io/otel/log/noop"
+	"go.opentelemetry.io/otel/metric"
+	otelmetricnoop "go.opentelemetry.io/otel/metric/noop"
 	"go.opentelemetry.io/otel/propagation"
-	"go.opentelemetry.io/otel/sdk/metric"
-	"go.opentelemetry.io/otel/sdk/trace"
+	otelsdklog "go.opentelemetry.io/otel/sdk/log"
+	otelsdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.uber.org/fx"
 )
 
-func NewTraceProvider(lc fx.Lifecycle, _ propagation.TextMapPropagator) (*trace.TracerProvider, error) {
-	traceExporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
-	if err != nil {
-		return nil, err
-	}
-
-	// Default is 5s. Set to 1s for demonstrative purposes.
-	traceProvider := trace.NewTracerProvider(
-		trace.WithBatcher(traceExporter, trace.WithBatchTimeout(time.Second)),
-	)
-
-	lc.Append(fx.Hook{
-		OnStop: func(ctx context.Context) error {
-			if err := traceProvider.Shutdown(ctx); err != nil {
-				return err
-			}
-			return nil
-		},
-	})
-
-	return traceProvider, nil
-}
-
-func NewMeterProvider(lc fx.Lifecycle, cfg *config.Config, _ propagation.TextMapPropagator) (*metric.MeterProvider, error) {
-	var metricExporter metric.Exporter
+func NewMeterProvider(lc fx.Lifecycle, cfg *config.Config, _ propagation.TextMapPropagator) (metric.MeterProvider, error) {
+	var exporter otelsdkmetric.Exporter
 	var err error
-	if cfg.Environment == config.TestingEnvironment {
-		metricExporter, err = stdoutmetric.New()
+	if !cfg.Collector.EnableMetricProvider {
+		return otelmetricnoop.NewMeterProvider(), nil
 	} else {
 		var options []otlpmetricgrpc.Option
 		endpoint := fmt.Sprintf("%s:%d", cfg.Collector.Host, cfg.Collector.Port)
 		options = append(options, otlpmetricgrpc.WithEndpoint(endpoint))
 		options = append(options, otlpmetricgrpc.WithInsecure())
 
-		metricExporter, err = otlpmetricgrpc.New(context.TODO(), options...)
+		exporter, err = otlpmetricgrpc.New(context.TODO(), options...)
 	}
 	if err != nil {
 		return nil, err
 	}
 
 	// Default is 1m. Set to 3s for demonstrative purposes.
-	meterProvider := metric.NewMeterProvider(
-		metric.WithReader(metric.NewPeriodicReader(metricExporter, metric.WithInterval(3*time.Second))),
-	)
+	reader := otelsdkmetric.NewPeriodicReader(exporter, otelsdkmetric.WithInterval(3*time.Second))
+	provider := otelsdkmetric.NewMeterProvider(otelsdkmetric.WithReader(reader))
 
 	lc.Append(fx.Hook{
 		OnStop: func(ctx context.Context) error {
-			if err := meterProvider.Shutdown(ctx); err != nil {
+			if err := provider.Shutdown(ctx); err != nil {
 				return err
 			}
 			return nil
 		},
 	})
 
-	return meterProvider, nil
+	return provider, nil
+}
+
+func NewLoggerProvider(lc fx.Lifecycle, cfg *config.Config, _ propagation.TextMapPropagator) (log.LoggerProvider, error) {
+	var exporter otelsdklog.Exporter
+	var err error
+	if !cfg.Collector.EnableLogProvider {
+		return otellognoop.NewLoggerProvider(), nil
+	} else {
+		var options []otlploggrpc.Option
+		endpoint := fmt.Sprintf("%s:%d", cfg.Collector.Host, cfg.Collector.Port)
+		options = append(options, otlploggrpc.WithEndpoint(endpoint))
+		options = append(options, otlploggrpc.WithInsecure())
+
+		exporter, err = otlploggrpc.New(context.TODO(), options...)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	processor := otelsdklog.NewBatchProcessor(exporter)
+	provider := otelsdklog.NewLoggerProvider(otelsdklog.WithProcessor(processor))
+
+	lc.Append(fx.Hook{
+		OnStop: func(ctx context.Context) error {
+			if err := provider.Shutdown(ctx); err != nil {
+				return err
+			}
+			return nil
+		},
+	})
+
+	return provider, nil
 }
 
 func NewPropagator() propagation.TextMapPropagator {

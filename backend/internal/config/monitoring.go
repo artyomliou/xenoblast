@@ -1,6 +1,8 @@
 package config
 
 type Collector struct {
-	Host string `yaml:"host" env-required:"true"`
-	Port int    `yaml:"port" env-required:"true"`
+	EnableMetricProvider bool   `yaml:"enable_metric_provider" env-required:"true"`
+	EnableLogProvider    bool   `yaml:"enable_log_provider" env-required:"true"`
+	Host                 string `yaml:"host" env-required:"true"`
+	Port                 int    `yaml:"port" env-required:"true"`
 }

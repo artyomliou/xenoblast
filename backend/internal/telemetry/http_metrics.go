@@ -2,7 +2,6 @@ package telemetry
 
 import (
 	"go.opentelemetry.io/otel/metric"
-	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 )
 
 type HttpMetrics struct {
@@ -11,7 +10,7 @@ type HttpMetrics struct {
 	ErrorTotal                 metric.Int64Counter
 }
 
-func NewHttpMetrics(mp *sdkmetric.MeterProvider) (metrics *HttpMetrics, err error) {
+func NewHttpMetrics(mp metric.MeterProvider) (metrics *HttpMetrics, err error) {
 	name := "websocket"
 	meter := mp.Meter(name)
 
