@@ -1,15 +1,17 @@
-resource "aws_ecr_repository" "main" {
-  name                 = "${var.project_name}-main"
+locals {
+  images = [
+    "api-gateway",
+    "backend",
+    "collector",
+    "grafana",
+    "prometheus",
+    "loki"
+  ]
+}
+resource "aws_ecr_repository" "repos" {
+  for_each             = toset(local.images)
+  name                 = "${var.project_name}-${each.value}"
   image_tag_mutability = "MUTABLE"
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-  encryption_configuration {
-    encryption_type = "AES256"
-  }
-  force_delete = true
+  force_delete         = true
 }
 
-output "ecr_repo_name" {
-  value = aws_ecr_repository.main.name
-}

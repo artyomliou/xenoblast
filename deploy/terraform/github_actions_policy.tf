@@ -24,9 +24,7 @@ resource "aws_iam_role_policy" "github_actions_push_ecr" {
           "ecr:UploadLayerPart"
         ]
 
-        Resource = [
-          aws_ecr_repository.main.arn
-        ]
+        Resource = [for repo in aws_ecr_repository.repos : repo.arn]
       },
     ]
   })
