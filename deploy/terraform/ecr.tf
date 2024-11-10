@@ -10,7 +10,6 @@ resource "aws_ecr_repository" "main" {
   force_delete = true
 }
 
-output "ecr_repo_arn" {
-  value = aws_ecr_repository.main.arn
+output "ecr_repo_name" {
+  value = aws_ecr_repository.main.name
 }
-
