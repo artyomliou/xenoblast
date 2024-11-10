@@ -2,7 +2,11 @@
 
 A bomberman-like game made of Phaser.js and go.
 
-# Setup
+# Environment
+
+## Development
+
+### Setup
 
 ```
 cd backend && make setup
@@ -10,7 +14,7 @@ cd deploy/docker-compose && docker compose build
 cd frontend && npm run proto-js && npm run proto-ts
 ```
 
-# Run
+### Run
 
 ```
 cd deploy/docker-compose && cp .env.example .env && docker compose up -d
@@ -18,6 +22,17 @@ cd frontend && npm run dev
 ```
 
 Then check http://localhost:8080
+
+## Staging / Production
+
+## Setup
+
+```
+cd deploy/terraform
+# setup .auto.tfvars
+terraform init
+terraform apply
+```
 
 # Backend architecture
 
@@ -59,3 +74,9 @@ Using [open telemetry SDK](https://opentelemetry.io/docs/languages/go/getting-st
 - [telemetry/providers.go](./backend/internal/telemetry/providers.go)
 - [telemetry/websocket_metrics.go](./backend/internal/telemetry/websocket_metrics.go)
 - [websocket_service/client_handler.go](./backend/internal/service/websocket_service/client_handler.go)
+
+# References
+
+## Security of Github secrets
+
+- [Is it okay to use GitHub Secrets with a public repo?](https://stackoverflow.com/questions/62142092/is-it-okay-to-use-github-secrets-with-a-public-repo)

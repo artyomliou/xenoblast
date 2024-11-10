@@ -1,0 +1,4 @@
+project_name    = "xenoblast"
+github_org      = "artyomliou"
+repository_name = "xenoblast"
+aws_region      = "ap-east-1"
