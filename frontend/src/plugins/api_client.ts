@@ -5,7 +5,7 @@ const ApiKeyHeader = "X-API-KEY"
 
 export class ApiClient extends Plugins.BasePlugin {
   https = false;
-  base = "localhost";
+  base = import.meta.env.BASE_URL;
 
   async authRegister(nickname: string) {
     const req = http_api.RegisterRequest.create({
@@ -37,7 +37,7 @@ export class ApiClient extends Plugins.BasePlugin {
     return game.GetGameInfoResponse.decode(new Uint8Array(buf));
   }
 
-  async sendRequest(method: string, path: string, query: Record<string,string>, body: any, apiKey: string) {
+  async sendRequest(method: string, path: string, query: Record<string, string>, body: any, apiKey: string) {
     const protocol = this.https ? "https" : "http";
     const url = new URL(`${protocol}://${this.base}/${path}`);
     for (const [k, v] of Object.entries(query)) {
