@@ -1,2 +1,5 @@
+FROM frontend:latest AS frontend
+
 FROM nginx:latest
 COPY nginx.ecs.conf /etc/nginx/nginx.conf
+COPY --from=frontend /etc/nginx/html /etc/nginx/html

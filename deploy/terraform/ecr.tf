@@ -1,7 +1,6 @@
 locals {
   images = [
     "api-gateway",
-    "frontend",
     "backend",
   ]
 }
