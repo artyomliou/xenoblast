@@ -3,7 +3,7 @@ import { http_api } from "../pkg_proto/compiled";
 
 export class WebsocketClient extends Plugins.BasePlugin {
 
-  https: boolean = false;
+  https: boolean = import.meta.env.PROD;
   base: string = import.meta.env.BASE_URL;
   ws: WebSocket | null = null;
 

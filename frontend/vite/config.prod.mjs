@@ -17,7 +17,7 @@ const phasermsg = () => {
 };
 
 export default defineConfig({
-  base: "https://xenoblast.artyomliou.ninja/",
+  base: "xenoblast.artyomliou.ninja",
   logLevel: "warning",
   build: {
     rollupOptions: {

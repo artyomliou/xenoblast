@@ -4,7 +4,7 @@ import { game, http_api } from "../pkg_proto/compiled.js";
 const ApiKeyHeader = "X-API-KEY"
 
 export class ApiClient extends Plugins.BasePlugin {
-  https = false;
+  https = import.meta.env.PROD;
   base = import.meta.env.BASE_URL;
 
   async authRegister(nickname: string) {
