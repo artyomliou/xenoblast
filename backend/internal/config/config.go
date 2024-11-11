@@ -53,7 +53,6 @@ func GetDefault() *Config {
 		},
 		Collector: Collector{
 			EnableMetricProvider: false,
-			EnableLogProvider:    false,
 			Host:                 "collector",
 			Port:                 4317,
 		},

@@ -19,8 +19,6 @@ import (
 	"net"
 	"net/http"
 
-	"go.opentelemetry.io/contrib/bridges/otelzap"
-	"go.opentelemetry.io/otel/log"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -66,7 +64,6 @@ var Module = fx.Options(
 		game_service.NewGameServiceClientFactory,
 
 		NewLogger,
-		telemetry.NewLoggerProvider,
 
 		telemetry.NewMeterProvider,
 		telemetry.NewHttpMetrics,
@@ -182,12 +179,10 @@ func NewMatchmakingService(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logg
 	return service
 }
 
-func NewLogger(lc fx.Lifecycle, cfg *config.Config, loggerProvider log.LoggerProvider) (*zap.Logger, error) {
+func NewLogger(lc fx.Lifecycle, cfg *config.Config) (*zap.Logger, error) {
 	var logger *zap.Logger
 	var err error
-	if cfg.Collector.EnableLogProvider {
-		logger = zap.New(otelzap.NewCore("artyomliou/xenoblast-backend", otelzap.WithLoggerProvider(loggerProvider)))
-	} else if cfg.Environment == config.ProdEnvironment {
+	if cfg.Environment == config.ProdEnvironment {
 		logger, err = zap.NewProduction()
 	} else {
 		logger, err = zap.NewDevelopment()

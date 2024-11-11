@@ -36,6 +36,5 @@ game_service:
 
 collector:
   enable_metric_provider: true
-  enable_log_provider: true
   host: collector
   port: 4317
