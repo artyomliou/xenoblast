@@ -5,7 +5,7 @@ const ApiKeyHeader = "X-API-KEY"
 
 export class ApiClient extends Plugins.BasePlugin {
   https = import.meta.env.PROD;
-  base = import.meta.env.BASE_URL;
+  base = window.location.host;
 
   async authRegister(nickname: string) {
     const req = http_api.RegisterRequest.create({
