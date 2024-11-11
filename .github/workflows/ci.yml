@@ -40,19 +40,3 @@ jobs:
           docker build -t $REGISTRY/xenoblast-backend:$IMAGE_TAG .
           docker push $REGISTRY/xenoblast-backend:$IMAGE_TAG
           cd -
-          cd monitoring/collector
-          docker build -t $REGISTRY/xenoblast-collector:$IMAGE_TAG .
-          docker push $REGISTRY/xenoblast-collector:$IMAGE_TAG
-          cd -
-          cd monitoring/grafana
-          docker build -t $REGISTRY/xenoblast-grafana:$IMAGE_TAG .
-          docker push $REGISTRY/xenoblast-grafana:$IMAGE_TAG
-          cd -
-          cd monitoring/prometheus
-          docker build -t $REGISTRY/xenoblast-prometheus:$IMAGE_TAG .
-          docker push $REGISTRY/xenoblast-prometheus:$IMAGE_TAG
-          cd -
-          cd monitoring/loki
-          docker build -t $REGISTRY/xenoblast-loki:$IMAGE_TAG .
-          docker push $REGISTRY/xenoblast-loki:$IMAGE_TAG
-          cd -

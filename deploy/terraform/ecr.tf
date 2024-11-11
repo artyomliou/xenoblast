@@ -2,10 +2,6 @@ locals {
   images = [
     "api-gateway",
     "backend",
-    "collector",
-    "grafana",
-    "prometheus",
-    "loki"
   ]
 }
 resource "aws_ecr_repository" "repos" {
