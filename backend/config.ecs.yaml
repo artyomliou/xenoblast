@@ -3,38 +3,38 @@ graceful_shutdown: true
 logger_output: stdout
 
 http_service:
-  host: http_service
-  port: 8080
+  host: localhost
+  port: 8081
 
 websocket_service:
-  host: websocket_service
-  port: 8080
+  host: localhost
+  port: 8082
 
 auth_service:
-  host: auth_service
-  port: 50051
+  host: localhost
+  port: 50052
 
 auth_repository:
   driver: redis
   redis_config:
-    host: redis
+    host: localhost
     port: 6379
 
 matchmaking_service:
-  host: matchmaking_service
-  port: 50051
+  host: localhost
+  port: 50053
 
 matchmaking_repository:
   driver: redis
   redis_config:
-    host: redis
+    host: localhost
     port: 6379
 
 game_service:
-  host: game_service
-  port: 50051
+  host: localhost
+  port: 50054
 
 collector:
   enable_metric_provider: true
-  host: collector
+  host: localhost
   port: 4317

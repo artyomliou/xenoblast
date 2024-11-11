@@ -32,6 +32,10 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
+          cd frontend
+          docker build -t $REGISTRY/xenoblast-frontend:$IMAGE_TAG .
+          docker push $REGISTRY/xenoblast-frontend:$IMAGE_TAG
+          cd -
           cd api-gateway
           docker build -t $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG .
           docker push $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG
