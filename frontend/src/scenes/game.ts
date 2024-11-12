@@ -16,9 +16,11 @@ const STATE_COUNTDOWN = 7;
 const STATE_PLAYING = 8;
 
 const NEW_STATE_QUEUE_HANDLE_INTERVAL = 100; //ms
-const BOMB_FIRE_BEFORE_REMOVE_DURATION = 350; //ms
 const SEND_MOVE_EVENT_INTERVAL = 100; // ms
 const SEND_MOVE_EVENT_THRESHOLD = 10; // px
+
+const FIRE_SPREAD_INTERVAL = 50; // ms
+const FIRE_GROUP_BEFORE_DESTROY_DURATION = 350; // ms
 
 export class Game extends BaseScene {
   state!: number;
@@ -196,7 +198,7 @@ export class Game extends BaseScene {
 
   setupPhysics() {
     for (const player of this.gameInfo.players) {
-      if (player.sprite ==undefined) {
+      if (player.sprite == undefined) {
         continue
       }
       this.physics.add.collider(player.sprite, this.obstaclesGroup);
@@ -494,14 +496,7 @@ export class Game extends BaseScene {
     );
     setTimeout(() => {
       fireGroup.destroy(true);
-    }, BOMB_FIRE_BEFORE_REMOVE_DURATION);
-
-    // Remove bomb
-    tile.obstacleType = null;
-    tile.obstacle.destroy();
-    tile.obstacle = null;
-    this.bombTiles.delete(tile);
-    console.debug(`BombExploded, x=${x} y=${y}`);
+    }, bombFirepower * FIRE_SPREAD_INTERVAL + FIRE_GROUP_BEFORE_DESTROY_DURATION);
 
     // Restore current player bombcount
     if (ev.bombExploded.playerId == this.session.playerId) {
@@ -515,12 +510,18 @@ export class Game extends BaseScene {
   setupFire(fireGroup: Phaser.Physics.Arcade.Group, bombX: number, bombY: number, offsetX: number, offsetY: number, firepower: number, textureKey: string) {
     let currentFireIndex = 0;
     let stoppedByOverlapping = false;
+    let stoppedByError = false;
     this.time.addEvent({
-      delay: 50,
+      delay: FIRE_SPREAD_INTERVAL,
       repeat: firepower - 1,
       callback: () => {
-        if (currentFireIndex >= firepower || stoppedByOverlapping) {
+        if (currentFireIndex >= firepower || stoppedByOverlapping || stoppedByError) {
           return;
+        }
+        if (fireGroup.children == undefined) {
+          console.error("cannot add fire, fireGroup may be destroyed.");
+          stoppedByError = true;
+          return
         }
 
         const x = bombX + offsetX * (currentFireIndex + 1);
@@ -570,13 +571,12 @@ export class Game extends BaseScene {
     const x = ev.powerupDropped.x || 0; // workaround zero-value marshalling
     const y = ev.powerupDropped.y || 0;
     const powerupType = ev.powerupDropped.type || common.PowerupType.MoreBomb;
-    
+
     const tile = this.gameInfo.tiles[x][y];
     tile.powerupType = powerupType;
     this.setupPowerup(tile, x, y);
     console.debug(
-      `PowerupDropped, x=${x} y=${y} type=${
-        common.PowerupType[powerupType]
+      `PowerupDropped, x=${x} y=${y} type=${common.PowerupType[powerupType]
       }`
     );
   }
