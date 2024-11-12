@@ -409,9 +409,7 @@ export class Game extends BaseScene {
     const y = ev.bombPlanted.y || 0;
 
     const tile = this.gameInfo.tiles[x][y];
-    tile.obstacleType = common.ObstacleType.Bomb;
     this.setupBomb(tile, x, y);
-    this.bombTiles.add(tile);
     console.debug(`BombPlanted, x=${x} y=${y}`);
 
     if (ev.bombPlanted.playerId == this.session.playerId) {
@@ -422,8 +420,24 @@ export class Game extends BaseScene {
 
   setupBomb(tile: Tile, x: number, y: number) {
     const { pixelX, pixelY } = tileToPixel(x, y);
+    tile.obstacleType = common.ObstacleType.Bomb;
     tile.obstacle = this.add.sprite(pixelX, pixelY, "bomb");
     this.bombGroup.add(tile.obstacle);
+    this.bombTiles.add(tile);
+  }
+
+  removeBomb(tile: Tile) {
+    if (tile.obstacleType != common.ObstacleType.Bomb) {
+      console.warn("cannot remove bomb because tile.obstacleType is not Bomb");
+    }
+    tile.obstacleType = null;
+    if (!tile.obstacle) {
+      console.warn("cannot remove bomb because tile.obstacle is empty");
+      return
+    }
+    this.bombGroup.remove(tile.obstacle, true, true);
+    this.bombTiles.delete(tile);
+    tile.obstacle = null;
   }
 
   handleBombExplodedEvent(ev: common.Event) {
@@ -434,20 +448,18 @@ export class Game extends BaseScene {
     const y = ev.bombExploded.y || 0;
     const bombFirepower = ev.bombExploded.bombFirepower || 0;
     const userBombcount = ev.bombExploded.userBombcount || 0;
+    console.debug(`BombExploded, x=${x} y=${y}`);
 
     const tile = this.gameInfo.tiles[x][y];
-    if (tile.obstacleType != common.ObstacleType.Bomb || !tile.obstacle) {
-      console.warn("this tile is not bomb", ev, tile);
-      return;
-    }
-    const bomb = tile.obstacle;
+    this.removeBomb(tile);
 
     // fire
+    const { pixelX: bombX, pixelY: bombY } = tileToPixel(x, y);
     const fireGroup = this.physics.add.group();
     this.setupFire(
       fireGroup,
-      bomb.x,
-      bomb.y,
+      bombX,
+      bombY,
       -TILE_SIZE,
       0,
       bombFirepower,
@@ -455,8 +467,8 @@ export class Game extends BaseScene {
     );
     this.setupFire(
       fireGroup,
-      bomb.x,
-      bomb.y,
+      bombX,
+      bombY,
       TILE_SIZE,
       0,
       bombFirepower,
@@ -464,8 +476,8 @@ export class Game extends BaseScene {
     );
     this.setupFire(
       fireGroup,
-      bomb.x,
-      bomb.y,
+      bombX,
+      bombY,
       0,
       -TILE_SIZE,
       bombFirepower,
@@ -473,8 +485,8 @@ export class Game extends BaseScene {
     );
     this.setupFire(
       fireGroup,
-      bomb.x,
-      bomb.y,
+      bombX,
+      bombY,
       0,
       TILE_SIZE,
       bombFirepower,
