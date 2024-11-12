@@ -435,6 +435,16 @@ func (h *ClientHandler) recvGameEvent(ctx context.Context, gameServerAddr string
 }
 
 func (h *ClientHandler) HandleGameServiceEvent(ctx context.Context, ev *pkg_proto.Event) {
+	if ev.Type == pkg_proto.EventType_PlayerMoved {
+		data := ev.GetPlayerMoved()
+		if data == nil {
+			return
+		}
+		if data.PlayerId == h.player.PlayerId {
+			return // skip sending PlayerMoved event to whom trigger PlayerMove event for saving bandwidth
+		}
+	}
+
 	if err := h.sendEvent(ctx, ev); err != nil {
 		h.logger.Error("Run() fromGame: ", zap.Error(err))
 		h.metrics.ErrorTotal.Add(ctx, 1)
