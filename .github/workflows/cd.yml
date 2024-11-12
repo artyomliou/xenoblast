@@ -6,7 +6,8 @@ permissions:
 on:
   push:
     branches:
-      - feature/deploy
+      - testing
+      - production
   workflow_call:
     secrets:
       AWS_ROLE_ARN:
