@@ -188,7 +188,7 @@ export class Game extends BaseScene {
 
       // Because we have lots of sprites placed on map without any gap,
       // setting this avoids too many collision which is annoying.
-      player.sprite.setSize(35, 35).setOffset(2.5, 2.5);
+      player.sprite.setSize(30, 30).setOffset(5, 5);
 
       if (player.playerId == this.session.playerId) {
         this.player = player;
