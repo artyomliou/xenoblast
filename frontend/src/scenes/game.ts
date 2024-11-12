@@ -31,7 +31,7 @@ export class Game extends BaseScene {
   bushGroup!: Phaser.Physics.Arcade.Group;
   powerupGroup!: Phaser.Physics.Arcade.Group;
   bombGroup!: Phaser.Physics.Arcade.StaticGroup;
-  bombTiles!: Set<Tile>;
+  bombTilesForDeduplicate!: Set<Tile>;
   gettingPowerupTiles!: Set<Tile>;
   prevX: number | undefined;
   prevY: number | undefined;
@@ -100,7 +100,7 @@ export class Game extends BaseScene {
     this.bushGroup = this.physics.add.group();
     this.powerupGroup = this.physics.add.group();
     this.bombGroup = this.physics.add.staticGroup();
-    this.bombTiles = new Set();
+    this.bombTilesForDeduplicate = new Set();
     this.gettingPowerupTiles = new Set();
 
     this.setupMap();
@@ -425,7 +425,6 @@ export class Game extends BaseScene {
     tile.obstacleType = common.ObstacleType.Bomb;
     tile.obstacle = this.add.sprite(pixelX, pixelY, "bomb");
     this.bombGroup.add(tile.obstacle);
-    this.bombTiles.add(tile);
   }
 
   removeBomb(tile: Tile) {
@@ -438,7 +437,7 @@ export class Game extends BaseScene {
       return
     }
     this.bombGroup.remove(tile.obstacle, true, true);
-    this.bombTiles.delete(tile);
+    this.bombTilesForDeduplicate.delete(tile);
     tile.obstacle = null;
   }
 
@@ -670,7 +669,8 @@ export class Game extends BaseScene {
               this.player.sprite.y
             );
             const tile = this.gameInfo.tiles[tileX][tileY];
-            if (!this.bombTiles.has(tile)) {
+            if (!this.bombTilesForDeduplicate.has(tile)) {
+              this.bombTilesForDeduplicate.add(tile);
               this.player.bombcount--;
 
               const event = common.Event.create({
