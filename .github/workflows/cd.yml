@@ -91,6 +91,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
       # https://github.com/aws-actions/amazon-ecs-render-task-definition
       - id: fill-image-api-gateway
         uses: aws-actions/amazon-ecs-render-task-definition@v1
