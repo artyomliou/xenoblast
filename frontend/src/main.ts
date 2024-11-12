@@ -19,7 +19,7 @@ export default new Phaser.Game({
     default: "arcade",
     arcade: {
       gravity: { y: 0 } as Phaser.Types.Math.Vector2Like,
-      debug: true,
+      debug: import.meta.env.DEV,
     },
   },
   parent: "game-container",
