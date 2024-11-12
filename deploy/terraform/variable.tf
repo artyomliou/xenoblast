@@ -17,3 +17,7 @@ variable "api_gateway_image" {
 variable "backend_image" {
   type = string
 }
+
+variable "cost_saving_mode" {
+  type = bool
+}

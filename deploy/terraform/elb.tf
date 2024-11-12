@@ -1,4 +1,9 @@
+locals {
+  create_lb = !var.cost_saving_mode
+}
+
 resource "aws_lb" "main" {
+  count              = local.create_lb ? 1 : 0
   name               = "${var.project_name}-lb"
   internal           = false
   load_balancer_type = "application"
@@ -9,7 +14,8 @@ resource "aws_lb" "main" {
 }
 
 resource "aws_lb_listener" "https" {
-  load_balancer_arn = aws_lb.main.arn
+  count             = local.create_lb ? 1 : 0
+  load_balancer_arn = aws_lb.main[0].arn
   port              = 443
   protocol          = "HTTPS"
   certificate_arn   = data.aws_acm_certificate.https.arn
