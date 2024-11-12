@@ -10,14 +10,6 @@ variable "https_domain" {
   type = string
 }
 
-variable "api_gateway_image" {
-  type = string
-}
-
-variable "backend_image" {
-  type = string
-}
-
 variable "cost_saving_mode" {
   type = bool
 }

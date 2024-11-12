@@ -27,6 +27,11 @@ resource "aws_ecs_service" "backend" {
   }
 }
 
+locals {
+  api_gateway_image = data.aws_ecr_image.images["api-gateway"].image_uri
+  backend_image     = data.aws_ecr_image.images["backend"].image_uri
+}
+
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html
 resource "aws_ecs_task_definition" "backend" {
   family             = "backend"
@@ -47,7 +52,7 @@ resource "aws_ecs_task_definition" "backend" {
   container_definitions = jsonencode([
     {
       name  = "api_gateway"
-      image = "${var.api_gateway_image}"
+      image = "${local.api_gateway_image}"
       portMappings = [
         {
           containerPort = 80
@@ -77,7 +82,7 @@ resource "aws_ecs_task_definition" "backend" {
     },
     {
       name       = "http_service"
-      image      = "${var.backend_image}"
+      image      = "${local.backend_image}"
       entryPoint = ["/app/server", "-service"]
       command    = ["http"]
       portMappings = [
@@ -105,7 +110,7 @@ resource "aws_ecs_task_definition" "backend" {
     },
     {
       name       = "websocket_service"
-      image      = "${var.backend_image}"
+      image      = "${local.backend_image}"
       entryPoint = ["/app/server", "-service"]
       command    = ["websocket"]
       portMappings = [
@@ -133,7 +138,7 @@ resource "aws_ecs_task_definition" "backend" {
     },
     {
       name       = "auth_service"
-      image      = "${var.backend_image}"
+      image      = "${local.backend_image}"
       entryPoint = ["/app/server", "-service"]
       command    = ["auth"]
       portMappings = [
@@ -165,7 +170,7 @@ resource "aws_ecs_task_definition" "backend" {
     },
     {
       name       = "matchmaking_service"
-      image      = "${var.backend_image}"
+      image      = "${local.backend_image}"
       entryPoint = ["/app/server", "-service"]
       command    = ["matchmaking"]
       portMappings = [
@@ -197,7 +202,7 @@ resource "aws_ecs_task_definition" "backend" {
     },
     {
       name       = "game_service"
-      image      = "${var.backend_image}"
+      image      = "${local.backend_image}"
       entryPoint = ["/app/server", "-service"]
       command    = ["game"]
       portMappings = [

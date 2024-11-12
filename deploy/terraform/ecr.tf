@@ -11,3 +11,8 @@ resource "aws_ecr_repository" "repos" {
   force_delete         = true
 }
 
+data "aws_ecr_image" "images" {
+  for_each        = toset(local.images)
+  repository_name = "${var.project_name}-${each.key}"
+  most_recent     = true
+}

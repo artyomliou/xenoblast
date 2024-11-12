@@ -3,6 +3,4 @@ github_org        = "artyomliou"
 repository_name   = "xenoblast"
 aws_region        = "$AWS_REGION"
 https_domain      = "xenoblast.yourdomain.com"
-api_gateway_image = "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/xenoblast-api-gateway:latest"
-backend_image     = "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/xenoblast-backend:latest"
 cost_saving_mode  = false
