@@ -26,7 +26,7 @@ jobs:
       - name: Display Go version
         run: go version
       - name: Install dependencies
-        run: pwd && go get .
+        run: go mod download
       - name: Test with the Go CLI
         run: go test ./...
 
