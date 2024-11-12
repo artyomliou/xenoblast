@@ -73,8 +73,8 @@ func TestFrontend(t *testing.T) {
 	player1.newStateQueue <- stateMainMenu
 	player2.newStateQueue <- stateMainMenu
 
-	expectedPlayingCount := 2
-	playingCount := atomic.Int32{}
+	expectedCompleteCount := 2
+	completeCount := atomic.Int32{}
 MAIN:
 	for {
 		select {
@@ -87,10 +87,10 @@ MAIN:
 			t.Fatal(err)
 			break MAIN
 		case <-player1.completeCh:
-			playingCount.Add(1)
+			completeCount.Add(1)
 		case <-player2.completeCh:
-			playingCount.Add(1)
+			completeCount.Add(1)
 		}
 	}
-	assert.Equal(t, expectedPlayingCount, int(playingCount.Load()))
+	assert.Equal(t, expectedCompleteCount, int(completeCount.Load()))
 }
