@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     branches:
-      - develop
+      - feature/deploy
 
 jobs:
   build:
@@ -37,9 +37,11 @@ jobs:
           cd -
           cd api-gateway
           docker build -t $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG .
-          docker push $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG
+          docker tag $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG $REGISTRY/xenoblast-api-gateway:latest
+          docker push -a $REGISTRY/xenoblast-api-gateway
           cd -
           cd backend
           docker build -t $REGISTRY/xenoblast-backend:$IMAGE_TAG .
-          docker push $REGISTRY/xenoblast-backend:$IMAGE_TAG
+          docker tag $REGISTRY/xenoblast-backend:$IMAGE_TAG $REGISTRY/xenoblast-backend:latest
+          docker push -a $REGISTRY/xenoblast-backend
           cd -
