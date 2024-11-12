@@ -109,23 +109,6 @@ services:
       - 55679
     depends_on:
       - prometheus
-      - loki
-
-  grafana:
-    container_name: grafana
-    image: grafana/grafana:latest
-    volumes:
-      - grafana_data:/var/lib/grafana #persistence
-      - ../../monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ../../monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
-    depends_on:
-      - prometheus
-      - loki
 
   prometheus:
     container_name: prometheus
@@ -136,18 +119,6 @@ services:
     expose:
       - 9090
 
-  loki:
-    container_name: loki
-    image: grafana/loki:latest
-    command: -config.file=/etc/loki/local-config.yaml
-    volumes:
-      - loki_data:/loki
-      - ../../monitoring/loki/loki.yml:/etc/loki/local-config.yaml
-    expose:
-      - 3100
-
 volumes:
   redis_data:
-  grafana_data:
   prometheus_data:
-  loki_data:
