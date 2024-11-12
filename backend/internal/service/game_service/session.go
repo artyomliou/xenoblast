@@ -25,17 +25,18 @@ const BombBeforeExplodeDuration = 3 * time.Second
 const PowerupDropRate = 0.3
 
 type gameSession struct {
-	id           int32
-	logger       *zap.Logger
-	state        *state.StateManager
-	eventBus     *eventbus.EventBus
-	eventCh      chan *pkg_proto.Event
-	winCondition WinCondition
-	gameMap      *maploader.GameMap
-	players      map[int32]*Player
-	alivePlayers map[int32]bool
-	readyPlayers map[int32]bool
-	prepareOnce  sync.Once
+	id                 int32
+	logger             *zap.Logger
+	state              *state.StateManager
+	eventBus           *eventbus.EventBus
+	eventCh            chan *pkg_proto.Event
+	bombRangeDetection *BombRangeDetection
+	winCondition       WinCondition
+	gameMap            *maploader.GameMap
+	players            map[int32]*Player
+	alivePlayers       map[int32]bool
+	readyPlayers       map[int32]bool
+	prepareOnce        sync.Once
 
 	powerupDropRate float32
 }
@@ -62,6 +63,7 @@ func NewGameSession(logger *zap.Logger, id int32, state *state.StateManager, eve
 		powerupDropRate: PowerupDropRate,
 	}
 	game.winCondition = &OnlyOnePlayerLeft{&game.alivePlayers}
+	game.bombRangeDetection = &BombRangeDetection{gameMap, players}
 	game.setupSerializeEventChannel()
 	return game, nil
 }
@@ -473,67 +475,29 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 	})
 	g.logger.Sugar().Debugf("bomb removed at X=%d Y=%d ", data.X, data.Y)
 
-	for _, bombedBoxCoord := range g.findBombedBoxCoords(data) {
-		g.replaceTileBoxWithPowerup(bombedBoxCoord[0], bombedBoxCoord[1])
-		g.logger.Sugar().Debugf("box was bombed at x=%d y=%d", data.X, data.Y)
+	bombedObjects := g.bombRangeDetection.Scan(data.X, data.Y, data.BombFirepower)
+	for _, boxCoord := range bombedObjects.BoxCoords {
+		g.replaceTileBoxWithPowerup(boxCoord[0], boxCoord[1])
+		g.logger.Sugar().Debugf("box was bombed at x=%d y=%d", boxCoord[0], boxCoord[1])
 	}
-	for _, bombedPlayerId := range g.findBombedPlayers(data) {
-		g.alivePlayers[bombedPlayerId] = false
+	for _, player := range bombedObjects.Players {
+		if !g.alivePlayers[player.playerId] {
+			continue
+		}
+		g.alivePlayers[player.playerId] = false
+
 		go g.eventBus.Publish(&pkg_proto.Event{
 			Type:      pkg_proto.EventType_PlayerDead,
 			Timestamp: time.Now().Unix(),
 			GameId:    g.id,
 			Data: &pkg_proto.Event_PlayerDead{
 				PlayerDead: &pkg_proto.PlayerDeadData{
-					PlayerId: bombedPlayerId,
+					PlayerId: player.playerId,
 				},
 			},
 		})
-		g.logger.Sugar().Debugf("player %d was bombed at x=%d y=%d", bombedPlayerId, data.X, data.Y)
+		g.logger.Sugar().Debugf("player %d was bombed at x=%d y=%d", player.playerId, player.X, player.Y)
 	}
-}
-
-func (g *gameSession) findBombedBoxCoords(data *pkg_proto.BombWillExplodeData) (bombedBoxCoords [][]int32) {
-	offsets := [][]int{
-		{-1, 0}, //left
-		{1, 0},  //right
-		{0, -1}, //up
-		{0, 1},  //down
-	}
-	for _, offset := range offsets {
-		for i := 1; i <= int(data.BombFirepower); i++ {
-			tileX := data.X + int32(offset[0]*i)
-			tileY := data.Y + int32(offset[1]*i)
-			if tileX < 0 || tileY < 0 || tileX > (maploader.MapWidth-1) || tileY > (maploader.MapHeight-1) {
-				break
-			}
-			// fire stop at obstacle
-			if g.gameMap.CheckObstacleExists(tileX, tileY) {
-				if g.gameMap.CheckObstacleType(tileX, tileY, pkg_proto.ObstacleType_Box) {
-					bombedBoxCoords = append(bombedBoxCoords, []int32{tileX, tileY})
-				}
-				break
-			}
-		}
-	}
-	return
-}
-
-func (g *gameSession) findBombedPlayers(data *pkg_proto.BombWillExplodeData) (bombedPlayerIds []int32) {
-	x1 := data.X - data.BombFirepower
-	x2 := data.X + data.BombFirepower
-	y1 := data.Y - data.BombFirepower
-	y2 := data.Y + data.BombFirepower
-	for playerId, player := range g.players {
-		if g.alivePlayers[playerId] {
-			bombedVertically := player.X == data.X && y1 <= player.Y && player.Y <= y2
-			bombedHorizontally := player.Y == data.Y && x1 <= player.X && player.X <= x2
-			if bombedVertically || bombedHorizontally {
-				bombedPlayerIds = append(bombedPlayerIds, playerId)
-			}
-		}
-	}
-	return
 }
 
 func (g *gameSession) replaceTileBoxWithPowerup(x, y int32) {
