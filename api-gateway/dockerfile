@@ -1,5 +1,12 @@
-FROM frontend:latest AS frontend
+# This dockerfile can be used in both development and production
+
+# In CI pipeline, this will be set to `frontend:latest`for static frontend files
+ARG ASSET_IMAGE=nginx:latest
+FROM ${ASSET_IMAGE} AS asset
 
 FROM nginx:latest
+ARG ASSET_PATH=/usr/share/nginx/html
+COPY --from=asset ${ASSET_PATH} /etc/nginx/html
+
+# This file can be overridden with docker-compose volume for development
 COPY nginx.ecs.conf /etc/nginx/nginx.conf
-COPY --from=frontend /etc/nginx/html /etc/nginx/html

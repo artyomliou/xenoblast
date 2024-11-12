@@ -36,7 +36,7 @@ jobs:
           docker build -t frontend:latest .
           cd -
           cd api-gateway
-          docker build -t $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG .
+          docker build --build-arg ASSET_IMAGE=frontend:latest --build-arg ASSET_PATH=/etc/nginx/html -t $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG .
           docker tag $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG $REGISTRY/xenoblast-api-gateway:latest
           docker push -a $REGISTRY/xenoblast-api-gateway
           cd -
