@@ -7,6 +7,18 @@ on:
   push:
     branches:
       - feature/deploy
+  workflow_call:
+    secrets:
+      AWS_REGION:
+        required: true
+      AWS_ROLE_ARN:
+        required: true
+      TASK_DEFINIFTION_ARN:
+        required: true
+      ECS_CLUSTER_NAME:
+        required: true
+      ECS_SERVICE_NAME:
+        required: true
 
 jobs:
   test:
@@ -51,6 +63,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag, and push docker image to Amazon ECR
+        id: build-tag-push
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
@@ -60,11 +73,74 @@ jobs:
           cd -
           cd api-gateway
           docker build --build-arg ASSET_IMAGE=frontend:latest --build-arg ASSET_PATH=/etc/nginx/html -t $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG .
-          docker tag $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG $REGISTRY/xenoblast-api-gateway:latest
-          docker push -a $REGISTRY/xenoblast-api-gateway
+          docker push $REGISTRY/xenoblast-api-gateway:$IMAGE_TAG
+          echo "api_gateway_image=$REGISTRY/xenoblast-api-gateway:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           cd -
           cd backend
           docker build -t $REGISTRY/xenoblast-backend:$IMAGE_TAG .
-          docker tag $REGISTRY/xenoblast-backend:$IMAGE_TAG $REGISTRY/xenoblast-backend:latest
-          docker push -a $REGISTRY/xenoblast-backend
+          docker push $REGISTRY/xenoblast-backend:$IMAGE_TAG
+          echo "backend_image=$REGISTRY/xenoblast-backend:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           cd -
+
+    outputs:
+      api_gateway_image: ${{ steps.build-tag-push.outputs.api_gateway_image }}
+      backend_image: ${{ steps.build-tag-push.outputs.backend_image }}
+
+  deploy:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # https://github.com/aws-actions/amazon-ecs-render-task-definition
+      - id: fill-image-api-gateway
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-arn: ${{ secrets.TASK_DEFINIFTION_ARN }}
+          container-name: api_gateway
+          image: ${{ needs.build.outputs.api_gateway_image }}
+
+      - id: fill-image-http
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.fill-image-api-gateway.outputs.task-definition }}
+          container-name: http_service
+          image: ${{ needs.build.outputs.backend_image }}
+
+      - id: fill-image-websocket
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.fill-image-http.outputs.task-definition }}
+          container-name: websocket_service
+          image: ${{ needs.build.outputs.backend_image }}
+
+      - id: fill-image-auth
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.fill-image-websocket.outputs.task-definition }}
+          container-name: auth_service
+          image: ${{ needs.build.outputs.backend_image }}
+
+      - id: fill-image-matchmaking
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.fill-image-auth.outputs.task-definition }}
+          container-name: matchmaking_service
+          image: ${{ needs.build.outputs.backend_image }}
+
+      - id: fill-image-game
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.fill-image-matchmaking.outputs.task-definition }}
+          container-name: game_service
+          image: ${{ needs.build.outputs.backend_image }}
+
+      # https://github.com/aws-actions/amazon-ecs-deploy-task-definition
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.fill-image-game.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE_NAME }}
+          cluster: ${{ secrets.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: true
+          wait-for-minutes: 2

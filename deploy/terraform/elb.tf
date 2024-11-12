@@ -15,7 +15,7 @@ resource "aws_lb" "main" {
 
 resource "aws_lb_listener" "https" {
   count             = local.create_lb ? 1 : 0
-  load_balancer_arn = aws_lb.main[0].arn
+  load_balancer_arn = one(aws_lb.main[*].arn)
   port              = 443
   protocol          = "HTTPS"
   certificate_arn   = data.aws_acm_certificate.https.arn

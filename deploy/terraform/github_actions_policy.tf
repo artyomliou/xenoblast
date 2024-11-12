@@ -29,3 +29,42 @@ resource "aws_iam_role_policy" "github_actions_push_ecr" {
     ]
   })
 }
+
+resource "aws_iam_role_policy" "github_actions_update_ecs" {
+  name = "github_actions_update_ecs"
+  role = aws_iam_role.github_actions_role.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecs:DescribeTaskDefinition",
+          "ecs:RegisterTaskDefinition"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:PassRole"
+        ]
+        Resource = [
+          aws_iam_role.ecs_task_role.arn,
+          aws_iam_role.ecs_task_execution_role.arn
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ecs:UpdateService",
+          "ecs:DescribeServices"
+        ]
+
+        Resource = [
+          one(aws_ecs_service.backend[*].id)
+        ]
+      },
+    ]
+  })
+}
