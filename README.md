@@ -18,10 +18,9 @@ cd frontend && npm run proto-js && npm run proto-ts
 
 ```
 cd deploy/docker-compose && cp .env.example .env && docker compose up -d
-cd frontend && npm run dev
 ```
 
-Then check http://localhost:8080
+Then check http://localhost
 
 ## Staging / Production
 
@@ -74,6 +73,17 @@ Using [open telemetry SDK](https://opentelemetry.io/docs/languages/go/getting-st
 - [telemetry/providers.go](./backend/internal/telemetry/providers.go)
 - [telemetry/websocket_metrics.go](./backend/internal/telemetry/websocket_metrics.go)
 - [websocket_service/client_handler.go](./backend/internal/service/websocket_service/client_handler.go)
+
+# Troubleshooting
+
+## npm run dev
+
+### Error: EACCES: permission denied, unlink '.../.vite/deps/\_metadata.json'
+
+Once you run docker-compose, the frontend-dev container run `npm run dev` and create files with root permission.
+Remove these files and re-run `npm run dev`.
+
+Command: `sudo rm -rf node_modules/.vite/`
 
 # References
 

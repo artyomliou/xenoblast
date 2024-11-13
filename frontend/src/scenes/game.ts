@@ -22,6 +22,10 @@ const SEND_MOVE_EVENT_THRESHOLD = 10; // px
 const FIRE_SPREAD_INTERVAL = 50; // ms
 const FIRE_GROUP_BEFORE_DESTROY_DURATION = 350; // ms
 
+const SIDEBAR_X = 650; // px
+const SIDEBAR_Y = 50; // px
+const SIDEBAR_Y_OFFSET = 100; // px
+
 export class Game extends BaseScene {
   state!: number;
   newStateQueue!: number[];
@@ -108,6 +112,8 @@ export class Game extends BaseScene {
     this.setupPhysics();
     this.setupControls();
     this.setupMoveEventSending();
+    this.setupClock(120); // workaround
+    this.setupPlayerInfo();
 
     this.newStateQueue.push(STATE_COUNTDOWN);
     setInterval(
@@ -244,6 +250,60 @@ export class Game extends BaseScene {
       () => this.sendPlayerMoveEventIfMoved(),
       SEND_MOVE_EVENT_INTERVAL
     );
+  }
+
+  setupClock(gameSeconds: number) {
+    const clockText = this.add.text(SIDEBAR_X, SIDEBAR_Y, "00:00", {
+      fontSize: 20,
+      fontStyle: "bold",
+      color: "black"
+    });
+    const secondsToString = () => {
+      const min = Math.floor(gameSeconds / 60).toString().padStart(2, '0');
+      const sec = (gameSeconds % 60).toString().padStart(2, '0');
+      return `${min}:${sec}`;
+    }
+
+    clockText.setText(secondsToString());
+
+    let clear = setInterval(() => {
+      if (this.state !== STATE_PLAYING) {
+        return
+      }
+      gameSeconds--;
+      clockText.setText(secondsToString());
+      if (gameSeconds <= 0) {
+        clearInterval(clear);
+      }
+    }, 1000);
+  }
+
+  setupPlayerInfo() {
+    for (let i = 0; i < this.gameInfo.players.length; i++) {
+      const player = this.gameInfo.players[i]
+
+      const x = SIDEBAR_X;
+      const y = SIDEBAR_Y + SIDEBAR_Y_OFFSET * (i + 1);
+      this.add.text(x, y, player.nickname, {
+        fontSize: 18,
+        fontStyle: "bold",
+        color: "black",
+      });
+      const playerBombcountText = this.add.text(x, y + 25, '', {
+        fontSize: 18,
+        fontStyle: "bold",
+        color: "black",
+      });
+      const playerFirepowerText = this.add.text(x, y + 50, '', {
+        fontSize: 18,
+        fontStyle: "bold",
+        color: "black",
+      });
+      setInterval(() => {
+        playerFirepowerText.setText('💥 ' + player.firepower.toString());
+        playerBombcountText.setText('💣 ' + player.bombcount.toString());
+      }, 200);
+    }
   }
 
   handlePlayerGetPowerup(powerupSprite: Phaser.GameObjects.Sprite) {
