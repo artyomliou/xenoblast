@@ -20,7 +20,7 @@ const MaximumPlayer = 4
 const EventQueueLength = 200
 const MaxWaitingReadyRetry = 20
 const GameCountdown = 2 * time.Second
-const GameMaxTime = 2 * time.Minute
+const GameDuration = 2 * time.Minute
 const BombBeforeExplodeDuration = 3 * time.Second
 const PowerupDropRate = 0.3
 
@@ -32,6 +32,7 @@ type gameSession struct {
 	eventCh            chan *pkg_proto.Event
 	bombRangeDetection *BombRangeDetection
 	winCondition       WinCondition
+	duration           time.Duration
 	gameMap            *maploader.GameMap
 	players            map[int32]*Player
 	alivePlayers       map[int32]bool
@@ -54,6 +55,7 @@ func NewGameSession(logger *zap.Logger, id int32, state *state.StateManager, eve
 		state:        state,
 		eventBus:     eventBus,
 		eventCh:      make(chan *pkg_proto.Event, EventQueueLength),
+		duration:     GameDuration,
 		gameMap:      gameMap,
 		players:      players,
 		alivePlayers: map[int32]bool{},
@@ -341,7 +343,7 @@ func (g *gameSession) HandleCountdown(ev *pkg_proto.Event) {
 }
 
 func (g *gameSession) HandlePlaying(ev *pkg_proto.Event) {
-	<-time.After(GameMaxTime)
+	<-time.After(g.duration)
 	if err := g.state.Transition(pkg_proto.GameState_Gameover); err != nil {
 		g.logger.Error("transition failed", zap.Error(err))
 		return

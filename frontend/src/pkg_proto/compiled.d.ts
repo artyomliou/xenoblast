@@ -4171,6 +4171,9 @@ export namespace game {
 
         /** GetGameInfoResponse tiles */
         tiles?: (common.ITileDto[]|null);
+
+        /** GetGameInfoResponse duration */
+        duration?: (number|null);
     }
 
     /** Represents a GetGameInfoResponse. */
@@ -4199,6 +4202,9 @@ export namespace game {
 
         /** GetGameInfoResponse tiles. */
         public tiles: common.ITileDto[];
+
+        /** GetGameInfoResponse duration. */
+        public duration: number;
 
         /**
          * Creates a new GetGameInfoResponse instance using the specified properties.

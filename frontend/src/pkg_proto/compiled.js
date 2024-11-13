@@ -9793,6 +9793,7 @@ export const game = $root.game = (() => {
          * @property {number|null} [mapWidth] GetGameInfoResponse mapWidth
          * @property {number|null} [mapHeight] GetGameInfoResponse mapHeight
          * @property {Array.<common.ITileDto>|null} [tiles] GetGameInfoResponse tiles
+         * @property {number|null} [duration] GetGameInfoResponse duration
          */
 
         /**
@@ -9861,6 +9862,14 @@ export const game = $root.game = (() => {
         GetGameInfoResponse.prototype.tiles = $util.emptyArray;
 
         /**
+         * GetGameInfoResponse duration.
+         * @member {number} duration
+         * @memberof game.GetGameInfoResponse
+         * @instance
+         */
+        GetGameInfoResponse.prototype.duration = 0;
+
+        /**
          * Creates a new GetGameInfoResponse instance using the specified properties.
          * @function create
          * @memberof game.GetGameInfoResponse
@@ -9898,6 +9907,8 @@ export const game = $root.game = (() => {
             if (message.tiles != null && message.tiles.length)
                 for (let i = 0; i < message.tiles.length; ++i)
                     $root.common.TileDto.encode(message.tiles[i], writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+            if (message.duration != null && Object.hasOwnProperty.call(message, "duration"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.duration);
             return writer;
         };
 
@@ -9958,6 +9969,10 @@ export const game = $root.game = (() => {
                         if (!(message.tiles && message.tiles.length))
                             message.tiles = [];
                         message.tiles.push($root.common.TileDto.decode(reader, reader.uint32()));
+                        break;
+                    }
+                case 7: {
+                        message.duration = reader.int32();
                         break;
                     }
                 default:
@@ -10036,6 +10051,9 @@ export const game = $root.game = (() => {
                         return "tiles." + error;
                 }
             }
+            if (message.duration != null && message.hasOwnProperty("duration"))
+                if (!$util.isInteger(message.duration))
+                    return "duration: integer expected";
             return null;
         };
 
@@ -10117,6 +10135,8 @@ export const game = $root.game = (() => {
                     message.tiles[i] = $root.common.TileDto.fromObject(object.tiles[i]);
                 }
             }
+            if (object.duration != null)
+                message.duration = object.duration | 0;
             return message;
         };
 
@@ -10142,6 +10162,7 @@ export const game = $root.game = (() => {
                 object.state = options.enums === String ? "Init" : 0;
                 object.mapWidth = 0;
                 object.mapHeight = 0;
+                object.duration = 0;
             }
             if (message.gameId != null && message.hasOwnProperty("gameId"))
                 object.gameId = message.gameId;
@@ -10161,6 +10182,8 @@ export const game = $root.game = (() => {
                 for (let j = 0; j < message.tiles.length; ++j)
                     object.tiles[j] = $root.common.TileDto.toObject(message.tiles[j], options);
             }
+            if (message.duration != null && message.hasOwnProperty("duration"))
+                object.duration = message.duration;
             return object;
         };
 

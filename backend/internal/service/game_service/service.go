@@ -93,6 +93,7 @@ func (service *GameService) GetGameInfo(ctx context.Context, gameId int32) (*gam
 		MapWidth:  maploader.MapWidth,
 		MapHeight: maploader.MapHeight,           // TODO this should be stored in sess
 		Tiles:     sess.gameMap.ToTileDtoArray(), // TODO cache
+		Duration:  int32(sess.duration.Seconds()),
 	}
 
 	return response, nil

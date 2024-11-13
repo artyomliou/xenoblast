@@ -112,7 +112,7 @@ export class Game extends BaseScene {
     this.setupPhysics();
     this.setupControls();
     this.setupMoveEventSending();
-    this.setupClock(120); // workaround
+    this.setupClock(this.gameInfo.duration);
     this.setupPlayerInfo();
 
     this.newStateQueue.push(STATE_COUNTDOWN);

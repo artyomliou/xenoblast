@@ -28,6 +28,7 @@ message GetGameInfoResponse {
   int32 mapWidth = 4;
   int32 mapHeight = 5;
   repeated common.TileDto tiles = 6;
+  int32 duration = 7;
 }
 
 message SubscribeRequest {

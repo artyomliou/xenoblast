@@ -7,6 +7,7 @@ export class GameInfo extends Plugins.BasePlugin {
   mapHeight = 0;
   players: Player[] = [];
   tiles: Tile[][] = [];
+  duration = 0;
 
   applyGameInfo(gameInfo: game.GetGameInfoResponse) {
     this.mapWidth = gameInfo.mapWidth;
@@ -40,14 +41,16 @@ export class GameInfo extends Plugins.BasePlugin {
         }
       }
     }
+
+    this.duration = gameInfo.duration
   }
 }
 
 export class Player extends common.PlayerPropertyDto {
-  sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody|undefined;
+  sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
   isAlive = true;
-  targetX: number|undefined;
-  targetY: number|undefined;
+  targetX: number | undefined;
+  targetY: number | undefined;
 
   update() {
     if (!this.sprite) {

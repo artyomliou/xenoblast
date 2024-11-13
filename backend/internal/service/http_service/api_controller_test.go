@@ -203,6 +203,7 @@ func TestApiController(t *testing.T) {
 					},
 				},
 			},
+			Duration: 120,
 		}
 		gameServiceClientMock.On("GetGameInfo", ctx, gameReq).Return(gameResp, nil)
 
