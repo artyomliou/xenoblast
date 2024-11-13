@@ -20,7 +20,7 @@ const MaximumPlayer = 4
 const EventQueueLength = 200
 const MaxWaitingReadyRetry = 20
 const GameCountdown = 2 * time.Second
-const GameDuration = 2 * time.Minute
+const GameDuration = 3 * time.Minute
 const BombBeforeExplodeDuration = 3 * time.Second
 const PowerupDropRate = 0.3
 

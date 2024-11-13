@@ -9,6 +9,7 @@ resource "aws_lb" "main" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb.id]
   subnets            = [for subnet in aws_subnet.public : subnet.id]
+  idle_timeout       = var.game_duration_seconds
 
   enable_xff_client_port = true
 }

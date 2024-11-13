@@ -13,3 +13,9 @@ variable "https_domain" {
 variable "cost_saving_mode" {
   type = bool
 }
+
+variable "game_duration_seconds" {
+  type        = number
+  default     = 180
+  description = "ensure websocket will not be closed within GameDuration by ELB"
+}
