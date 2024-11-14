@@ -19,3 +19,9 @@ variable "game_duration_seconds" {
   default     = 180
   description = "ensure websocket will not be closed within GameDuration by ELB"
 }
+
+variable "route_53_zone_name" {
+  type    = string
+  default = "example.com."
+}
+

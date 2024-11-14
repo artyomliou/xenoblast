@@ -1,6 +1,7 @@
-project_name      = "xenoblast"
-github_org        = "artyomliou"
-repository_name   = "xenoblast"
-aws_region        = "$AWS_REGION"
-https_domain      = "xenoblast.yourdomain.com"
-cost_saving_mode  = false
+project_name       = "xenoblast"
+github_org         = "artyomliou"
+repository_name    = "xenoblast"
+aws_region         = "$AWS_REGION"
+https_domain       = "xenoblast.yourdomain.com"
+route_53_zone_name = "yourdomain.com."
+cost_saving_mode   = false
