@@ -74,7 +74,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			h.logger.Info("websocket handler receive termination signal")
+			h.logger.Debug("websocket handler receive termination signal")
 			return
 
 		case ev := <-h.clientEventCh:

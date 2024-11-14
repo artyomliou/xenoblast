@@ -94,8 +94,8 @@ func (g *gameSession) setupSerializeEventChannel() {
 }
 
 func (g *gameSession) Run(ctx context.Context) {
-	g.logger.Debug("Run(): start")
-	defer g.logger.Debug("Run(): end")
+	g.logger.Debug("session start")
+	defer g.logger.Debug("session end")
 
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -109,7 +109,7 @@ func (g *gameSession) Run(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			g.logger.Info("receive termination signal")
+			g.logger.Debug("receive termination signal")
 			if err := g.state.Transition(pkg_proto.GameState_Crash); err != nil {
 				g.logger.Error(err.Error())
 			}
@@ -117,7 +117,7 @@ func (g *gameSession) Run(ctx context.Context) {
 			return
 
 		case ev := <-g.eventCh:
-			g.logger.Debug("<-", zap.String("type", ev.Type.String()))
+			g.logger.Debug("event", zap.String("type", ev.Type.String()))
 			startExecutionTime := time.Now()
 			trace := true
 
@@ -161,7 +161,7 @@ func (g *gameSession) Run(ctx context.Context) {
 				return
 			}
 			if trace {
-				g.logger.Debug("event execution time", zap.String("type", ev.Type.String()), zap.String("time", time.Since(startExecutionTime).String()))
+				g.logger.Debug(fmt.Sprintf("event execution time %s", time.Since(startExecutionTime).String()), zap.String("type", ev.Type.String()))
 			}
 		}
 	}
@@ -281,12 +281,12 @@ func (g *gameSession) HandlePlayerReady(ev *pkg_proto.Event) {
 	}
 
 	g.markPlayerReady(data.PlayerId)
-	g.logger.Sugar().Debugf("player %d ready", data.PlayerId)
+	g.logger.Sugar().Infof("player %d ready", data.PlayerId)
 
 	if !g.allPlayersReady() {
 		return
 	}
-	g.logger.Debug("all players are ready")
+	g.logger.Info("all players are ready")
 
 	if err := g.state.Transition(pkg_proto.GameState_Countdown); err != nil {
 		g.logger.Error(err.Error())

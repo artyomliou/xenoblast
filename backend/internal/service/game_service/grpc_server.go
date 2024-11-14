@@ -45,7 +45,7 @@ func (server *GameServiceServer) NewGame(ctx context.Context, req *game.NewGameR
 	idNicknameMap := resp.Nicknames
 
 	if _, ok := server.service.sessions[req.GameId]; ok {
-		server.logger.Warn("skip created session", zap.Int32("game", req.GameId))
+		server.logger.Sugar().Warnf("skip created session %d", req.GameId)
 		return nil, nil
 	}
 	if err := server.service.NewGame(context.TODO(), req.GameId, idNicknameMap); err != nil {
@@ -91,7 +91,7 @@ func (server *GameServiceServer) Subscribe(req *game.SubscribeRequest, stream gr
 
 	// TODO cancel subscription
 	for ev := range eventCh {
-		server.logger.Debug("<-", zap.String("type", ev.Type.String()))
+		server.logger.Debug("event from GameService", zap.String("type", ev.Type.String()))
 		if err := stream.Send(ev); err != nil {
 			server.logger.Error(err.Error())
 			return err

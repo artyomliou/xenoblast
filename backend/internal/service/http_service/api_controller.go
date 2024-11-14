@@ -156,7 +156,7 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 		return
 	}
 
-	ctl.logger.Debug("opening game service client", zap.String("addr", gameServerAddr))
+	ctl.logger.Sugar().Infof("opening game service client %s", gameServerAddr)
 	gameServiceClient, close, err := ctl.gameServiceClientFactory.NewClient(gameServerAddr)
 	if err != nil {
 		ctl.logger.Error(err.Error())

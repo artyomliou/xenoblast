@@ -77,7 +77,7 @@ func (service *AuthService) GetNicknames(ctx context.Context, playerIds []int32)
 	for _, playerId := range playerIds {
 		nickname, err := service.repo.GetNicknameByPlayerId(ctx, int(playerId))
 		if err != nil {
-			service.logger.Error("invalid player id", zap.Int32("player", playerId))
+			service.logger.Sugar().Errorf("invalid player id %d", playerId)
 			nickname = "ERR"
 		}
 		idNicknameMap[playerId] = nickname

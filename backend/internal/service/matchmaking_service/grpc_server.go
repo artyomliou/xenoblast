@@ -91,7 +91,7 @@ func (server *MatchmakingServiceServer) HandleNewMatchEvent(ev *pkg_proto.Event,
 				server.logger.Error(err.Error())
 				return
 			}
-			server.logger.Debug("->", zap.Int32("player", playerId), zap.String("type", "NewMatch"))
+			server.logger.Sugar().Infof("NewMatch event being sent to player %d", playerId)
 			return
 		}
 	}
@@ -109,7 +109,7 @@ func (server *MatchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) 
 		return &EventDataNilError{Event: ev}
 	}
 
-	server.logger.Sugar().Debugf("opening game service client to %s", data.GameServerAddr)
+	server.logger.Sugar().Infof("opening game service client to %s", data.GameServerAddr)
 	gameServiceClient, close, err := server.gameServiceClientFactory.NewClient(data.GameServerAddr)
 	if err != nil {
 		return err

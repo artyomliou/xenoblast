@@ -102,7 +102,7 @@ func appendHttpServerLifecycle(lc fx.Lifecycle, logger *zap.Logger, server *http
 			if err != nil {
 				return err
 			}
-			logger.Info("Starting HTTP server at", zap.String("addr", server.Addr))
+			logger.Sugar().Infof("Starting HTTP server at %d", server.Addr)
 			go server.Serve(listener)
 			return nil
 		},
@@ -147,11 +147,11 @@ func appendGrpcServerLifecycle(lc fx.Lifecycle, cfg *config.Config, logger *zap.
 				return err
 			}
 			go grpcServer.Serve(listener)
-			logger.Info("Starting GRPC server at", zap.String("addr", addr))
+			logger.Sugar().Info("Starting GRPC server at %d", addr)
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
-			logger.Info("Shutdown signal received")
+			logger.Sugar().Info("Shutdown signal received")
 			if cfg.GracefulShutdown {
 				grpcServer.GracefulStop()
 			} else {
