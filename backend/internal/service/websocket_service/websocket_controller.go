@@ -51,7 +51,7 @@ func (ctl *WebsocketController) Handle(w http.ResponseWriter, r *http.Request) {
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		ctl.logger.Error("failed to upgrade", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		return
 	}
 

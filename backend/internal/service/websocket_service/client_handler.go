@@ -97,7 +97,7 @@ func (h *ClientHandler) Run(ctx context.Context) {
 
 		case err := <-h.errCh:
 			if !websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
-				h.logger.Error("error ", zap.Error(err))
+				h.logger.Error(err.Error())
 				h.metrics.ErrorTotal.Add(ctx, 1)
 			}
 			return
@@ -158,7 +158,7 @@ func (h *ClientHandler) HandleSubscribeNewMatch(ctx context.Context, msg *pkg_pr
 
 	// Automatically enroll once connected
 	if err := h.sendEnrollMatchmakingOverHttp(ctx); err != nil {
-		h.logger.Error("Run(): ", zap.Error(err))
+		h.logger.Error(err.Error())
 		h.metrics.ErrorTotal.Add(ctx, 1)
 		return
 	}
@@ -167,7 +167,7 @@ func (h *ClientHandler) HandleSubscribeNewMatch(ctx context.Context, msg *pkg_pr
 	go func() {
 		<-ctx.Done()
 		if err := h.sendCancelMatchmakingOverHttp(ctx); err != nil {
-			h.logger.Error("Run(): ", zap.Error(err))
+			h.logger.Error(err.Error())
 			h.metrics.ErrorTotal.Add(ctx, 1)
 			return
 		}
@@ -187,7 +187,7 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 		PlayerId: h.player.PlayerId,
 	})
 	if err != nil {
-		h.logger.Error("recvMatchmakingEvent(): ", zap.Error(err))
+		h.logger.Error(err.Error())
 		return
 	}
 	for {
@@ -196,11 +196,11 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 			return
 		}
 		if err != nil {
-			h.logger.Error("recvMatchmakingEvent(): ", zap.Error(err))
+			h.logger.Error(err.Error())
 			return
 		}
 		if ev == nil {
-			h.logger.Error("recvMatchmakingEvent(): unexpected ev nil")
+			h.logger.Error("unexpected ev nil")
 			return
 		}
 
@@ -231,15 +231,15 @@ func (h *ClientHandler) sendCancelMatchmakingOverHttp(ctx context.Context) error
 func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 	data := msg.GetPlayerReady()
 	if data == nil {
-		h.logger.Error("HandlePlayerReadyEvent(): data is nil")
+		h.logger.Error("data is nil")
 		return
 	}
 	if data.PlayerId != h.player.PlayerId {
-		h.logger.Error("HandlePlayerReadyEvent(): playerId unmatch")
+		h.logger.Error("playerId unmatch")
 		return
 	}
 	if msg.GameId != h.gameId {
-		h.logger.Error("HandlePlayerReadyEvent(): gameId unmatch")
+		h.logger.Error("gameId unmatch")
 		return
 	}
 
@@ -254,7 +254,7 @@ func (h *ClientHandler) HandlePlayerReadyEvent(msg *pkg_proto.Event) {
 		},
 	})
 	if err != nil {
-		h.logger.Error("HandlePlayerReadyEvent():", zap.Error(err))
+		h.logger.Error(err.Error())
 		return
 	}
 }
@@ -281,7 +281,7 @@ func (h *ClientHandler) HandlePlayerMoveEvent(msg *pkg_proto.Event) {
 		},
 	})
 	if err != nil {
-		h.logger.Error("HandlePlayerMoveEvent():", zap.Error(err))
+		h.logger.Error(err.Error())
 		return
 	}
 }
@@ -308,7 +308,7 @@ func (h *ClientHandler) HandlePlayerPlantBombEvent(msg *pkg_proto.Event) {
 		},
 	})
 	if err != nil {
-		h.logger.Error("HandlePlayerPlantBombEvent():", zap.Error(err))
+		h.logger.Error(err.Error())
 		return
 	}
 }
@@ -335,7 +335,7 @@ func (h *ClientHandler) HandlePlayerGetPowerupEvent(msg *pkg_proto.Event) {
 		},
 	})
 	if err != nil {
-		h.logger.Error("HandlePlayerGetPowerupEvent():", zap.Error(err))
+		h.logger.Error(err.Error())
 		return
 	}
 }
@@ -365,7 +365,7 @@ func (h *ClientHandler) HandleMatchmakingNewMatchEvent(ctx context.Context, ev *
 
 	// Start subscribing all game events
 	if err := h.recvGameEvent(ctx, data.GameServerAddr); err != nil {
-		h.logger.Error("recvGameEvent(): ", zap.Error(err))
+		h.logger.Error(err.Error())
 		h.metrics.ErrorTotal.Add(ctx, 1)
 		return
 	}
@@ -373,7 +373,7 @@ func (h *ClientHandler) HandleMatchmakingNewMatchEvent(ctx context.Context, ev *
 	// All prepares done, send event to player
 	ev.GetNewMatch().GameServerAddr = "" // Delete this before sending it to client
 	if err := h.sendEvent(ctx, ev); err != nil {
-		h.logger.Error("failed to send NewMatch event", zap.Error(err))
+		h.logger.Error(err.Error())
 		h.metrics.ErrorTotal.Add(ctx, 1)
 		return
 	}
@@ -424,11 +424,11 @@ func (h *ClientHandler) recvGameEvent(ctx context.Context, gameServerAddr string
 				return
 			}
 			if err != nil {
-				h.logger.Error("recvGameEvent(): ", zap.Error(err))
+				h.logger.Error(err.Error())
 				return
 			}
 			if ev == nil {
-				h.logger.Error("recvGameEvent(): unexpected ev nil")
+				h.logger.Error("unexpected ev nil")
 				return
 			}
 			h.gameServiceEventCh <- ev
@@ -449,7 +449,7 @@ func (h *ClientHandler) HandleGameServiceEvent(ctx context.Context, ev *pkg_prot
 	}
 
 	if err := h.sendEvent(ctx, ev); err != nil {
-		h.logger.Error("Run() fromGame: ", zap.Error(err))
+		h.logger.Error(err.Error())
 		h.metrics.ErrorTotal.Add(ctx, 1)
 		return
 	}

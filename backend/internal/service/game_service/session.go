@@ -111,7 +111,7 @@ func (g *gameSession) Run(ctx context.Context) {
 		case <-ctx.Done():
 			g.logger.Info("receive termination signal")
 			if err := g.state.Transition(pkg_proto.GameState_Crash); err != nil {
-				g.logger.Error("Run(): ", zap.Error(err))
+				g.logger.Error(err.Error())
 			}
 			g.publishCrashEvent("server terminated")
 			return
@@ -169,7 +169,7 @@ func (g *gameSession) Run(ctx context.Context) {
 
 func (g *gameSession) TriggerPreparing() {
 	if err := g.state.Transition(pkg_proto.GameState_Preparing); err != nil {
-		g.logger.Error("transition failed", zap.Error(err))
+		g.logger.Error(err.Error())
 		return
 	}
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -183,7 +183,7 @@ func (g *gameSession) HandlePreparing() {
 	g.prepare()
 
 	if err := g.state.Transition(pkg_proto.GameState_Prepared); err != nil {
-		g.logger.Error("transition failed", zap.Error(err))
+		g.logger.Error(err.Error())
 		return
 	}
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -241,7 +241,7 @@ func (g *gameSession) setupPlayerReadyMap() {
 
 func (g *gameSession) HandlePrepared() {
 	if err := g.state.Transition(pkg_proto.GameState_WaitingReady); err != nil {
-		g.logger.Error("transition failed", zap.Error(err))
+		g.logger.Error(err.Error())
 		return
 	}
 
@@ -264,7 +264,7 @@ func (g *gameSession) HandlePrepared() {
 
 		reason := fmt.Sprintf("Some players are not ready in %d", MaxWaitingReadyRetry)
 		if err := g.state.Transition(pkg_proto.GameState_Crash); err != nil {
-			g.logger.Error("transition failed", zap.Error(err))
+			g.logger.Error(err.Error())
 			return
 		}
 		g.publishCrashEvent(reason)
@@ -289,7 +289,7 @@ func (g *gameSession) HandlePlayerReady(ev *pkg_proto.Event) {
 	g.logger.Debug("all players are ready")
 
 	if err := g.state.Transition(pkg_proto.GameState_Countdown); err != nil {
-		g.logger.Error("transition failed", zap.Error(err))
+		g.logger.Error(err.Error())
 		return
 	}
 	startTimestamp := time.Now()
@@ -332,7 +332,7 @@ func (g *gameSession) HandleCountdown(ev *pkg_proto.Event) {
 	<-time.After(time.Until(endTimestamp))
 
 	if err := g.state.Transition(pkg_proto.GameState_Playing); err != nil {
-		g.logger.Error("transition failed", zap.Error(err))
+		g.logger.Error(err.Error())
 		return
 	}
 	go g.eventBus.Publish(&pkg_proto.Event{
@@ -345,7 +345,7 @@ func (g *gameSession) HandleCountdown(ev *pkg_proto.Event) {
 func (g *gameSession) HandlePlaying(ev *pkg_proto.Event) {
 	<-time.After(g.duration)
 	if err := g.state.Transition(pkg_proto.GameState_Gameover); err != nil {
-		g.logger.Error("transition failed", zap.Error(err))
+		g.logger.Error(err.Error())
 		return
 	}
 	g.publishGameoverEvent(pkg_proto.GameOverReason_Reason_TimesUp, 0)
@@ -625,7 +625,7 @@ func (g *gameSession) HandlePlayerDead(ev *pkg_proto.Event) {
 
 func (g *gameSession) HandleWinConditionSatisfied(ev *pkg_proto.Event) {
 	if err := g.state.Transition(pkg_proto.GameState_Gameover); err != nil {
-		g.logger.Error("transition failed", zap.Error(err))
+		g.logger.Error(err.Error())
 		return
 	}
 

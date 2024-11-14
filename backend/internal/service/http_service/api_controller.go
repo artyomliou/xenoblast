@@ -53,7 +53,7 @@ func (ctl *ApiController) Register(ctx *gin.Context) {
 		Nickname: req.Nickname,
 	})
 	if err != nil {
-		ctl.logger.Error("Register(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -75,7 +75,7 @@ func (ctl *ApiController) Validate(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Error("Validate(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -96,14 +96,14 @@ func (ctl *ApiController) GetWaitingPlayerCount(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Error("GetWaitingPlayerCount(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
 	resp, err := ctl.matchmakingServiceClient.GetWaitingPlayerCount(ctx, nil)
 	if err != nil {
-		ctl.logger.Error("GetWaitingPlayerCount(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -125,7 +125,7 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 		ApiKey: apiKey,
 	})
 	if err != nil {
-		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -133,7 +133,7 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 	// Get gameServerAddr by playerId
 	resp1, err := ctl.matchmakingServiceClient.GetGameServerAddr(ctx, &matchmaking.GetGameServerAddrRequest{PlayerId: player.PlayerId})
 	if err != nil {
-		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -142,7 +142,7 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 	// Get gameInfo by gameId
 	var req http_api.GetGameInfoRequest
 	if err := ctx.BindQuery(&req); err != nil {
-		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusBadRequest, "Invalid request")
 		return
 	}
@@ -159,7 +159,7 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 	ctl.logger.Debug("opening game service client", zap.String("addr", gameServerAddr))
 	gameServiceClient, close, err := ctl.gameServiceClientFactory.NewClient(gameServerAddr)
 	if err != nil {
-		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -169,7 +169,7 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 		GameId: req.GameId,
 	})
 	if err != nil {
-		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
@@ -177,7 +177,7 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 	// Encode gameInfo into protobuf
 	protobufBytes, err := proto.Marshal(resp2)
 	if err != nil {
-		ctl.logger.Error("GetGameInfo(): ", zap.Error(err))
+		ctl.logger.Error(err.Error())
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}

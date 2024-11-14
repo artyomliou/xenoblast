@@ -84,7 +84,7 @@ func (server *GameServiceServer) Subscribe(req *game.SubscribeRequest, stream gr
 			}
 		})
 		if err != nil {
-			server.logger.Error("Subscribe()", zap.Error(err))
+			server.logger.Error(err.Error())
 			return err
 		}
 	}
@@ -93,7 +93,7 @@ func (server *GameServiceServer) Subscribe(req *game.SubscribeRequest, stream gr
 	for ev := range eventCh {
 		server.logger.Debug("<-", zap.String("type", ev.Type.String()))
 		if err := stream.Send(ev); err != nil {
-			server.logger.Error("Send(ev) failed", zap.Error(err))
+			server.logger.Error(err.Error())
 			return err
 		}
 	}

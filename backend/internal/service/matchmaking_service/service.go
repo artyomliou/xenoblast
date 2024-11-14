@@ -59,7 +59,7 @@ func (service *MatchmakingService) StartMatchmaking() {
 			return
 		case <-ticker.C:
 			if err := service.matchmaking(); err != nil {
-				service.logger.Error("matchmaking failed", zap.Error(err))
+				service.logger.Error(err.Error())
 				return
 			}
 		}

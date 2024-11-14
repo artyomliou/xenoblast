@@ -67,7 +67,7 @@ func (server *MatchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 
 		// The NewGame request should be sent to specific IP.
 		if err := server.sendNewGameRequest(event); err != nil {
-			server.logger.Error("sendNewGameRequest() err: %s, skip sending NewMatch event to player", zap.Error(err))
+			server.logger.Error(err.Error())
 			return
 		}
 		server.HandleNewMatchEvent(event, req, stream)
@@ -88,7 +88,7 @@ func (server *MatchmakingServiceServer) HandleNewMatchEvent(ev *pkg_proto.Event,
 	for _, playerId := range data.Players {
 		if playerId == req.PlayerId {
 			if err := stream.Send(ev); err != nil {
-				server.logger.Error("HandleNewMatchEvent(): ", zap.Error(err))
+				server.logger.Error(err.Error())
 				return
 			}
 			server.logger.Debug("->", zap.Int32("player", playerId), zap.String("type", "NewMatch"))
