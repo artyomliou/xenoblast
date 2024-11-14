@@ -12,6 +12,7 @@ import (
 	"io"
 	"time"
 
+	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -25,7 +26,10 @@ type ClientHandler struct {
 	gameServiceClient        game.GameServiceClient
 	client                   *Client
 	player                   *auth.PlayerInfoDto
-	msgCh                    chan *messageContainer
+	clientEventCh            chan *pkg_proto.Event
+	matchmakingEventCh       chan *pkg_proto.Event
+	gameServiceEventCh       chan *pkg_proto.Event
+	errCh                    chan error
 	gameId                   int32
 }
 
@@ -39,7 +43,10 @@ func NewClientHandler(cfg *config.Config, logger *zap.Logger, metrics *telemetry
 		gameServiceClientFactory: gameServiceClientFactory,
 		gameServiceClient:        nil,
 		player:                   player,
-		msgCh:                    make(chan *messageContainer, 100),
+		clientEventCh:            make(chan *pkg_proto.Event, 100),
+		matchmakingEventCh:       make(chan *pkg_proto.Event),
+		gameServiceEventCh:       make(chan *pkg_proto.Event, 100),
+		errCh:                    make(chan error),
 		gameId:                   0,
 	}
 }
@@ -53,15 +60,16 @@ func (h *ClientHandler) Run(ctx context.Context) {
 		h.metrics.ConnectionActive.Add(ctx, -1)
 	}()
 
-	h.logger.Debug("Run()")
-	defer h.logger.Debug("Run() exit")
 	defer h.client.Close()
-	defer close(h.msgCh)
+	defer func() {
+		close(h.errCh)
+		h.errCh = nil
+	}()
 
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	go h.recvWebsocketEvent(ctx)
+	go h.recvWebsocketEvent()
 
 	for {
 		select {
@@ -69,62 +77,57 @@ func (h *ClientHandler) Run(ctx context.Context) {
 			h.logger.Info("websocket handler receive termination signal")
 			return
 
-		case msg, ok := <-h.msgCh:
-			if !ok {
-				h.logger.Debug("channel closed")
-				return
-			}
-			if msg.err != nil {
-				h.logger.Error("error ", zap.Error(msg.err))
+		case ev := <-h.clientEventCh:
+			h.logger.Debug("client event", zap.String("type", ev.Type.String()))
+			h.metrics.MessageReceived.Add(ctx, 1)
+
+			messageStartTime := time.Now()
+			h.HandleWebsocketClientEvent(ctx, ev)
+			h.metrics.MessageDurationMillisecond.Record(ctx, time.Since(messageStartTime).Milliseconds())
+
+		case ev := <-h.matchmakingEventCh:
+			h.logger.Debug("matchmaking event", zap.String("type", ev.Type.String()))
+			h.metrics.ServerEventReceived.Add(ctx, 1)
+			h.HandleMatchmakingServiceEvent(ctx, ev)
+
+		case ev := <-h.gameServiceEventCh:
+			h.logger.Debug("game event", zap.String("type", ev.Type.String()))
+			h.metrics.ServerEventReceived.Add(ctx, 1)
+			h.HandleGameServiceEvent(ctx, ev)
+
+		case err := <-h.errCh:
+			if !websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
+				h.logger.Error("error ", zap.Error(err))
 				h.metrics.ErrorTotal.Add(ctx, 1)
-				return
 			}
-
-			ev := msg.event
-
-			if msg.fromClient {
-				h.logger.Debug("client event", zap.String("type", ev.Type.String()))
-				h.metrics.MessageReceived.Add(ctx, 1)
-
-				messageStartTime := time.Now()
-				h.HandleWebsocketClientEvent(ctx, ev)
-				h.metrics.MessageDurationMillisecond.Record(ctx, time.Since(messageStartTime).Milliseconds())
-
-			} else if msg.fromMatchmaking {
-				h.logger.Debug("matchmaking event", zap.String("type", ev.Type.String()))
-				h.metrics.ServerEventReceived.Add(ctx, 1)
-				h.HandleMatchmakingServiceEvent(ctx, ev)
-
-			} else if msg.fromGame {
-				h.logger.Debug("game event", zap.String("type", ev.Type.String()))
-				h.metrics.ServerEventReceived.Add(ctx, 1)
-				h.HandleGameServiceEvent(ctx, ev)
-			}
+			return
 		}
 	}
 }
 
-func (h *ClientHandler) recvWebsocketEvent(ctx context.Context) {
-	defer h.logger.Debug("recvWebsocketEvent() exit")
+func (h *ClientHandler) recvWebsocketEvent() {
+	defer func() {
+		h.logger.Debug("recvWebsocketEvent() exit")
+		close(h.clientEventCh)
+		h.clientEventCh = nil
+	}()
+
+	// When connection being closed, `ReadMessage()` returns error.
+	// Error will be passed through channel and results in a done context.
 	for {
 		message, err := h.client.ReadMessage()
 		if err != nil {
-			h.msgCh <- &messageContainer{err: err}
+			h.errCh <- err
 			return
 		}
 
 		ev := &pkg_proto.Event{}
 		err = proto.Unmarshal(message, ev)
 		if err != nil {
-			h.msgCh <- &messageContainer{err: err}
+			h.errCh <- err
 			return
 		}
-		select {
-		case <-ctx.Done():
-			h.logger.Debug("recvWebsocketEvent() Done")
-			return
-		case h.msgCh <- &messageContainer{event: ev, fromClient: true}:
-		}
+		h.clientEventCh <- ev
 	}
 }
 
@@ -172,8 +175,14 @@ func (h *ClientHandler) HandleSubscribeNewMatch(ctx context.Context, msg *pkg_pr
 }
 
 func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
-	defer h.logger.Debug("recvMatchmakingEvent() exit")
+	defer func() {
+		h.logger.Debug("recvMatchmakingEvent() exit")
+		close(h.matchmakingEventCh)
+		h.matchmakingEventCh = nil
+	}()
 
+	// After a successful NewMatchEvent, grpc server will close the stream.
+	// The `stream.Recv()` receives `io.EOF` and goroutine exits.
 	stream, err := h.matchmakingServiceClient.SubscribeMatch(ctx, &matchmaking.MatchmakingRequest{
 		PlayerId: h.player.PlayerId,
 	})
@@ -184,7 +193,6 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 	for {
 		ev, err := stream.Recv()
 		if err == io.EOF {
-			h.logger.Info("recvMatchmakingEvent(): EOF")
 			return
 		}
 		if err != nil {
@@ -195,12 +203,8 @@ func (h *ClientHandler) recvMatchmakingEvent(ctx context.Context) {
 			h.logger.Error("recvMatchmakingEvent(): unexpected ev nil")
 			return
 		}
-		select {
-		case <-ctx.Done():
-			h.logger.Info("recvMatchmakingEvent(): Done")
-			return
-		case h.msgCh <- &messageContainer{event: ev, fromMatchmaking: true}:
-		}
+
+		h.matchmakingEventCh <- ev
 	}
 }
 
@@ -376,8 +380,6 @@ func (h *ClientHandler) HandleMatchmakingNewMatchEvent(ctx context.Context, ev *
 }
 
 func (h *ClientHandler) recvGameEvent(ctx context.Context, gameServerAddr string) error {
-	defer h.logger.Debug("recvGameEvent(): exit")
-
 	// Open a connection to game service, must check before use
 	h.logger.Sugar().Debugf("opening game service client to %s", gameServerAddr)
 	gameServiceClient, connClose, err := h.gameServiceClientFactory.NewClient(gameServerAddr)
@@ -407,12 +409,18 @@ func (h *ClientHandler) recvGameEvent(ctx context.Context, gameServerAddr string
 	if err != nil {
 		return err
 	}
+	// When client connection being closed, context will cancel the subscription (and grpc stream),
+	// then `stream.Recv()` receives `io.EOF` and goroutine exits.
 	go func() {
-		defer connClose()
+		defer func() {
+			h.logger.Debug("recvGameEvent(): exit")
+			connClose()
+			close(h.gameServiceEventCh)
+			h.gameServiceEventCh = nil
+		}()
 		for {
 			ev, err := stream.Recv()
 			if err == io.EOF {
-				h.logger.Info("recvGameEvent(): EOF")
 				return
 			}
 			if err != nil {
@@ -423,12 +431,7 @@ func (h *ClientHandler) recvGameEvent(ctx context.Context, gameServerAddr string
 				h.logger.Error("recvGameEvent(): unexpected ev nil")
 				return
 			}
-			select {
-			case <-ctx.Done():
-				h.logger.Info("recvGameEvent(): Done")
-				return
-			case h.msgCh <- &messageContainer{event: ev, fromGame: true}:
-			}
+			h.gameServiceEventCh <- ev
 		}
 	}()
 	return nil
