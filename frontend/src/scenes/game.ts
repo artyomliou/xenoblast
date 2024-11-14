@@ -474,10 +474,12 @@ export class Game extends BaseScene {
     this.setupBomb(tile, x, y);
     console.debug(`BombPlanted, x=${x} y=${y}`);
 
-    if (ev.bombPlanted.playerId == this.session.playerId) {
-      this.player.bombcount = ev.bombPlanted.userBombcount || 0;
-      console.debug(`bombcount was set to ${ev.bombPlanted.userBombcount || 0}`);
-    }
+    this.gameInfo.players.forEach(player => {
+      if (ev.bombPlanted?.playerId == player.playerId) {
+        player.bombcount = ev.bombPlanted.userBombcount || 0;
+        console.debug(`bomb planted, player=${player.nickname} bombcount=${ev.bombPlanted.userBombcount || 0}`);
+      }
+    })
   }
 
   setupBomb(tile: Tile, x: number, y: number) {
@@ -558,12 +560,14 @@ export class Game extends BaseScene {
     }, bombFirepower * FIRE_SPREAD_INTERVAL + FIRE_GROUP_BEFORE_DESTROY_DURATION);
 
     // Restore current player bombcount
-    if (ev.bombExploded.playerId == this.session.playerId) {
-      this.player.bombcount = userBombcount;
-      console.debug(
-        `bomb exploded, bombcount was set to ${userBombcount}`
-      );
-    }
+    this.gameInfo.players.forEach(player => {
+      if (ev.bombExploded?.playerId == player.playerId) {
+        player.bombcount = userBombcount;
+        console.debug(
+          `bomb exploded, player=${player.nickname} bombcount=${userBombcount}`
+        );
+      }
+    })
   }
 
   setupFire(fireGroup: Phaser.Physics.Arcade.Group, bombX: number, bombY: number, offsetX: number, offsetY: number, firepower: number, textureKey: string) {
@@ -646,19 +650,20 @@ export class Game extends BaseScene {
     }
     const x = ev.powerupConsumed.x || 0; // workaround zero-value marshalling
     const y = ev.powerupConsumed.y || 0;
-    const playerId = ev.powerupConsumed.playerId || 0;
     const userBombcount = ev.powerupConsumed.userBombcount || 0;
     const userFirepower = ev.powerupConsumed.userFirepower || 0;
 
     const tile = this.gameInfo.tiles[x][y];
 
-    if (playerId == this.session.playerId) {
-      this.player.bombcount = userBombcount;
-      this.player.firepower = userFirepower;
-      console.debug(
-        `PowerupConsumed, bombcount=${userBombcount} firepower=${userFirepower}`
-      );
-    }
+    this.gameInfo.players.forEach(player => {
+      if (ev.powerupConsumed?.playerId == player.playerId) {
+        player.bombcount = userBombcount;
+        player.firepower = userFirepower;
+        console.debug(
+          `powerup consumed, player=${player.nickname} bombcount=${userBombcount} firepower=${userFirepower}`
+        );
+      }
+    })
 
     if (tile.powerup) {
       tile.powerup.destroy();
