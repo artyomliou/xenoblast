@@ -5,6 +5,12 @@ resource "aws_ecs_service" "backend" {
   task_definition = aws_ecs_task_definition.backend.arn
   desired_count   = var.cost_saving_mode ? 0 : 1
 
+  capacity_provider_strategy {
+    base              = 0
+    capacity_provider = "FARGATE_SPOT"
+    weight            = 100
+  }
+
   network_configuration {
     subnets          = [for subnet in aws_subnet.public : subnet.id]
     security_groups  = [aws_security_group.api_gateway.id]
@@ -31,8 +37,8 @@ locals {
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html
 resource "aws_ecs_task_definition" "backend" {
   family             = "backend"
-  cpu                = "512"
-  memory             = "2048"
+  cpu                = "256"
+  memory             = "1024"
   task_role_arn      = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
 
