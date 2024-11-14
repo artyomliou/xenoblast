@@ -1,5 +1,5 @@
 import { Plugins } from "phaser";
-import { http_api } from "../pkg_proto/compiled";
+import logger from "../helper/logger";
 
 export class WebsocketClient extends Plugins.BasePlugin {
 
@@ -22,7 +22,7 @@ export class WebsocketClient extends Plugins.BasePlugin {
       this.ws = new WebSocket(this.url("ws/", apiKey));
       this.ws.binaryType = "arraybuffer";
       this.ws.onopen = () => {
-        console.debug("websocket opened");
+        logger.info("websocket opened");
         resolve(undefined);
       };
       this.ws.onmessage = (ev) => {
@@ -32,7 +32,7 @@ export class WebsocketClient extends Plugins.BasePlugin {
         reject(ev);
       };
       this.ws.onclose = (ev) => {
-        console.debug("websocket closed", ev);
+        logger.debug("websocket closed", ev);
       };
     });
   }
@@ -56,6 +56,6 @@ export class WebsocketClient extends Plugins.BasePlugin {
     }
     this.ws.close();
     this.ws = null;
-    console.debug("websocket closed");
+    logger.info("websocket closed");
   }
 }

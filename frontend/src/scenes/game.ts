@@ -12,6 +12,7 @@ import {
 } from "../helper/map";
 import Clock from "../helper/clock";
 import ClearCallbackManager from "../helper/clear_callback_manager";
+import logger from "../helper/logger";
 
 const STATE_UNKNOWN = 0;
 const STATE_COUNTDOWN = 7;
@@ -110,7 +111,7 @@ export class Game extends BaseScene {
     );
     this.clearCallbackManager.register(() => {
       clearInterval(newStateQueueHandlerId);
-      console.debug("clear interval of newStateQueueHandlerId")
+      logger.debug("clear interval of newStateQueueHandlerId")
     })
   }
 
@@ -276,7 +277,7 @@ export class Game extends BaseScene {
     );
     this.clearCallbackManager.register(() => {
       clearInterval(playerMoveHandlerId);
-      console.debug("clear interval of playerMoveHandlerId")
+      logger.debug("clear interval of playerMoveHandlerId")
     })
   }
 
@@ -327,7 +328,7 @@ export class Game extends BaseScene {
       }, 200);
       this.clearCallbackManager.register(() => {
         clearInterval(playerInfoRendererId);
-        console.debug("clear interval of playerInfoRendererId");
+        logger.debug("clear interval of playerInfoRendererId");
       })
     }
   }
@@ -338,18 +339,18 @@ export class Game extends BaseScene {
     this.anims.remove("right");
     this.anims.remove("up");
     this.anims.remove("down");
-    console.debug("cleaned animations");
+    logger.debug("cleaned animations");
 
     this.obstaclesGroup.destroy(true, true);
     this.bushGroup.destroy(true, true);
     this.powerupGroup.destroy(true, true);
     this.bombGroup.destroy(true, true);
     this.gameInfo.tiles = [];
-    console.debug("cleaned map");
+    logger.debug("cleaned map");
 
     this.bombTilesForDeduplicate.clear();
     this.gettingPowerupTiles.clear();
-    console.debug("cleaned tile sets")
+    logger.debug("cleaned tile sets")
 
     this.gameInfo.players.forEach(player => {
       if (player.sprite !== undefined) {
@@ -358,16 +359,16 @@ export class Game extends BaseScene {
       }
     })
     this.gameInfo.players = [];
-    console.debug("cleaned players");
+    logger.debug("cleaned players");
 
     this.messageBox.clean();
-    console.debug("cleaned message box and its cached events");
+    logger.debug("cleaned message box and its cached events");
 
     this.wsClient.close()
-    console.debug("cleaned websocket connection");
+    logger.debug("cleaned websocket connection");
 
     this.session.clean();
-    console.debug("cleaned session");
+    logger.debug("cleaned session");
   }
 
   handlePlayerGetPowerup(powerupSprite: Phaser.GameObjects.Sprite) {
@@ -393,7 +394,7 @@ export class Game extends BaseScene {
         y: tileY,
       },
     });
-    console.debug(`-> ${common.EventType[event.type]}`, event);
+    logger.debug(`-> ${common.EventType[event.type]}`, event);
     const msg = common.Event.encode(event).finish();
     this.wsClient.send(msg);
 
@@ -412,7 +413,7 @@ export class Game extends BaseScene {
         return
       }
       this.state = newState;
-      console.debug(`newState=${newState}`);
+      logger.debug(`newState=${newState}`);
 
       try {
         switch (newState) {
@@ -426,11 +427,11 @@ export class Game extends BaseScene {
             break;
 
           default:
-            console.error("Unknown new state", newState);
+            logger.error("Unknown new state", newState);
             return;
         }
       } catch (error) {
-        console.error(error);
+        logger.error(error);
       }
     }
   }
@@ -444,7 +445,7 @@ export class Game extends BaseScene {
 
   handlePlaying() {
     if (this.handlePlayingOnce) {
-      console.warn("cannot execute handlePlaying() twice");
+      logger.warn("cannot execute handlePlaying() twice");
       return;
     }
     this.handlePlayingOnce = true;
@@ -452,12 +453,12 @@ export class Game extends BaseScene {
     this.clock.startTick();
     this.clearCallbackManager.register(() => {
       this.clock.stopTick();
-      console.debug("clear interval of clock");
+      logger.debug("clear interval of clock");
     });
 
     this.messageBox.registerListener((ev: common.Event) => {
       if (this.state == STATE_PLAYING) {
-        console.log(`<- ${common.EventType[ev.type]}`)
+        logger.debug(`<- ${common.EventType[ev.type]}`)
         this.handleGameEvent(ev);
       }
     });
@@ -529,7 +530,7 @@ export class Game extends BaseScene {
           player.sprite.destroy();
           player.sprite = undefined;
         }
-        console.debug(`PlayerDead, user=${player.playerId}`);
+        logger.debug(`PlayerDead, user=${player.playerId}`);
       }
     }
   }
@@ -543,12 +544,12 @@ export class Game extends BaseScene {
 
     const tile = this.gameInfo.tiles[x][y];
     this.setupBomb(tile, x, y);
-    console.debug(`BombPlanted, x=${x} y=${y}`);
+    logger.debug(`BombPlanted, x=${x} y=${y}`);
 
     this.gameInfo.players.forEach(player => {
       if (ev.bombPlanted?.playerId == player.playerId) {
         player.bombcount = ev.bombPlanted.userBombcount || 0;
-        console.debug(`bomb planted, player=${player.nickname} bombcount=${ev.bombPlanted.userBombcount || 0}`);
+        logger.debug(`bomb planted, player=${player.nickname} bombcount=${ev.bombPlanted.userBombcount || 0}`);
       }
     })
   }
@@ -562,11 +563,11 @@ export class Game extends BaseScene {
 
   removeBomb(tile: Tile) {
     if (tile.obstacleType != common.ObstacleType.Bomb) {
-      console.warn("cannot remove bomb because tile.obstacleType is not Bomb");
+      logger.warn("cannot remove bomb because tile.obstacleType is not Bomb");
     }
     tile.obstacleType = null;
     if (!tile.obstacle) {
-      console.warn("cannot remove bomb because tile.obstacle is empty");
+      logger.warn("cannot remove bomb because tile.obstacle is empty");
       return
     }
     this.bombGroup.remove(tile.obstacle, true, true);
@@ -582,7 +583,7 @@ export class Game extends BaseScene {
     const y = ev.bombExploded.y || 0;
     const bombFirepower = ev.bombExploded.bombFirepower || 0;
     const userBombcount = ev.bombExploded.userBombcount || 0;
-    console.debug(`BombExploded, x=${x} y=${y}`);
+    logger.debug(`BombExploded, x=${x} y=${y}`);
 
     const tile = this.gameInfo.tiles[x][y];
     this.removeBomb(tile);
@@ -634,7 +635,7 @@ export class Game extends BaseScene {
     this.gameInfo.players.forEach(player => {
       if (ev.bombExploded?.playerId == player.playerId) {
         player.bombcount = userBombcount;
-        console.debug(
+        logger.debug(
           `bomb exploded, player=${player.nickname} bombcount=${userBombcount}`
         );
       }
@@ -653,7 +654,7 @@ export class Game extends BaseScene {
           return;
         }
         if (fireGroup.children == undefined) {
-          console.error("cannot add fire, fireGroup may be destroyed.");
+          logger.warn("cannot add fire, fireGroup may be destroyed.");
           stoppedByError = true;
           return
         }
@@ -689,13 +690,13 @@ export class Game extends BaseScene {
 
     const tile = this.gameInfo.tiles[x][y];
     if (tile.obstacleType != common.ObstacleType.Box || !tile.obstacle) {
-      console.warn("this tile is not box", ev, tile);
+      logger.warn("this tile is not box", ev, tile);
       return;
     }
     tile.obstacleType = null;
     tile.obstacle.destroy();
     tile.obstacle = null;
-    console.debug(`BoxRemoved, x=${x} y=${y}`);
+    logger.debug(`BoxRemoved, x=${x} y=${y}`);
   }
 
   handlePowerupDroppedEvent(ev: common.Event) {
@@ -709,7 +710,7 @@ export class Game extends BaseScene {
     const tile = this.gameInfo.tiles[x][y];
     tile.powerupType = powerupType;
     this.setupPowerup(tile, x, y);
-    console.debug(
+    logger.debug(
       `PowerupDropped, x=${x} y=${y} type=${common.PowerupType[powerupType]
       }`
     );
@@ -730,7 +731,7 @@ export class Game extends BaseScene {
       if (ev.powerupConsumed?.playerId == player.playerId) {
         player.bombcount = userBombcount;
         player.firepower = userFirepower;
-        console.debug(
+        logger.debug(
           `powerup consumed, player=${player.nickname} bombcount=${userBombcount} firepower=${userFirepower}`
         );
       }
@@ -741,7 +742,7 @@ export class Game extends BaseScene {
     }
     tile.powerupType = null;
     tile.powerup = null;
-    console.debug(`PowerupConsumed, x=${x} y=${y}`);
+    logger.debug(`PowerupConsumed, x=${x} y=${y}`);
   }
 
   handleGameoverEvent(ev: common.Event) {
@@ -751,7 +752,7 @@ export class Game extends BaseScene {
     if (ev.gameOver.reason == null || ev.gameOver.reason == undefined) {
       ev.gameOver.reason = common.GameOverReason.Reason_WinConditionSatisfied // workaround zero-value marshaling
     }
-    console.debug(`Gameover, reason=${common.GameOverReason[ev.gameOver.reason]}, winnerPlayerId=${ev.gameOver.winnerPlayerId}`);
+    logger.debug(`Gameover, reason=${common.GameOverReason[ev.gameOver.reason]}, winnerPlayerId=${ev.gameOver.winnerPlayerId}`);
 
     switch (ev.gameOver.reason) {
       case common.GameOverReason.Reason_WinConditionSatisfied:
@@ -819,7 +820,7 @@ export class Game extends BaseScene {
                   y: tileY,
                 },
               });
-              console.debug(`-> ${common.EventType[event.type]}`, event);
+              logger.debug(`-> ${common.EventType[event.type]}`, event);
               const msg = common.Event.encode(event).finish();
               this.wsClient.send(msg);
             }
@@ -861,7 +862,7 @@ export class Game extends BaseScene {
           y: tileY,
         },
       });
-      console.debug(`-> ${common.EventType[event.type]}`);
+      logger.debug(`-> ${common.EventType[event.type]}`);
       const msg = common.Event.encode(event).finish();
       this.wsClient.send(msg);
     }

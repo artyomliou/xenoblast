@@ -1,3 +1,4 @@
+import logger from "../helper/logger";
 import { BaseScene } from "./base_scene";
 import { Game } from "./game";
 import { WaitingRoom } from "./waiting_room";
@@ -10,7 +11,7 @@ export class GameOver extends BaseScene {
   }
 
   init(data: Record<string, any>) {
-    console.debug("GameOver", data["reason"]);
+    logger.debug("GameOver", data["reason"]);
     if (data["reason"]) {
       this.reason = data["reason"];
     }
@@ -41,10 +42,10 @@ export class GameOver extends BaseScene {
   clean() {
     this.scene.remove("WaitingRoom");
     this.scene.add("WaitingRoom", WaitingRoom, false);
-    console.debug("cleaned WaitingRoom scene");
+    logger.debug("cleaned WaitingRoom scene");
 
     this.scene.remove("Game");
     this.scene.add("Game", Game, false);
-    console.debug("cleaned Game scene");
+    logger.debug("cleaned Game scene");
   }
 }

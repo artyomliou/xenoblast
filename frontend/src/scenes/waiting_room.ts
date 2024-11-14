@@ -1,5 +1,6 @@
 import { BaseScene } from "./base_scene";
 import { common, matchmaking } from "../pkg_proto/compiled.js";
+import logger from "../helper/logger";
 
 const STATE_UNKNOWN = 0;
 const STATE_INIT = 1;
@@ -43,7 +44,7 @@ export class WaitingRoom extends BaseScene {
         return
       }
       this.state = newState;
-      console.debug(`newState = ${newState}`);
+      logger.debug(`newState = ${newState}`);
 
       try {
         switch (newState) {
@@ -88,11 +89,11 @@ export class WaitingRoom extends BaseScene {
             break;
 
           default:
-            console.error("Unknown new state", newState);
+            logger.error("Unknown new state", newState);
             return;
         }
       } catch (error) {
-        console.error(error);
+        logger.error(error);
       }
     }
   }
@@ -134,7 +135,7 @@ export class WaitingRoom extends BaseScene {
       timestamp: new Date().getTime() / 1000,
       gameId: this.session.gameId,
     });
-    console.debug(`-> ${common.EventType[event.type]}`, event);
+    logger.debug(`-> ${common.EventType[event.type]}`, event);
     const msg = common.Event.encode(event).finish();
     this.wsClient.send(msg);
   }
@@ -148,7 +149,7 @@ export class WaitingRoom extends BaseScene {
     if (!event.gameId) {
       throw new Error("event.gameId should not be zero value");
     }
-    console.debug("gameId", event.gameId);
+    logger.debug("gameId", event.gameId);
   }
 
   async receiveWaitingReadyFromWebsocket() {
@@ -164,7 +165,7 @@ export class WaitingRoom extends BaseScene {
       this.session.gameId
     );
     this.gameInfo.applyGameInfo(gameInfo);
-    console.debug(gameInfo);
+    logger.debug(gameInfo);
   }
 
   async sendPlayerReadyOverWebsocket() {
@@ -176,7 +177,7 @@ export class WaitingRoom extends BaseScene {
         playerId: this.session.playerId,
       },
     });
-    console.debug(`-> ${common.EventType[event.type]}`, event);
+    logger.debug(`-> ${common.EventType[event.type]}`, event);
     const msg = common.Event.encode(event).finish();
     this.wsClient.send(msg);
   }
@@ -197,7 +198,7 @@ export class WaitingRoom extends BaseScene {
       );
       event = await Promise.race([promise1, promise2]);
     } catch (error) {
-      console.error(error)
+      logger.error(error)
     }
     return event
   }
@@ -207,7 +208,7 @@ export class WaitingRoom extends BaseScene {
     if (!event.gameId) {
       throw new Error("event.gameId should not be zero value");
     }
-    console.debug("gameId", event.gameId);
+    logger.debug("gameId", event.gameId);
     this.newStateQueue.push(STATE_COUNTDOWN);
   }
 

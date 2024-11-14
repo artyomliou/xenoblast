@@ -1,3 +1,4 @@
+import logger from "../helper/logger";
 import { BaseScene } from "./base_scene";
 
 export class MainMenu extends BaseScene {
@@ -43,7 +44,7 @@ export class MainMenu extends BaseScene {
             inputText.value
           );
           promise.catch((err) => {
-            console.error(err);
+            logger.error(err);
             this.nameform.addListener("click");
             this.nameform.setVisible(true);
           });
@@ -66,7 +67,7 @@ export class MainMenu extends BaseScene {
     this.session.nickname = nickname;
     this.session.apiKey = resp.apiKey;
     this.session.playerId = resp.playerId;
-    console.debug(`playerId ${this.session.playerId}`);
+    logger.debug(`playerId ${this.session.playerId}`);
     this.scene.start("WaitingRoom");
   }
 }
