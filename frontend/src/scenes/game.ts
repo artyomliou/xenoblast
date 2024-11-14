@@ -10,6 +10,8 @@ import {
   TILE_SIZE,
   tileToPixel,
 } from "../helper/map";
+import Clock from "../helper/clock";
+import ClearCallbackManager from "../helper/clear_callback_manager";
 
 const STATE_UNKNOWN = 0;
 const STATE_COUNTDOWN = 7;
@@ -41,6 +43,8 @@ export class Game extends BaseScene {
   prevY: number | undefined;
   cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   spaceKey!: Phaser.Input.Keyboard.Key;
+  clock!: Clock;
+  clearCallbackManager!: ClearCallbackManager;
 
   constructor() {
     super({ key: "Game" });
@@ -107,12 +111,14 @@ export class Game extends BaseScene {
     this.bombTilesForDeduplicate = new Set();
     this.gettingPowerupTiles = new Set();
 
+    this.clearCallbackManager = new ClearCallbackManager();
+
     this.setupMap();
     this.setupPlayers();
     this.setupPhysics();
     this.setupControls();
     this.setupMoveEventSending();
-    this.setupClock(this.gameInfo.duration);
+    this.clock = this.setupClock(this.gameInfo.duration);
     this.setupPlayerInfo();
 
     this.newStateQueue.push(STATE_COUNTDOWN);
@@ -252,30 +258,24 @@ export class Game extends BaseScene {
     );
   }
 
-  setupClock(gameSeconds: number) {
-    const clockText = this.add.text(SIDEBAR_X, SIDEBAR_Y, "00:00", {
+  setupClock(gameDuration: number) {
+    const clock = new Clock(gameDuration);
+
+    const text = this.add.text(SIDEBAR_X, SIDEBAR_Y, "00:00", {
       fontSize: 20,
       fontStyle: "bold",
       color: "black"
     });
-    const secondsToString = () => {
-      const min = Math.floor(gameSeconds / 60).toString().padStart(2, '0');
-      const sec = (gameSeconds % 60).toString().padStart(2, '0');
-      return `${min}:${sec}`;
-    }
 
-    clockText.setText(secondsToString());
+    clock.registerOnTickCallback(() => {
+      clock.seconds--;
+      if (clock.seconds <= 0) {
+        clock.stopTick();
+      }
+      text.setText(clock.secondsToString());
+    });
 
-    let clear = setInterval(() => {
-      if (this.state !== STATE_PLAYING) {
-        return
-      }
-      gameSeconds--;
-      clockText.setText(secondsToString());
-      if (gameSeconds <= 0) {
-        clearInterval(clear);
-      }
-    }, 1000);
+    return clock;
   }
 
   setupPlayerInfo() {
@@ -384,6 +384,13 @@ export class Game extends BaseScene {
       return;
     }
     this.handlePlayingOnce = true;
+
+    this.clock.startTick();
+    this.clearCallbackManager.register(() => {
+      this.clock.stopTick();
+      console.debug("clear interval of clock");
+    });
+
     this.messageBox.registerListener((ev: common.Event) => {
       if (this.state == STATE_PLAYING) {
         console.log(`<- ${common.EventType[ev.type]}`)
@@ -686,21 +693,21 @@ export class Game extends BaseScene {
       case common.GameOverReason.Reason_WinConditionSatisfied:
         for (const player of this.gameInfo.players) {
           if (player.playerId == ev.gameOver.winnerPlayerId) {
-            this.scene.start("GameOver", { reason: `Winner is ${player.nickname}` });
+            this.startGameoverScene(`Winner is ${player.nickname}`);
             return;
           }
         }
         break;
 
       case common.GameOverReason.Reason_TimesUp:
-        this.scene.start("GameOver", { reason: 'Times up' });
+        this.startGameoverScene('Times up');
         return;
     }
-    this.scene.start("GameOver");
+    this.startGameoverScene("");
   }
 
   handleCrashEvent(ev: common.Event) {
-    this.scene.start("GameOver", { reason: `Game crash\nReason: ${ev.crash?.reason}` });
+    this.startGameoverScene(`Game crash\nReason: ${ev.crash?.reason}`);
   }
 
   update() {
@@ -797,5 +804,14 @@ export class Game extends BaseScene {
 
     this.prevX = curX;
     this.prevY = curY;
+  }
+
+  startGameoverScene(reason: string) {
+    this.scene.start("GameOver", { reason });
+    this.onLeave();
+  }
+
+  onLeave() {
+    this.clearCallbackManager.call();
   }
 }
