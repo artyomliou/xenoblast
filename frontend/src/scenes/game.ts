@@ -78,6 +78,43 @@ export class Game extends BaseScene {
     this.cameras.main.setBounds(0, 0, 800, 600);
     this.physics.world.setBounds(0, 0, 600, 520);
 
+    this.clearCallbackManager = new ClearCallbackManager();
+
+    this.state = STATE_UNKNOWN;
+    this.newStateQueue = [];
+    this.handlePlayingOnce = false;
+    this.player = new Player({});
+    this.obstaclesGroup = this.physics.add.staticGroup();
+    this.bushGroup = this.physics.add.group();
+    this.powerupGroup = this.physics.add.group();
+    this.bombGroup = this.physics.add.staticGroup();
+    this.bombTilesForDeduplicate = new Set();
+    this.gettingPowerupTiles = new Set();
+
+    this.setupAnimations();
+    this.setupMap();
+    this.setupPlayers();
+    this.setupPhysics();
+    this.setupControls();
+    this.setupMoveEventSending();
+    this.clock = this.setupClock(this.gameInfo.duration);
+    this.setupPlayerInfo();
+    this.clearCallbackManager.register(() => {
+      this.clean();
+    });
+
+    this.newStateQueue.push(STATE_COUNTDOWN);
+    const newStateQueueHandlerId = setInterval(
+      () => this.handleNewStateQueue(),
+      NEW_STATE_QUEUE_HANDLE_INTERVAL
+    );
+    this.clearCallbackManager.register(() => {
+      clearInterval(newStateQueueHandlerId);
+      console.debug("clear interval of newStateQueueHandlerId")
+    })
+  }
+
+  setupAnimations() {
     this.anims.create({
       key: "turn",
       frames: [{ key: "alien", frame: 0 }],
@@ -107,37 +144,6 @@ export class Game extends BaseScene {
       frameRate: 1,
       repeat: -1,
     });
-
-    this.state = STATE_UNKNOWN;
-    this.newStateQueue = [];
-    this.handlePlayingOnce = false;
-    this.player = new Player({});
-    this.obstaclesGroup = this.physics.add.staticGroup();
-    this.bushGroup = this.physics.add.group();
-    this.powerupGroup = this.physics.add.group();
-    this.bombGroup = this.physics.add.staticGroup();
-    this.bombTilesForDeduplicate = new Set();
-    this.gettingPowerupTiles = new Set();
-
-    this.clearCallbackManager = new ClearCallbackManager();
-
-    this.setupMap();
-    this.setupPlayers();
-    this.setupPhysics();
-    this.setupControls();
-    this.setupMoveEventSending();
-    this.clock = this.setupClock(this.gameInfo.duration);
-    this.setupPlayerInfo();
-
-    this.newStateQueue.push(STATE_COUNTDOWN);
-    const newStateQueueHandlerId = setInterval(
-      () => this.handleNewStateQueue(),
-      NEW_STATE_QUEUE_HANDLE_INTERVAL
-    );
-    this.clearCallbackManager.register(() => {
-      clearInterval(newStateQueueHandlerId);
-      console.debug("clear interval of newStateQueueHandlerId")
-    })
   }
 
   setupMap() {
@@ -324,6 +330,44 @@ export class Game extends BaseScene {
         console.debug("clear interval of playerInfoRendererId");
       })
     }
+  }
+
+  clean() {
+    this.anims.remove("turn");
+    this.anims.remove("left");
+    this.anims.remove("right");
+    this.anims.remove("up");
+    this.anims.remove("down");
+    console.debug("cleaned animations");
+
+    this.obstaclesGroup.destroy(true, true);
+    this.bushGroup.destroy(true, true);
+    this.powerupGroup.destroy(true, true);
+    this.bombGroup.destroy(true, true);
+    this.gameInfo.tiles = [];
+    console.debug("cleaned map");
+
+    this.bombTilesForDeduplicate.clear();
+    this.gettingPowerupTiles.clear();
+    console.debug("cleaned tile sets")
+
+    this.gameInfo.players.forEach(player => {
+      if (player.sprite !== undefined) {
+        player.sprite.destroy()
+        player.sprite = undefined;
+      }
+    })
+    this.gameInfo.players = [];
+    console.debug("cleaned players");
+
+    this.messageBox.clean();
+    console.debug("cleaned message box and its cached events");
+
+    this.wsClient.close()
+    console.debug("cleaned websocket connection");
+
+    this.session.clean();
+    console.debug("cleaned session");
   }
 
   handlePlayerGetPowerup(powerupSprite: Phaser.GameObjects.Sprite) {

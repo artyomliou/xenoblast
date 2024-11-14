@@ -79,13 +79,6 @@ export class Player extends common.PlayerPropertyDto {
       }
     }
   }
-
-  clean() {
-    if (this.sprite !== undefined) {
-      this.sprite.destroy()
-      this.sprite = undefined;
-    }
-  }
 }
 
 export class Tile {

@@ -39,43 +39,6 @@ export class GameOver extends BaseScene {
   }
 
   clean() {
-    for (let x = 0; x < this.gameInfo.mapWidth; x++) {
-      for (let y = 0; y < this.gameInfo.mapHeight; y++) {
-        const tile = this.gameInfo.tiles[x][y];
-        if (tile.obstacle != null) {
-          tile.obstacleType = null;
-          tile.obstacle.destroy();
-          tile.obstacle = null;
-        }
-        if (tile.decoration != null) {
-          tile.decorationType = null;
-          tile.decoration.destroy();
-          tile.decoration = null;
-        }
-        if (tile.powerup != null) {
-          tile.powerupType = null;
-          tile.powerup.destroy();
-          tile.powerup = null;
-        }
-      }
-    }
-    console.debug("cleaned map");
-
-    for (let i = 0; i < this.gameInfo.players.length; i++) {
-      this.gameInfo.players[i].clean();
-    }
-    this.gameInfo.players = [];
-    console.debug("cleaned players");
-
-    this.messageBox.clean();
-    console.debug("cleaned message box and its cached events");
-
-    this.wsClient.close()
-    console.debug("cleaned websocket connection");
-
-    this.session.clean();
-    console.debug("cleaned session");
-
     this.scene.remove("WaitingRoom");
     this.scene.add("WaitingRoom", WaitingRoom, false);
     console.debug("cleaned WaitingRoom scene");
