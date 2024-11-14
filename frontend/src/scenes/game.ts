@@ -29,22 +29,30 @@ const SIDEBAR_Y = 50; // px
 const SIDEBAR_Y_OFFSET = 100; // px
 
 export class Game extends BaseScene {
+  // Flow control
   state!: number;
   newStateQueue!: number[];
   handlePlayingOnce!: boolean;
-  player!: Player;
+  clearCallbackManager!: ClearCallbackManager;
+
+  // Phaser objects
   obstaclesGroup!: Phaser.Physics.Arcade.StaticGroup;
   bushGroup!: Phaser.Physics.Arcade.Group;
   powerupGroup!: Phaser.Physics.Arcade.Group;
   bombGroup!: Phaser.Physics.Arcade.StaticGroup;
+  cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  spaceKey!: Phaser.Input.Keyboard.Key;
+
+  // Game logic
+  player!: Player;
   bombTilesForDeduplicate!: Set<Tile>;
   gettingPowerupTiles!: Set<Tile>;
   prevX: number | undefined;
   prevY: number | undefined;
-  cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
-  spaceKey!: Phaser.Input.Keyboard.Key;
+
+  // UI
   clock!: Clock;
-  clearCallbackManager!: ClearCallbackManager;
+
 
   constructor() {
     super({ key: "Game" });
