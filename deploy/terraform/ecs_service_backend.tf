@@ -1,13 +1,9 @@
-locals {
-  create_task = !var.cost_saving_mode
-}
 
 resource "aws_ecs_service" "backend" {
   name            = "${var.project_name}-backend"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.backend.arn
-  desired_count   = local.create_task ? 1 : 0
-  launch_type     = "FARGATE"
+  desired_count   = var.cost_saving_mode ? 0 : 1
 
   network_configuration {
     subnets          = [for subnet in aws_subnet.public : subnet.id]
