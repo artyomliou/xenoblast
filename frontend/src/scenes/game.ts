@@ -122,10 +122,14 @@ export class Game extends BaseScene {
     this.setupPlayerInfo();
 
     this.newStateQueue.push(STATE_COUNTDOWN);
-    setInterval(
+    const newStateQueueHandlerId = setInterval(
       () => this.handleNewStateQueue(),
       NEW_STATE_QUEUE_HANDLE_INTERVAL
     );
+    this.clearCallbackManager.register(() => {
+      clearInterval(newStateQueueHandlerId);
+      console.debug("clear interval of newStateQueueHandlerId")
+    })
   }
 
   setupMap() {
@@ -252,10 +256,14 @@ export class Game extends BaseScene {
   setupMoveEventSending() {
     this.prevX = this.player.sprite?.x;
     this.prevY = this.player.sprite?.y;
-    setInterval(
+    const playerMoveHandlerId = setInterval(
       () => this.sendPlayerMoveEventIfMoved(),
       SEND_MOVE_EVENT_INTERVAL
     );
+    this.clearCallbackManager.register(() => {
+      clearInterval(playerMoveHandlerId);
+      console.debug("clear interval of playerMoveHandlerId")
+    })
   }
 
   setupClock(gameDuration: number) {
@@ -299,10 +307,14 @@ export class Game extends BaseScene {
         fontStyle: "bold",
         color: "black",
       });
-      setInterval(() => {
+      const playerInfoRendererId = setInterval(() => {
         playerFirepowerText.setText('💥 ' + player.firepower.toString());
         playerBombcountText.setText('💣 ' + player.bombcount.toString());
       }, 200);
+      this.clearCallbackManager.register(() => {
+        clearInterval(playerInfoRendererId);
+        console.debug("clear interval of playerInfoRendererId");
+      })
     }
   }
 
