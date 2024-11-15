@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const currentOnlyMap = "./map_loader/map_0.yaml"
+const currentOnlyMap = "./map_loader/map_0.txt"
 
 func basicArgumentHelper(mapInfo *maploader.MapInfo) (*state.StateManager, *eventbus.EventBus, *maploader.GameMap, map[int32]*gamelogic.Player) {
 	state := state.NewStateManager()
@@ -39,7 +39,7 @@ func TestGameSession(t *testing.T) {
 	}
 	defer logger.Sync()
 
-	mapLoader := maploader.NewYamlMapLoader()
+	mapLoader := maploader.NewTxtMapLoader()
 	fileContent, err := os.ReadFile(currentOnlyMap)
 	assert.NoError(t, err)
 	mapInfo, err := mapLoader.Load(context.Background(), fileContent)

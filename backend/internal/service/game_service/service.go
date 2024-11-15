@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-//go:embed map_loader/map_0.yaml
+//go:embed map_loader/map_0.txt
 var currentOnlyMapContent string
 
 type GameService struct {
@@ -25,7 +25,7 @@ type GameService struct {
 func NewGameService(logger *zap.Logger) *GameService {
 	return &GameService{
 		logger:    logger,
-		mapLoader: maploader.NewYamlMapLoader(),
+		mapLoader: maploader.NewTxtMapLoader(),
 		sessions:  map[int32]*gameSession{},
 	}
 }

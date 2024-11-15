@@ -10,33 +10,42 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestYamlParser(t *testing.T) {
+func TestParser(t *testing.T) {
 	t.Run("basic loading", func(t *testing.T) {
 		t.Parallel()
 
-		parser := maploader.NewYamlMapLoader()
+		parser := maploader.NewTxtMapLoader()
 		fileContent := []byte(`
-houses: [
-	[1, 2]
-]
+...............
+...............
+.H.............
+...............
+...............
+...............
+...............
+...............
+...............
+...............
+...............
+...............
+...............
 `)
 
 		mapInfo, err := parser.Load(context.Background(), fileContent)
 		assert.NoError(t, err)
 		assert.Len(t, mapInfo.Houses, 1)
-		assert.EqualValues(t, 1, mapInfo.Houses[0][0])
-		assert.EqualValues(t, 2, mapInfo.Houses[0][1])
+		assert.Equal(t, []int32{1, 2}, mapInfo.Houses[0])
 	})
 
 	t.Run("file loading", func(t *testing.T) {
 		t.Parallel()
 
-		fileContent, err := os.ReadFile("./map_0.yaml")
+		fileContent, err := os.ReadFile("./map_0.txt")
 		if err != nil {
 			t.Error(err)
 		}
 
-		parser := maploader.NewYamlMapLoader()
+		parser := maploader.NewTxtMapLoader()
 		mapInfo, err := parser.Load(context.Background(), fileContent)
 
 		assert.NoError(t, err)

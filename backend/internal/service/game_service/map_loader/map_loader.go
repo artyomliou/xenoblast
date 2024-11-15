@@ -2,24 +2,48 @@ package maploader
 
 import (
 	"context"
-
-	"gopkg.in/yaml.v3"
+	"fmt"
+	"log"
+	"strings"
 )
 
 type MapLoader interface {
 	Load(context.Context, []byte) (*MapInfo, error)
 }
 
-type yamlMapLoader struct{}
+type txtMapLoader struct{}
 
-func NewYamlMapLoader() *yamlMapLoader {
-	return &yamlMapLoader{}
+func NewTxtMapLoader() *txtMapLoader {
+	return &txtMapLoader{}
 }
 
-func (loader *yamlMapLoader) Load(ctx context.Context, fileContent []byte) (*MapInfo, error) {
+func (loader *txtMapLoader) Load(ctx context.Context, fileContent []byte) (*MapInfo, error) {
+	txtContent := string(fileContent)
+	txtContent = strings.ReplaceAll(txtContent, "\n", "")
+	log.Printf("%+v", txtContent)
+
+	expectedLength := MapWidth * MapHeight
+	if len(txtContent) != expectedLength {
+		return nil, fmt.Errorf("unexpected txt map length: %d", len(txtContent))
+	}
+
 	mapInfo := &MapInfo{}
-	if err := yaml.Unmarshal(fileContent, mapInfo); err != nil {
-		return nil, err
+	for x := 0; x < MapWidth; x++ {
+		for y := 0; y < MapHeight; y++ {
+			pos := y*MapWidth + x
+			switch txtContent[pos] {
+			case 'H':
+				mapInfo.Houses = append(mapInfo.Houses, []int32{int32(x), int32(y)})
+			case 'T':
+				mapInfo.Trees = append(mapInfo.Trees, []int32{int32(x), int32(y)})
+			case 'B':
+				mapInfo.Boxes = append(mapInfo.Boxes, []int32{int32(x), int32(y)})
+			case 'O':
+				mapInfo.Bushes = append(mapInfo.Bushes, []int32{int32(x), int32(y)})
+			case 'P':
+				mapInfo.PredefinedPlayerCoords = append(mapInfo.PredefinedPlayerCoords, []int32{int32(x), int32(y)})
+			}
+		}
 	}
 
 	return mapInfo, nil
