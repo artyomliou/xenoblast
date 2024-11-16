@@ -111,7 +111,11 @@ func (service *MatchmakingService) matchmaking() error {
 		if len(records) == 0 {
 			return fmt.Errorf("couldnt find any SRV record using %s", srvName)
 		}
-		gameServerHost = records[0].Target
+		gameServerIp, err := net.ResolveIPAddr("ip", records[0].Target)
+		if err != nil {
+			return err
+		}
+		gameServerHost = gameServerIp.String()
 		gameServerPort = int(records[0].Port)
 	} else {
 		hostname := service.cfg.GameService.Host
