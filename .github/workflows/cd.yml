@@ -105,7 +105,7 @@ jobs:
       - id: fill-image-api-gateway
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-arn: ${{ secrets.TASK_DEFINIFTION_ARN }}
+          task-definition-arn: ${{ secrets.BACKEND_TASKDEF_ARN }}
           container-name: api_gateway
           image: ${{ needs.build.outputs.api_gateway_image }}
 
