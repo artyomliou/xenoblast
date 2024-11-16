@@ -31,8 +31,9 @@ matchmaking_repository:
     port: 6379
 
 game_service:
-  host: game_service
-  port: 50054
+  resolve_srv: true
+  host: game_service.xenoblast
+  listen_port: 50054
 
 collector:
   enable_metric_provider: true

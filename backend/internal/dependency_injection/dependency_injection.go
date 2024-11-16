@@ -131,7 +131,7 @@ func NewMatchmakingServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logge
 }
 
 func NewGameServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, service *game_service.GameService, authServiceClient auth.AuthServiceClient) (*game_service.GameServiceServer, error) {
-	addr := fmt.Sprintf(":%d", cfg.GameService.Port)
+	addr := fmt.Sprintf(":%d", cfg.GameService.ListenPort)
 	grpcServer := grpc.NewServer()
 	server := game_service.NewGameServiceServer(cfg, logger, service, authServiceClient)
 	game.RegisterGameServiceServer(grpcServer, server)

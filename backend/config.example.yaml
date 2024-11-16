@@ -31,8 +31,9 @@ matchmaking_repository:
     port: 6379
 
 game_service:
+  resolve_srv: false
   host: game_service
-  port: 50051
+  listen_port: 50051
 
 collector:
   enable_metric_provider: true

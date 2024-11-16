@@ -87,7 +87,7 @@ services:
       - 50051
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1 # This value can be increased to simulate scaling out.
       endpoint_mode: dnsrr
     depends_on:
       - collector

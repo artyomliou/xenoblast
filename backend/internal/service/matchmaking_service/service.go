@@ -98,13 +98,34 @@ func (service *MatchmakingService) matchmaking() error {
 	if err != nil {
 		return err
 	}
-	gameServerIp, err := net.ResolveIPAddr("ip", service.cfg.GameService.Host)
-	if err != nil {
-		return err
+
+	// Find available game service instance
+	var gameServerHost string
+	var gameServerPort int
+	if service.cfg.GameService.ResolveSrv {
+		srvName := service.cfg.GameService.Host
+		_, records, err := net.LookupSRV("", "", srvName)
+		if err != nil {
+			return err
+		}
+		if len(records) == 0 {
+			return fmt.Errorf("couldnt find any SRV record using %s", srvName)
+		}
+		gameServerHost = records[0].Target
+		gameServerPort = int(records[0].Port)
+	} else {
+		hostname := service.cfg.GameService.Host
+		gameServerIp, err := net.ResolveIPAddr("ip", hostname)
+		if err != nil {
+			return err
+		}
+		gameServerHost = gameServerIp.String()
+		gameServerPort = service.cfg.GameService.ListenPort
 	}
+
 	associateGame := &matchmaking_repository.AssociatedGame{
 		Id:         gameId,
-		ServerAddr: fmt.Sprintf("%s:%d", gameServerIp.String(), service.cfg.GameService.Port),
+		ServerAddr: fmt.Sprintf("%s:%d", gameServerHost, gameServerPort),
 	}
 	for _, playerId := range playerIds {
 		err := service.repo.SetAssociatedGameByPlayerId(service.ctx, associateGame, playerId)
