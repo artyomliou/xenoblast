@@ -12,13 +12,16 @@ on:
     secrets:
       AWS_ROLE_ARN:
         required: true
-      TASK_DEFINIFTION_ARN:
+      BACKEND_TASKDEF_ARN:
+        required: true
+      GAME_TASKDEF_ARN:
         required: true
 
 env:
   AWS_REGION: ap-east-1
   ECS_CLUSTER_NAME: xenoblast
-  ECS_SERVICE_NAME: xenoblast-backend
+  ECS_BACKEND_SERVICE_NAME: xenoblast-backend
+  ECS_GAME_SERVICE_NAME: xenoblast-game_service
 
 jobs:
   test:
@@ -86,7 +89,7 @@ jobs:
       api_gateway_image: ${{ steps.build-tag-push.outputs.api_gateway_image }}
       backend_image: ${{ steps.build-tag-push.outputs.backend_image }}
 
-  deploy:
+  deploy_backend:
     needs: build
 
     runs-on: ubuntu-latest
@@ -134,19 +137,36 @@ jobs:
           container-name: matchmaking_service
           image: ${{ needs.build.outputs.backend_image }}
 
-      - id: fill-image-game
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ steps.fill-image-matchmaking.outputs.task-definition }}
-          container-name: game_service
-          image: ${{ needs.build.outputs.backend_image }}
-
       # https://github.com/aws-actions/amazon-ecs-deploy-task-definition
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ steps.fill-image-game.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE_NAME }}
+          task-definition: ${{ steps.fill-image-matchmaking.outputs.task-definition }}
+          service: ${{ env.ECS_BACKEND_SERVICE_NAME }}
           cluster: ${{ env.ECS_CLUSTER_NAME }}
-          wait-for-service-stability: true
-          wait-for-minutes: 5
+
+  deploy_game:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - id: fill-image-game
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-arn: ${{ secrets.GAME_TASKDEF_ARN }}
+          container-name: game_service
+          image: ${{ needs.build.outputs.backend_image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.fill-image-game.outputs.task-definition }}
+          service: ${{ env.ECS_GAME_SERVICE_NAME }}
+          cluster: ${{ env.ECS_CLUSTER_NAME }}
