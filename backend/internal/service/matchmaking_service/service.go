@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
@@ -111,11 +112,7 @@ func (service *MatchmakingService) matchmaking() error {
 		if len(records) == 0 {
 			return fmt.Errorf("couldnt find any SRV record using %s", srvName)
 		}
-		gameServerIp, err := net.ResolveIPAddr("ip", records[0].Target)
-		if err != nil {
-			return err
-		}
-		gameServerHost = gameServerIp.String()
+		gameServerHost = strings.TrimSuffix(records[0].Target, ".")
 		gameServerPort = int(records[0].Port)
 	} else {
 		hostname := service.cfg.GameService.Host
