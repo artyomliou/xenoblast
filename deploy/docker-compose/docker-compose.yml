@@ -7,8 +7,10 @@ services:
       dockerfile: dockerfile
     volumes:
       - ../../api-gateway/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ../../api-gateway/ssl:/etc/nginx/ssl
     ports:
       - 80:80
+      - 443:443
     depends_on:
       - frontend_dev
       - http_service

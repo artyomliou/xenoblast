@@ -8,5 +8,9 @@ FROM nginx:latest
 ARG ASSET_PATH=/usr/share/nginx/html
 COPY --from=asset ${ASSET_PATH} /etc/nginx/html
 
+# This folder can be overridden with docker-compose volume for both development and production
+RUN mkdir /etc/nginx/ssl
+VOLUME /etc/nginx/ssl
+
 # This file can be overridden with docker-compose volume for development
 COPY nginx.ecs.conf /etc/nginx/nginx.conf

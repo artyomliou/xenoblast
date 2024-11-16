@@ -6,21 +6,22 @@ A bomberman-like game made of Phaser.js and go.
 
 ## Development
 
-### Setup
-
-```
-cd backend && make setup
-cd deploy/docker-compose && docker compose build
-cd frontend && npm run proto-js && npm run proto-ts
-```
-
 ### Run
 
 ```
+cd api-gateway && ./setup.sh
 cd deploy/docker-compose && cp .env.example .env && docker compose up -d
 ```
 
 Then check http://localhost
+Or check https using `curl --insecure htts://localhost`
+
+### Update protobuf files
+
+```
+cd backend && make proto
+cd frontend && npm run proto-js && npm run proto-ts
+```
 
 ## Staging / Production
 
