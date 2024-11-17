@@ -7,7 +7,7 @@ type Service struct {
 
 type GameService struct {
 	// If enabled, `Host` should be a valid SRV record in Route 53. This is for ECS & CloudMap deployment.
-	ResolveSrv bool `yaml:"resolve_srv" env-required:"true"`
+	ResolveSrv bool `yaml:"resolve_srv"`
 
 	// In docker-compose environment, this can be used to resolve multiple A record (which is container IP).
 	// In ECS environment, this should be used to resolve SRV record for actual IP and port of a specific task.
