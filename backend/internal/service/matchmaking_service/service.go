@@ -100,8 +100,8 @@ func (service *MatchmakingService) matchmaking() error {
 	}
 
 	// Find available game service instance
-	var gameServerHost string
-	var gameServerPort int
+	var gameServiceHost string
+	var gameServicePort int
 	if service.cfg.GameService.ResolveSrv {
 		srvName := service.cfg.GameService.Host
 		_, records, err := net.LookupSRV("", "", srvName)
@@ -115,21 +115,21 @@ func (service *MatchmakingService) matchmaking() error {
 		if err != nil {
 			return err
 		}
-		gameServerHost = "ipv4:" + gameServerIp.String() // workaround: grpc dns resolving
-		gameServerPort = int(records[0].Port)
+		gameServiceHost = gameServerIp.String()
+		gameServicePort = int(records[0].Port)
 	} else {
 		hostname := service.cfg.GameService.Host
 		gameServerIp, err := net.ResolveIPAddr("ip", hostname)
 		if err != nil {
 			return err
 		}
-		gameServerHost = gameServerIp.String()
-		gameServerPort = service.cfg.GameService.ListenPort
+		gameServiceHost = gameServerIp.String()
+		gameServicePort = service.cfg.GameService.ListenPort
 	}
 
 	associateGame := &matchmaking_repository.AssociatedGame{
 		Id:         gameId,
-		ServerAddr: fmt.Sprintf("%s:%d", gameServerHost, gameServerPort),
+		ServerAddr: fmt.Sprintf("%s:%d", gameServiceHost, gameServicePort),
 	}
 	for _, playerId := range playerIds {
 		err := service.repo.SetAssociatedGameByPlayerId(service.ctx, associateGame, playerId)
