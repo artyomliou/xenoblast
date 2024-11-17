@@ -130,25 +130,11 @@ jobs:
           container-name: websocket_service
           image: ${{ needs.build.outputs.backend_image }}
 
-      - id: fill-image-auth
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ steps.fill-image-websocket.outputs.task-definition }}
-          container-name: auth_service
-          image: ${{ needs.build.outputs.backend_image }}
-
-      - id: fill-image-matchmaking
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ steps.fill-image-auth.outputs.task-definition }}
-          container-name: matchmaking_service
-          image: ${{ needs.build.outputs.backend_image }}
-
       # https://github.com/aws-actions/amazon-ecs-deploy-task-definition
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ steps.fill-image-matchmaking.outputs.task-definition }}
+          task-definition: ${{ steps.fill-image-websocket.outputs.task-definition }}
           service: ${{ env.ECS_BACKEND_SERVICE_NAME }}
           cluster: ${{ env.ECS_CLUSTER_NAME }}
 
