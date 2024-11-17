@@ -2,6 +2,9 @@ package grpc_connection
 
 import (
 	"google.golang.org/grpc"
+
+	// By import this library, it will enable SRV resolving
+	_ "google.golang.org/grpc/balancer/grpclb"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
