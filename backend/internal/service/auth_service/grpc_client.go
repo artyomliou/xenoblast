@@ -12,7 +12,7 @@ import (
 
 func NewAuthServiceClient(lc fx.Lifecycle, cfg *config.Config) (auth.AuthServiceClient, error) {
 	addr := fmt.Sprintf("%s:%d", cfg.AuthService.Host, cfg.AuthService.Port)
-	conn, err := grpc_connection.NewGrpcConnection("dns:///" + addr)
+	conn, err := grpc_connection.NewGrpcConnection(addr)
 	if err != nil {
 		return nil, err
 	}

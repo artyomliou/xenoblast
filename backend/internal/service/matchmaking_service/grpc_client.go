@@ -13,7 +13,7 @@ import (
 
 func NewMatchmakingServiceClient(lc fx.Lifecycle, cfg *config.Config) (matchmaking.MatchmakingServiceClient, error) {
 	addr := fmt.Sprintf("%s:%d", cfg.MatchmakingService.Host, cfg.MatchmakingService.Port)
-	conn, err := grpc_connection.NewGrpcConnection("dns:///" + addr)
+	conn, err := grpc_connection.NewGrpcConnection(addr)
 	if err != nil {
 		return nil, err
 	}
