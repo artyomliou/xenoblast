@@ -15,6 +15,10 @@ on:
         required: true
       BACKEND_TASKDEF_ARN:
         required: true
+      AUTH_TASKDEF_ARN:
+        required: true
+      MATCHMAKING_TASKDEF_ARN:
+        required: true
       GAME_TASKDEF_ARN:
         required: true
 
@@ -22,6 +26,8 @@ env:
   AWS_REGION: ap-east-1
   ECS_CLUSTER_NAME: xenoblast
   ECS_BACKEND_SERVICE_NAME: xenoblast-backend
+  ECS_AUTH_SERVICE_NAME: xenoblast-auth_service
+  ECS_MATCHMAKING_SERVICE_NAME: xenoblast-matchmaking_service
   ECS_GAME_SERVICE_NAME: xenoblast-game_service
 
 jobs:
@@ -146,6 +152,58 @@ jobs:
           service: ${{ env.ECS_BACKEND_SERVICE_NAME }}
           cluster: ${{ env.ECS_CLUSTER_NAME }}
 
+  deploy_auth:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - id: fill-image-url
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-arn: ${{ secrets.AUTH_TASKDEF_ARN }}
+          container-name: auth_service
+          image: ${{ needs.build.outputs.backend_image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.fill-image-url.outputs.task-definition }}
+          service: ${{ env.ECS_AUTH_SERVICE_NAME }}
+          cluster: ${{ env.ECS_CLUSTER_NAME }}
+
+  deploy_matchmaking:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - id: fill-image-url
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-arn: ${{ secrets.MATCHMAKING_TASKDEF_ARN }}
+          container-name: matchmaking_service
+          image: ${{ needs.build.outputs.backend_image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.fill-image-url.outputs.task-definition }}
+          service: ${{ env.ECS_MATCHMAKING_SERVICE_NAME }}
+          cluster: ${{ env.ECS_CLUSTER_NAME }}
+
   deploy_game:
     needs: build
 
@@ -158,7 +216,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - id: fill-image-game
+      - id: fill-image-url
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition-arn: ${{ secrets.GAME_TASKDEF_ARN }}
@@ -168,6 +226,6 @@ jobs:
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ steps.fill-image-game.outputs.task-definition }}
+          task-definition: ${{ steps.fill-image-url.outputs.task-definition }}
           service: ${{ env.ECS_GAME_SERVICE_NAME }}
           cluster: ${{ env.ECS_CLUSTER_NAME }}
