@@ -8,10 +8,11 @@ import (
 )
 
 func NewGrpcConnection(addr string) (*grpc.ClientConn, error) {
-	opts := []grpc.DialOption{
+	return grpc.NewClient(
+		addr,
+		grpc.WithDisableServiceConfig(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}
-	return grpc.NewClient(addr, opts...)
+	)
 }
 
 func NewGrpcConnectionWithSpecificAddr(addr string) (*grpc.ClientConn, error) {
@@ -26,6 +27,7 @@ func NewGrpcConnectionWithSpecificAddr(addr string) (*grpc.ClientConn, error) {
 	return grpc.NewClient(
 		mr.Scheme()+":///",
 		grpc.WithResolvers(mr),
+		grpc.WithDisableServiceConfig(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 }
