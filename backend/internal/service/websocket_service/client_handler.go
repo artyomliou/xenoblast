@@ -77,7 +77,10 @@ func (h *ClientHandler) Run(ctx context.Context) {
 			h.logger.Debug("websocket handler receive termination signal")
 			return
 
-		case ev := <-h.clientEventCh:
+		case ev, ok := <-h.clientEventCh:
+			if !ok {
+				return
+			}
 			h.logger.Debug("client event", zap.String("type", ev.Type.String()))
 			h.metrics.MessageReceived.Add(ctx, 1)
 
@@ -85,12 +88,18 @@ func (h *ClientHandler) Run(ctx context.Context) {
 			h.HandleWebsocketClientEvent(ctx, ev)
 			h.metrics.MessageDurationMillisecond.Record(ctx, time.Since(messageStartTime).Milliseconds())
 
-		case ev := <-h.matchmakingEventCh:
+		case ev, ok := <-h.matchmakingEventCh:
+			if !ok {
+				break
+			}
 			h.logger.Debug("matchmaking event", zap.String("type", ev.Type.String()))
 			h.metrics.ServerEventReceived.Add(ctx, 1)
 			h.HandleMatchmakingServiceEvent(ctx, ev)
 
-		case ev := <-h.gameServiceEventCh:
+		case ev, ok := <-h.gameServiceEventCh:
+			if !ok {
+				break
+			}
 			h.logger.Debug("game event", zap.String("type", ev.Type.String()))
 			h.metrics.ServerEventReceived.Add(ctx, 1)
 			h.HandleGameServiceEvent(ctx, ev)
