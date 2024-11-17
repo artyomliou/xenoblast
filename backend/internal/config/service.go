@@ -5,7 +5,7 @@ type Service struct {
 	Port int    `yaml:"port" env-required:"true"`
 }
 
-type GameService struct {
+type CloudmapService struct {
 	// If enabled, `Host` should be a valid SRV record in Route 53. This is for ECS & CloudMap deployment.
 	ResolveSrv bool `yaml:"resolve_srv"`
 
@@ -15,5 +15,5 @@ type GameService struct {
 
 	// GameService will listen on this port.
 	// In ECS environment, this is not the port that other service can use it to communicate with game service.
-	ListenPort int `yaml:"listen_port" env-required:"true"`
+	Port int `yaml:"port" env-required:"true"`
 }

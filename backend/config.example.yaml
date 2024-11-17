@@ -11,6 +11,7 @@ websocket_service:
   port: 8080
 
 auth_service:
+  resolve_srv: false
   host: auth_service
   port: 50051
 
@@ -21,6 +22,7 @@ auth_repository:
     port: 6379
 
 matchmaking_service:
+  resolve_srv: false
   host: matchmaking_service
   port: 50051
 
@@ -33,7 +35,7 @@ matchmaking_repository:
 game_service:
   resolve_srv: false
   host: game_service
-  listen_port: 50051
+  port: 50051
 
 collector:
   enable_metric_provider: true

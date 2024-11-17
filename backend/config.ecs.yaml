@@ -11,6 +11,7 @@ websocket_service:
   port: 8082
 
 auth_service:
+  resolve_srv: true
   host: auth_service.xenoblast
   port: 50052
 
@@ -21,6 +22,7 @@ auth_repository:
     port: 6379
 
 matchmaking_service:
+  resolve_srv: true
   host: matchmaking_service.xenoblast
   port: 50053
 
@@ -33,7 +35,7 @@ matchmaking_repository:
 game_service:
   resolve_srv: true
   host: game_service.xenoblast
-  listen_port: 50054
+  port: 50054
 
 collector:
   enable_metric_provider: true

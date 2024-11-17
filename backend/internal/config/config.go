@@ -10,13 +10,13 @@ type Config struct {
 	Environment           `yaml:"environment" env-required:"true"`
 	GracefulShutdown      bool `yaml:"graceful_shutdown" env-required:"true"`
 	LoggerOutput          `yaml:"logger_output" env-required:"true"`
-	HttpService           Service     `yaml:"http_service" env-required:"true"`
-	WebsocketService      Service     `yaml:"websocket_service" env-required:"true"`
-	AuthService           Service     `yaml:"auth_service" env-required:"true"`
-	AuthRepository        Repository  `yaml:"auth_repository" env-required:"true"`
-	MatchmakingService    Service     `yaml:"matchmaking_service" env-required:"true"`
-	MatchmakingRepository Repository  `yaml:"matchmaking_repository" env-required:"true"`
-	GameService           GameService `yaml:"game_service" env-required:"true"`
+	HttpService           Service         `yaml:"http_service" env-required:"true"`
+	WebsocketService      Service         `yaml:"websocket_service" env-required:"true"`
+	AuthService           CloudmapService `yaml:"auth_service" env-required:"true"`
+	AuthRepository        Repository      `yaml:"auth_repository" env-required:"true"`
+	MatchmakingService    CloudmapService `yaml:"matchmaking_service" env-required:"true"`
+	MatchmakingRepository Repository      `yaml:"matchmaking_repository" env-required:"true"`
+	GameService           CloudmapService `yaml:"game_service" env-required:"true"`
 	Collector             `yaml:"collector" env-required:"true"`
 }
 
@@ -33,24 +33,26 @@ func GetDefault() *Config {
 			Host: "websocket_service",
 			Port: 8080,
 		},
-		AuthService: Service{
-			Host: "auth_service",
-			Port: 50051,
+		AuthService: CloudmapService{
+			ResolveSrv: false,
+			Host:       "auth_service",
+			Port:       50051,
 		},
 		AuthRepository: Repository{
 			Driver: InmemoryRepositoryDriver,
 		},
-		MatchmakingService: Service{
-			Host: "matchmaking_service",
-			Port: 50051,
+		MatchmakingService: CloudmapService{
+			ResolveSrv: false,
+			Host:       "matchmaking_service",
+			Port:       50051,
 		},
 		MatchmakingRepository: Repository{
 			Driver: InmemoryRepositoryDriver,
 		},
-		GameService: GameService{
+		GameService: CloudmapService{
 			ResolveSrv: false,
 			Host:       "game_service",
-			ListenPort: 50051,
+			Port:       50051,
 		},
 		Collector: Collector{
 			EnableMetricProvider: false,

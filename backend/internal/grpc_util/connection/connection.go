@@ -1,11 +1,11 @@
-package grpc_connection
+package connection
 
 import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewGrpcConnection(addr string) (*grpc.ClientConn, error) {
+func NewConnection(addr string) (*grpc.ClientConn, error) {
 	return grpc.NewClient(
 		addr,
 		grpc.WithDisableServiceConfig(),
