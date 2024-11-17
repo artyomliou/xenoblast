@@ -16,7 +16,7 @@ func NewGameServiceClientFactory() GameServiceClientFactory {
 type gameServiceClientFactory struct{}
 
 func (factory *gameServiceClientFactory) NewClient(addr string) (game.GameServiceClient, func() error, error) {
-	conn, err := grpc_connection.NewGrpcConnectionWithSpecificAddr(addr)
+	conn, err := grpc_connection.NewGrpcConnection(addr)
 	if err != nil {
 		return nil, nil, err
 	}
