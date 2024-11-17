@@ -63,6 +63,8 @@ func (server *MatchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 		if data == nil {
 			return
 		}
+
+		// The SubscribeMatch() finishes after receiving first NewMatch event
 		defer cancel()
 
 		// The NewGame request should be sent to specific IP.
