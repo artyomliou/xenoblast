@@ -62,7 +62,8 @@ resource "aws_iam_role_policy" "github_actions_update_ecs" {
         ]
 
         Resource = [
-          one(aws_ecs_service.backend[*].id)
+          one(aws_ecs_service.backend[*].id),
+          one(aws_ecs_service.game_service[*].id)
         ]
       },
     ]

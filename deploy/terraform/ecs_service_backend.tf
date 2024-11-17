@@ -29,11 +29,6 @@ resource "aws_ecs_service" "backend" {
   }
 }
 
-locals {
-  api_gateway_image = data.aws_ecr_image.images["api-gateway"].image_uri
-  backend_image     = data.aws_ecr_image.images["backend"].image_uri
-}
-
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html
 resource "aws_ecs_task_definition" "backend" {
   family             = "backend"
