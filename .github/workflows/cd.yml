@@ -6,6 +6,7 @@ permissions:
 on:
   push:
     branches:
+      - bugfix/ecs_game_service_client
       - testing
       - production
   workflow_call:
