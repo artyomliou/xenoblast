@@ -7,6 +7,7 @@ import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/matchmaking"
 	"artyomliou/xenoblast-backend/internal/service/game_service"
 	"context"
+	"errors"
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
@@ -53,50 +54,42 @@ func (server *MatchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 	server.logger.Debug("SubscribeMatch()", zap.Int32("player", req.PlayerId))
 	defer server.logger.Debug("SubscribeMatch() exit", zap.Int32("player", req.PlayerId))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	errCh := make(chan error)
 
 	server.service.eventBus.Subscribe(pkg_proto.EventType_NewMatch, func(event *pkg_proto.Event) {
-		if ctx.Err() == context.Canceled {
-			return
-		}
 		data := event.GetNewMatch()
 		if data == nil {
+			errCh <- errors.New("unexpected nil when calling event.GetNewMatch()")
 			return
 		}
 
-		// The SubscribeMatch() finishes after receiving first NewMatch event
-		defer cancel()
+		// workaround: filter out irrelevant event
+		related := false
+		for _, playerId := range data.Players {
+			if playerId == req.PlayerId {
+				related = true
+				break
+			}
+		}
+		if !related {
+			return // wait for next event
+		}
 
-		// The NewGame request should be sent to specific IP.
 		if err := server.sendNewGameRequest(event); err != nil {
-			server.logger.Error(err.Error())
+			errCh <- err
 			return
 		}
-		server.HandleNewMatchEvent(event, req, stream)
+
+		if err := stream.Send(event); err != nil {
+			errCh <- err
+			return
+		}
+		server.logger.Sugar().Infof("NewMatch event being sent to player %d", req.PlayerId)
+
+		errCh <- nil
 	})
 
-	<-ctx.Done()
-	return nil
-}
-
-func (server *MatchmakingServiceServer) HandleNewMatchEvent(ev *pkg_proto.Event, req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) {
-	data := ev.GetNewMatch()
-	if data == nil {
-		server.logger.Error("unexpected nil from GetNewMatch()")
-		return
-	}
-
-	// workaround: ensure this event is related to requestor
-	for _, playerId := range data.Players {
-		if playerId == req.PlayerId {
-			if err := stream.Send(ev); err != nil {
-				server.logger.Error(err.Error())
-				return
-			}
-			server.logger.Sugar().Infof("NewMatch event being sent to player %d", playerId)
-			return
-		}
-	}
+	return <-errCh
 }
 
 func (server *MatchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) error {
