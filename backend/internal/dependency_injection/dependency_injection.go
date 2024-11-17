@@ -70,8 +70,15 @@ var Module = fx.Options(
 		telemetry.NewWebsocketMetrics,
 		telemetry.NewPropagator,
 	),
-	fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
-		return &fxevent.ZapLogger{Logger: log}
+	fx.WithLogger(func(cfg *config.Config, log *zap.Logger) fxevent.Logger {
+		switch cfg.Environment {
+		case config.ProdEnvironment:
+			return fxevent.NopLogger
+		case config.TestingEnvironment:
+			return fxevent.NopLogger
+		default:
+			return &fxevent.ZapLogger{Logger: log}
+		}
 	}),
 )
 
