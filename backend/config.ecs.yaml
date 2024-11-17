@@ -11,7 +11,7 @@ websocket_service:
   port: 8082
 
 auth_service:
-  host: auth_service
+  host: auth_service.xenoblast
   port: 50052
 
 auth_repository:
@@ -21,7 +21,7 @@ auth_repository:
     port: 6379
 
 matchmaking_service:
-  host: matchmaking_service
+  host: matchmaking_service.xenoblast
   port: 50053
 
 matchmaking_repository:
