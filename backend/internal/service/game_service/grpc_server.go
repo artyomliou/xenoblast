@@ -33,6 +33,7 @@ func NewGameServiceServer(cfg *config.Config, logger *zap.Logger, service *GameS
 }
 
 func (server *GameServiceServer) NewGame(ctx context.Context, req *game.NewGameRequest) (*empty.Empty, error) {
+	server.logger.Sugar().Debugf("NewGame %d %q", req.GameId, req.Players)
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -59,6 +60,7 @@ func (server *GameServiceServer) NewGame(ctx context.Context, req *game.NewGameR
 }
 
 func (server *GameServiceServer) GetGameInfo(ctx context.Context, req *game.GetGameInfoRequest) (*game.GetGameInfoResponse, error) {
+	server.logger.Sugar().Debugf("GetGameInfo %d", req.GameId)
 	return server.service.GetGameInfo(ctx, req.GameId)
 }
 
@@ -71,8 +73,8 @@ func (server *GameServiceServer) PlayerPublish(ctx context.Context, ev *pkg_prot
 }
 
 func (server *GameServiceServer) Subscribe(req *game.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
-	server.logger.Debug("Subscribe()", zap.Int32("game", req.GameId))
-	defer server.logger.Debug("Subscribe() exit", zap.Int32("game", req.GameId))
+	server.logger.Sugar().Debugf("Subscribe %d", req.GameId)
+	defer server.logger.Sugar().Debugf("Subscribe %d exit", req.GameId)
 
 	eventCh := make(chan *pkg_proto.Event, 30)
 	for _, eventType := range req.Types {

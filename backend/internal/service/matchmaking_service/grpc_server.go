@@ -37,22 +37,25 @@ func NewMatchmakingServiceServer(cfg *config.Config, logger *zap.Logger, service
 }
 
 func (server *MatchmakingServiceServer) Enroll(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
+	server.logger.Sugar().Debugf("Enroll %d", req.PlayerId)
 	return nil, server.service.Enroll(ctx, req.PlayerId)
 }
 
 func (server *MatchmakingServiceServer) Cancel(ctx context.Context, req *matchmaking.MatchmakingRequest) (*empty.Empty, error) {
+	server.logger.Sugar().Debugf("Cancel %d", req.PlayerId)
 	return nil, server.service.Cancel(ctx, req.PlayerId)
 }
 
 func (server *MatchmakingServiceServer) GetWaitingPlayerCount(ctx context.Context, req *empty.Empty) (*matchmaking.GetWaitingPlayerCountResponse, error) {
+	server.logger.Sugar().Debugf("GetWaitingPlayerCount")
 	return &matchmaking.GetWaitingPlayerCountResponse{
 		Count: int32(server.service.waitingPlayerCount),
 	}, nil
 }
 
 func (server *MatchmakingServiceServer) SubscribeMatch(req *matchmaking.MatchmakingRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
-	server.logger.Debug("SubscribeMatch()", zap.Int32("player", req.PlayerId))
-	defer server.logger.Debug("SubscribeMatch() exit", zap.Int32("player", req.PlayerId))
+	server.logger.Sugar().Debugf("SubscribeMatch %d", req.PlayerId)
+	defer server.logger.Sugar().Debugf("SubscribeMatch() %d exit", req.PlayerId)
 
 	errCh := make(chan error)
 
