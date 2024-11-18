@@ -6,18 +6,16 @@ variable "aws_region" {
   type = string
 }
 
-variable "https_domain" {
+variable "ssh_key_name" {
   type = string
 }
 
-variable "cost_saving_mode" {
-  type = bool
+variable "ssh_ip" {
+  type = string
 }
 
-variable "game_duration_seconds" {
-  type        = number
-  default     = 180
-  description = "ensure websocket will not be closed within GameDuration by ELB"
+variable "https_domain" {
+  type = string
 }
 
 variable "route_53_zone_name" {
@@ -25,3 +23,11 @@ variable "route_53_zone_name" {
   default = "example.com."
 }
 
+variable "ec2_https_certs_path" {
+  type    = string
+  default = "/etc/letsencrypt/live/example.com"
+}
+
+variable "cost_saving_mode" {
+  type = bool
+}
