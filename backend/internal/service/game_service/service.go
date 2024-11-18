@@ -7,6 +7,7 @@ import (
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
 	"artyomliou/xenoblast-backend/internal/service/game_service/state"
 	"context"
+	"time"
 
 	_ "embed"
 
@@ -63,10 +64,22 @@ func (service *GameService) MakeGameRun(ctx context.Context, gameId int32) error
 		return &InvalidGameIdError{GameId: gameId}
 	}
 
-	sess.eventBus.Subscribe(pkg_proto.EventType_SessionRun, func(event *pkg_proto.Event) {
+	triggered := make(chan bool)
+	stop := sess.eventBus.Subscribe(pkg_proto.EventType_SessionRun, func(event *pkg_proto.Event) {
 		sess.TriggerPreparing()
+		triggered <- true
 	})
+	defer stop()
+
 	go sess.Run(ctx)
+
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-triggered:
+	}
 
 	return nil
 }
@@ -119,11 +132,10 @@ func (service *GameService) PlayerPublish(ctx context.Context, gameId int32, ev 
 	return nil
 }
 
-func (service *GameService) Subscribe(ctx context.Context, gameId int32, eventType pkg_proto.EventType, listener eventbus.EventListener) error {
+func (service *GameService) Subscribe(gameId int32, eventType pkg_proto.EventType, listener eventbus.SubscriptionCallback) (eventbus.CancelSubscription, error) {
 	sess, ok := service.sessions[gameId]
 	if !ok {
-		return &InvalidGameIdError{GameId: gameId}
+		return nil, &InvalidGameIdError{GameId: gameId}
 	}
-	sess.eventBus.Subscribe(eventType, listener)
-	return nil
+	return sess.eventBus.Subscribe(eventType, listener), nil
 }

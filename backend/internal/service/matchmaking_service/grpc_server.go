@@ -59,7 +59,7 @@ func (server *MatchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 
 	errCh := make(chan error)
 
-	server.service.eventBus.Subscribe(pkg_proto.EventType_NewMatch, func(event *pkg_proto.Event) {
+	stop := server.service.eventBus.Subscribe(pkg_proto.EventType_NewMatch, func(event *pkg_proto.Event) {
 		data := event.GetNewMatch()
 		if data == nil {
 			errCh <- errors.New("unexpected nil when calling event.GetNewMatch()")
@@ -91,6 +91,7 @@ func (server *MatchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 
 		errCh <- nil
 	})
+	defer stop()
 
 	return <-errCh
 }
