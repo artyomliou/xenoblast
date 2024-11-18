@@ -106,16 +106,7 @@ resource "aws_ecs_task_definition" "backend" {
           appProtocol   = "http"
         }
       ]
-      environment = [
-        {
-          name  = "GRPC_GO_LOG_VERBOSITY_LEVEL"
-          value = "99"
-        },
-        {
-          name  = "GRPC_GO_LOG_SEVERITY_LEVEL"
-          value = "info"
-        },
-      ]
+      environment = local.environment
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -148,6 +139,7 @@ resource "aws_ecs_task_definition" "backend" {
           appProtocol   = "http"
         }
       ]
+      environment = local.environment
       logConfiguration = {
         logDriver = "awslogs",
         options = {

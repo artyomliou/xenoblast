@@ -45,16 +45,7 @@ resource "aws_ecs_task_definition" "auth_service" {
           appProtocol   = "grpc"
         }
       ]
-      environment = [
-        {
-          name  = "GRPC_GO_LOG_VERBOSITY_LEVEL"
-          value = "99"
-        },
-        {
-          name  = "GRPC_GO_LOG_SEVERITY_LEVEL"
-          value = "info"
-        },
-      ]
+      environment = local.environment
       logConfiguration = {
         logDriver = "awslogs",
         options = {

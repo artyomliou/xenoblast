@@ -1,8 +1,8 @@
 package config
 
 type Repository struct {
-	Driver      RepositoryDriver `yaml:"driver" env-required:"true"`
-	RedisConfig `yaml:"redis_config"`
+	Driver RepositoryDriver `yaml:"driver" env:"driver" env-required:"true"`
+	Redis  `yaml:"redis" env-prefix:"redis_"`
 }
 
 type RepositoryDriver string
@@ -12,7 +12,7 @@ const (
 	RedisRepositoryDriver    RepositoryDriver = "redis"
 )
 
-type RedisConfig struct {
-	Host string `yaml:"host" env-required:"true"`
-	Port int    `yaml:"port" env-required:"true"`
+type Redis struct {
+	Host string `yaml:"host" env:"host" env-required:"true"`
+	Port int    `yaml:"port" env:"port" env-required:"true"`
 }

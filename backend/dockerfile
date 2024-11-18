@@ -8,5 +8,5 @@ RUN go build -o /bin/server ./cmd/main
 
 FROM ubuntu:22.04
 COPY --from=build /bin/server /app/server
-COPY --from=build /src/config.ecs.yaml /app/config.yaml
+COPY --from=build /src/config.example.yaml /app/config.yaml
 WORKDIR /app
