@@ -1,13 +1,13 @@
 locals {
   environment = [
-    {
-      name  = "GRPC_GO_LOG_VERBOSITY_LEVEL"
-      value = "99"
-    },
-    {
-      name  = "GRPC_GO_LOG_SEVERITY_LEVEL"
-      value = "info"
-    },
+    # {
+    #   name  = "GRPC_GO_LOG_VERBOSITY_LEVEL"
+    #   value = "99"
+    # },
+    # {
+    #   name  = "GRPC_GO_LOG_SEVERITY_LEVEL"
+    #   value = "info"
+    # },
     {
       name  = "environment"
       value = "prod"
