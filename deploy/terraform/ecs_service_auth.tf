@@ -15,7 +15,7 @@ resource "aws_ecs_service" "auth_service" {
   service_registries {
     registry_arn   = aws_service_discovery_service.auth_service.arn
     container_name = "auth_service"
-    container_port = 50052
+    container_port = 50051
   }
 }
 
@@ -40,7 +40,7 @@ resource "aws_ecs_task_definition" "auth_service" {
       command           = ["auth"]
       portMappings = [
         {
-          containerPort = 50052
+          containerPort = 50051
           protocol      = "tcp"
           appProtocol   = "grpc"
         }

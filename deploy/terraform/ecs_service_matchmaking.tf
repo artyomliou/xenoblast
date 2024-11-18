@@ -15,7 +15,7 @@ resource "aws_ecs_service" "matchmaking_service" {
   service_registries {
     registry_arn   = aws_service_discovery_service.matchmaking_service.arn
     container_name = "matchmaking_service"
-    container_port = 50053
+    container_port = 50051
   }
 }
 
@@ -40,7 +40,7 @@ resource "aws_ecs_task_definition" "matchmaking_service" {
       command           = ["matchmaking"]
       portMappings = [
         {
-          containerPort = 50053
+          containerPort = 50051
           protocol      = "tcp"
           appProtocol   = "grpc"
         }

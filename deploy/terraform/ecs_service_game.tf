@@ -15,7 +15,7 @@ resource "aws_ecs_service" "game_service" {
   service_registries {
     registry_arn   = aws_service_discovery_service.game_service.arn
     container_name = "game_service"
-    container_port = 50054
+    container_port = 50051
   }
 }
 
@@ -40,7 +40,7 @@ resource "aws_ecs_task_definition" "game_service" {
       command           = ["game"]
       portMappings = [
         {
-          containerPort = 50054
+          containerPort = 50051
           protocol      = "tcp"
           appProtocol   = "grpc"
         }
