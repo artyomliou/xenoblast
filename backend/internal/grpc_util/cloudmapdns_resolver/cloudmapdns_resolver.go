@@ -14,15 +14,23 @@ const Scheme = "cloudmapdns"
 type cloudmapdnsBuilder struct{}
 
 func (*cloudmapdnsBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
-	if target.Endpoint() == "" && opts.Dialer == nil {
-		return nil, errors.New("cloudmapdns: received empty target in Build()")
-	}
 	logger, err := zap.NewProduction()
 	if err != nil {
 		return nil, err
 	}
+
+	if target.Endpoint() == "" && opts.Dialer == nil {
+		return nil, errors.New("cloudmapdns: received empty target in Build()")
+	}
+
+	// Will not use provided port
+	host, _, err := net.SplitHostPort(target.Endpoint())
+	if err != nil {
+		return nil, err
+	}
+
 	r := &cloudmapdnsResolver{
-		target: target,
+		host:   host,
 		cc:     cc,
 		logger: logger,
 	}
@@ -35,13 +43,13 @@ func (*cloudmapdnsBuilder) Scheme() string {
 }
 
 type cloudmapdnsResolver struct {
-	target resolver.Target
+	host   string
 	cc     resolver.ClientConn
 	logger *zap.Logger
 }
 
 func (r *cloudmapdnsResolver) start() {
-	addresses, err := ResolveSrvToAddrs(r.target.Endpoint())
+	addresses, err := ResolveSrvToAddrs(r.host)
 	if err != nil {
 		r.logger.Error(err.Error())
 		return
