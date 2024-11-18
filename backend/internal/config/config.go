@@ -7,17 +7,15 @@ import (
 )
 
 type Config struct {
-	Environment           `yaml:"environment" env-required:"true"`
-	GracefulShutdown      bool `yaml:"graceful_shutdown" env-required:"true"`
-	LoggerOutput          `yaml:"logger_output" env-required:"true"`
-	HttpService           Service         `yaml:"http_service" env-required:"true"`
-	WebsocketService      Service         `yaml:"websocket_service" env-required:"true"`
-	AuthService           CloudmapService `yaml:"auth_service" env-required:"true"`
-	AuthRepository        Repository      `yaml:"auth_repository" env-required:"true"`
-	MatchmakingService    CloudmapService `yaml:"matchmaking_service" env-required:"true"`
-	MatchmakingRepository Repository      `yaml:"matchmaking_repository" env-required:"true"`
-	GameService           CloudmapService `yaml:"game_service" env-required:"true"`
-	Collector             `yaml:"collector" env-required:"true"`
+	Environment        `yaml:"environment" env-required:"true"`
+	GracefulShutdown   bool `yaml:"graceful_shutdown" env-required:"true"`
+	LoggerOutput       `yaml:"logger_output" env-required:"true"`
+	HttpService        Service            `yaml:"http_service" env-required:"true"`
+	WebsocketService   Service            `yaml:"websocket_service" env-required:"true"`
+	AuthService        AuthService        `yaml:"auth_service" env-required:"true"`
+	MatchmakingService MatchmakingService `yaml:"matchmaking_service" env-required:"true"`
+	GameService        GameService        `yaml:"game_service" env-required:"true"`
+	Collector          `yaml:"collector" env-required:"true"`
 }
 
 func GetDefault() *Config {
@@ -33,26 +31,32 @@ func GetDefault() *Config {
 			Host: "websocket_service",
 			Port: 8080,
 		},
-		AuthService: CloudmapService{
-			ResolveSrv: false,
-			Host:       "auth_service",
-			Port:       50051,
+		AuthService: AuthService{
+			Service: Service{
+				ResolveSrv: false,
+				Host:       "auth_service",
+				Port:       50051,
+			},
+			Repository: Repository{
+				Driver: InmemoryRepositoryDriver,
+			},
 		},
-		AuthRepository: Repository{
-			Driver: InmemoryRepositoryDriver,
+		MatchmakingService: MatchmakingService{
+			Service: Service{
+				ResolveSrv: false,
+				Host:       "matchmaking_service",
+				Port:       50051,
+			},
+			Repository: Repository{
+				Driver: InmemoryRepositoryDriver,
+			},
 		},
-		MatchmakingService: CloudmapService{
-			ResolveSrv: false,
-			Host:       "matchmaking_service",
-			Port:       50051,
-		},
-		MatchmakingRepository: Repository{
-			Driver: InmemoryRepositoryDriver,
-		},
-		GameService: CloudmapService{
-			ResolveSrv: false,
-			Host:       "game_service",
-			Port:       50051,
+		GameService: GameService{
+			Service: Service{
+				ResolveSrv: false,
+				Host:       "game_service",
+				Port:       50051,
+			},
 		},
 		Collector: Collector{
 			EnableMetricProvider: false,

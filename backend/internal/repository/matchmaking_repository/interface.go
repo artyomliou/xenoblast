@@ -24,8 +24,8 @@ type AssociatedGame struct {
 }
 
 func NewMatchmakingRepository(cfg *config.Config) (MatchmakingRepository, error) {
-	if cfg.MatchmakingRepository.Driver == config.RedisRepositoryDriver {
-		redisCfg := cfg.MatchmakingRepository.RedisConfig
+	if cfg.MatchmakingService.Driver == config.RedisRepositoryDriver {
+		redisCfg := cfg.MatchmakingService.RedisConfig
 		redisOpt := &redis.Options{
 			Addr: fmt.Sprintf("%s:%d", redisCfg.Host, redisCfg.Port),
 		}

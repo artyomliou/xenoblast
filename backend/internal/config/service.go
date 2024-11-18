@@ -1,11 +1,6 @@
 package config
 
 type Service struct {
-	Host string `yaml:"host" env-required:"true"`
-	Port int    `yaml:"port" env-required:"true"`
-}
-
-type CloudmapService struct {
 	// If enabled, `Host` should be a valid SRV record in Route 53. This is for ECS & CloudMap deployment.
 	ResolveSrv bool `yaml:"resolve_srv"`
 
@@ -16,4 +11,18 @@ type CloudmapService struct {
 	// GameService will listen on this port.
 	// In ECS environment, this is not the port that other service can use it to communicate with game service.
 	Port int `yaml:"port" env-required:"true"`
+}
+
+type AuthService struct {
+	Service
+	Repository `yaml:"repo" env-required:"true"`
+}
+
+type MatchmakingService struct {
+	Service
+	Repository `yaml:"repo" env-required:"true"`
+}
+
+type GameService struct {
+	Service
 }
