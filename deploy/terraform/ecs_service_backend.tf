@@ -1,28 +1,12 @@
-
 resource "aws_ecs_service" "backend" {
   name            = "${var.project_name}-backend"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.backend.arn
   desired_count   = var.cost_saving_mode ? 0 : 1
+  launch_type     = "EC2"
 
-  capacity_provider_strategy {
-    base              = 0
-    capacity_provider = "FARGATE_SPOT"
-    weight            = 100
-  }
-
-  network_configuration {
-    subnets          = [for subnet in aws_subnet.public : subnet.id]
-    security_groups  = [aws_security_group.api_gateway.id]
-    assign_public_ip = true
-  }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.backend.arn
-    container_name   = "api_gateway"
-    container_port   = 80
-  }
-
+  deployment_minimum_healthy_percent = 0
+  deployment_maximum_percent         = 100
   deployment_circuit_breaker {
     enable   = true
     rollback = true
@@ -31,30 +15,58 @@ resource "aws_ecs_service" "backend" {
 
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html
 resource "aws_ecs_task_definition" "backend" {
-  family             = "backend"
-  cpu                = "256"
-  memory             = "1024"
-  task_role_arn      = aws_iam_role.ecs_task_role.arn
-  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc" # fargate requires awsvpc
+  family                   = "backend"
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  requires_compatibilities = ["EC2"]
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
+  }
+
+  # Because I only want 1 task on 1 EC2 instance, it will be much easier to use bridge mode.
+  # https://docs.aws.amazon.com/zh_tw/AmazonECS/latest/developerguide/networking-networkmode-bridge.html
+  network_mode = "bridge"
+
+  volume {
+    name      = "https_certs"
+    host_path = var.ec2_https_certs_path
+  }
+
+  volume {
+    name      = "letsencrypt_archive"
+    host_path = "/etc/letsencrypt/archive"
   }
 
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#container_definitions
   # TODO systemControls net.ipv4.tcp_keepalive_time
   container_definitions = jsonencode([
     {
-      name  = "api_gateway"
-      image = "${local.api_gateway_image}"
+      name              = "api_gateway"
+      image             = "${local.api_gateway_image}"
+      memoryReservation = 64
       portMappings = [
         {
           containerPort = 80
+          hostPort      = 80
           protocol      = "tcp"
           appProtocol   = "http2"
+        },
+        {
+          containerPort = 443
+          hostPort      = 443
+          protocol      = "tcp"
+          appProtocol   = "http2"
+        }
+      ]
+      mountPoints = [
+        {
+          sourceVolume  = "https_certs"
+          containerPath = "/etc/nginx/ssl" # link: ../../archive (=/etc/archive) 
+        },
+        {
+          sourceVolume  = "letsencrypt_archive"
+          containerPath = "/etc/archive" # workaround: match relative link of /etc/nginx/ssl
         }
       ]
       logConfiguration = {
@@ -66,6 +78,10 @@ resource "aws_ecs_task_definition" "backend" {
           awslogs-create-group  = "True"
         }
       }
+      links = [
+        "http_service:http_service",
+        "websocket_service:websocket_service"
+      ]
       dependsOn = [
         {
           containerName = "http_service"
@@ -78,16 +94,27 @@ resource "aws_ecs_task_definition" "backend" {
       ]
     },
     {
-      name       = "http_service"
-      image      = "${local.backend_image}"
-      entryPoint = ["/app/server", "-service"]
-      command    = ["http"]
+      name              = "http_service"
+      image             = "${local.backend_image}"
+      memoryReservation = 64
+      entryPoint        = ["/app/server", "-service"]
+      command           = ["http"]
       portMappings = [
         {
           containerPort = 8081
           protocol      = "tcp"
           appProtocol   = "http"
         }
+      ]
+      environment = [
+        {
+          name  = "GRPC_GO_LOG_VERBOSITY_LEVEL"
+          value = "99"
+        },
+        {
+          name  = "GRPC_GO_LOG_SEVERITY_LEVEL"
+          value = "info"
+        },
       ]
       logConfiguration = {
         logDriver = "awslogs",
@@ -98,6 +125,9 @@ resource "aws_ecs_task_definition" "backend" {
           awslogs-create-group  = "True"
         }
       }
+      links = [
+        "collector:collector"
+      ]
       dependsOn = [
         {
           containerName = "collector"
@@ -106,10 +136,11 @@ resource "aws_ecs_task_definition" "backend" {
       ]
     },
     {
-      name       = "websocket_service"
-      image      = "${local.backend_image}"
-      entryPoint = ["/app/server", "-service"]
-      command    = ["websocket"]
+      name              = "websocket_service"
+      image             = "${local.backend_image}"
+      memoryReservation = 64
+      entryPoint        = ["/app/server", "-service"]
+      command           = ["websocket"]
       portMappings = [
         {
           containerPort = 8082
@@ -126,6 +157,9 @@ resource "aws_ecs_task_definition" "backend" {
           awslogs-create-group  = "True"
         }
       }
+      links = [
+        "collector:collector"
+      ]
       dependsOn = [
         {
           containerName = "collector"
@@ -134,121 +168,11 @@ resource "aws_ecs_task_definition" "backend" {
       ]
     },
     {
-      name       = "auth_service"
-      image      = "${local.backend_image}"
-      entryPoint = ["/app/server", "-service"]
-      command    = ["auth"]
-      portMappings = [
-        {
-          containerPort = 50052
-          protocol      = "tcp"
-          appProtocol   = "grpc"
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs",
-        options = {
-          awslogs-group         = "/ecs/${var.project_name}",
-          awslogs-region        = "${var.aws_region}",
-          awslogs-stream-prefix = "ecs",
-          awslogs-create-group  = "True"
-        }
-      }
-      dependsOn = [
-        {
-          containerName = "collector"
-          condition     = "START"
-        },
-        {
-          containerName = "redis"
-          condition     = "START"
-        }
-      ]
-    },
-    {
-      name       = "matchmaking_service"
-      image      = "${local.backend_image}"
-      entryPoint = ["/app/server", "-service"]
-      command    = ["matchmaking"]
-      portMappings = [
-        {
-          containerPort = 50053
-          protocol      = "tcp"
-          appProtocol   = "grpc"
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs",
-        options = {
-          awslogs-group         = "/ecs/${var.project_name}",
-          awslogs-region        = "${var.aws_region}",
-          awslogs-stream-prefix = "ecs",
-          awslogs-create-group  = "True"
-        }
-      }
-      dependsOn = [
-        {
-          containerName = "collector"
-          condition     = "START"
-        },
-        {
-          containerName = "redis"
-          condition     = "START"
-        }
-      ]
-    },
-    {
-      name       = "game_service"
-      image      = "${local.backend_image}"
-      entryPoint = ["/app/server", "-service"]
-      command    = ["game"]
-      portMappings = [
-        {
-          containerPort = 50054
-          protocol      = "tcp"
-          appProtocol   = "grpc"
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs",
-        options = {
-          awslogs-group         = "/ecs/${var.project_name}",
-          awslogs-region        = "${var.aws_region}",
-          awslogs-stream-prefix = "ecs",
-          awslogs-create-group  = "True"
-        }
-      }
-      dependsOn = [
-        {
-          containerName = "collector"
-          condition     = "START"
-        }
-      ]
-    },
-    {
-      name  = "redis"
-      image = "redis:latest"
-      portMappings = [
-        {
-          containerPort = 6379
-          protocol      = "tcp"
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs",
-        options = {
-          awslogs-group         = "/ecs/${var.project_name}",
-          awslogs-region        = "${var.aws_region}",
-          awslogs-stream-prefix = "ecs",
-          awslogs-create-group  = "True"
-        }
-      }
-    },
-    {
-      name      = "collector"
-      image     = "amazon/aws-otel-collector"
-      essential = true
-      command   = ["--config=/etc/ecs/ecs-default-config.yaml"]
+      name              = "collector"
+      image             = "amazon/aws-otel-collector"
+      memoryReservation = 64
+      essential         = true
+      command           = ["--config=/etc/ecs/ecs-default-config.yaml"]
       environment = [
         {
           name  = "AWS_REGION"
