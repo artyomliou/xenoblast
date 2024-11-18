@@ -113,7 +113,7 @@ func (g *gameSession) Run(ctx context.Context) {
 			if err := g.state.Transition(pkg_proto.GameState_Crash); err != nil {
 				g.logger.Error(err.Error())
 			}
-			g.publishCrashEvent("server terminated")
+			g.publishCrashEvent("session terminated")
 			return
 
 		case ev := <-g.eventCh:
