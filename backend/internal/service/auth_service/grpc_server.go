@@ -23,6 +23,7 @@ func NewAuthServiceServer(cfg *config.Config, logger *zap.Logger, service *AuthS
 }
 
 func (server *AuthServiceServer) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
+	server.logger.Sugar().Debugf("register %s", req.Nickname)
 	apiKey, playerId, err := server.service.Register(ctx, req.Nickname)
 	if err != nil {
 		return nil, err
@@ -38,10 +39,12 @@ func (server *AuthServiceServer) Register(ctx context.Context, req *auth.Registe
 }
 
 func (server *AuthServiceServer) Validate(ctx context.Context, req *auth.ValidateRequest) (*auth.PlayerInfoDto, error) {
+	server.logger.Sugar().Debugf("Validate")
 	return server.service.Validate(ctx, req.ApiKey)
 }
 
 func (server *AuthServiceServer) GetNickname(ctx context.Context, req *auth.GetNicknameRequest) (*auth.GetNicknameResponse, error) {
+	server.logger.Sugar().Debugf("GetNickname %q", req.Players)
 	nicknames, err := server.service.GetNicknames(ctx, req.Players)
 	if err != nil {
 		return nil, err

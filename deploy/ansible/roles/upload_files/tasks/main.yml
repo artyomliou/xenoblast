@@ -1,0 +1,13 @@
+---
+- name: Ensure the target directory exists
+  file:
+    path: "{{ target_directory }}"
+    state: directory
+    mode: "0755"
+
+- name: Upload file to target directory
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ target_directory }}/{{ item.dest }}"
+    mode: "{{ item.mode | default('0644') }}"
+  with_items: "{{ files_to_upload }}"

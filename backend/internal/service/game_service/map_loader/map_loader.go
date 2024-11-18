@@ -3,7 +3,6 @@ package maploader
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -20,7 +19,6 @@ func NewTxtMapLoader() *txtMapLoader {
 func (loader *txtMapLoader) Load(ctx context.Context, fileContent []byte) (*MapInfo, error) {
 	txtContent := string(fileContent)
 	txtContent = strings.ReplaceAll(txtContent, "\n", "")
-	log.Printf("%+v", txtContent)
 
 	expectedLength := MapWidth * MapHeight
 	if len(txtContent) != expectedLength {

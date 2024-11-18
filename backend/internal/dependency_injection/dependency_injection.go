@@ -70,8 +70,15 @@ var Module = fx.Options(
 		telemetry.NewWebsocketMetrics,
 		telemetry.NewPropagator,
 	),
-	fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
-		return &fxevent.ZapLogger{Logger: log}
+	fx.WithLogger(func(cfg *config.Config, log *zap.Logger) fxevent.Logger {
+		switch cfg.Environment {
+		case config.ProdEnvironment:
+			return fxevent.NopLogger
+		case config.TestingEnvironment:
+			return fxevent.NopLogger
+		default:
+			return &fxevent.ZapLogger{Logger: log}
+		}
 	}),
 )
 
@@ -131,7 +138,7 @@ func NewMatchmakingServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logge
 }
 
 func NewGameServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, service *game_service.GameService, authServiceClient auth.AuthServiceClient) (*game_service.GameServiceServer, error) {
-	addr := fmt.Sprintf(":%d", cfg.GameService.ListenPort)
+	addr := fmt.Sprintf(":%d", cfg.GameService.Port)
 	grpcServer := grpc.NewServer()
 	server := game_service.NewGameServiceServer(cfg, logger, service, authServiceClient)
 	game.RegisterGameServiceServer(grpcServer, server)
@@ -152,10 +159,10 @@ func appendGrpcServerLifecycle(lc fx.Lifecycle, cfg *config.Config, logger *zap.
 		},
 		OnStop: func(ctx context.Context) error {
 			logger.Sugar().Info("Shutdown signal received")
-			if cfg.GracefulShutdown {
-				grpcServer.GracefulStop()
-			} else {
+			if cfg.Environment == config.TestingEnvironment {
 				grpcServer.Stop()
+			} else {
+				grpcServer.GracefulStop()
 			}
 			return nil
 		},

@@ -16,3 +16,8 @@ data "aws_ecr_image" "images" {
   repository_name = "${var.project_name}-${each.key}"
   most_recent     = true
 }
+
+locals {
+  api_gateway_image = data.aws_ecr_image.images["api-gateway"].image_uri
+  backend_image     = data.aws_ecr_image.images["backend"].image_uri
+}

@@ -8,20 +8,24 @@ resource "aws_iam_role" "ecs_task_role" {
         Principal = {
           Service = "ecs-tasks.amazonaws.com"
         },
-        Action = "sts:AssumeRole"
+        Action = "sts:AssumeRole",
+        Condition = {
+          ArnLike = {
+            "aws:SourceArn" : "arn:aws:ecs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:*"
+          },
+          StringEquals = {
+            "aws:SourceAccount" : "${data.aws_caller_identity.current.account_id}"
+          }
+        }
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_role_aws_otel" {
-  role       = aws_iam_role.ecs_task_role.name
-  policy_arn = aws_iam_policy.aws_otel.arn
-}
-
-resource "aws_iam_policy" "aws_otel" {
+resource "aws_iam_role_policy" "aws_otel" {
   name = "AWSDistroOpenTelemetryPolicy"
-  policy = jsonencode({
+  role = aws_iam_role.ecs_task_role.name
+  policy = jsonencode(({
     "Version" : "2012-10-17",
     "Statement" : [
       {
@@ -46,7 +50,7 @@ resource "aws_iam_policy" "aws_otel" {
         "Resource" : "*"
       }
     ]
-  })
+  }))
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
@@ -65,20 +69,24 @@ resource "aws_iam_role" "ecs_task_execution_role" {
   })
 }
 
-resource "aws_iam_policy_attachment" "otel_execution_policy" {
-  name       = "otel-execution-policy"
-  roles      = [aws_iam_role.ecs_task_execution_role.name]
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+resource "aws_iam_policy_attachment" "ecs_task_basic" {
+  name = "ecs_task_basic"
+  roles = [
+    aws_iam_role.ec2_role.name,
+    aws_iam_role.ecs_task_execution_role.name,
+    aws_iam_role.ecs_task_role.name
+  ]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
-resource "aws_iam_policy_attachment" "otel_cloudwatch_logs_policy" {
-  name       = "otel-cloudwatch-logs-policy"
+resource "aws_iam_policy_attachment" "ecs_task_exec_logs_full" {
+  name       = "ecs_task_exec_logs_full"
   roles      = [aws_iam_role.ecs_task_execution_role.name]
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 
-resource "aws_iam_policy_attachment" "otel_ssm_readonly_policy" {
-  name       = "otel-ssm-readonly-policy"
+resource "aws_iam_policy_attachment" "ecs_task_exec_ssm_readonly" {
+  name       = "ecs_task_exec_ssm_readonly"
   roles      = [aws_iam_role.ecs_task_execution_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }

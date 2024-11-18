@@ -97,6 +97,8 @@ func (g *gameSession) Run(ctx context.Context) {
 	g.logger.Debug("session start")
 	defer g.logger.Debug("session end")
 
+	defer close(g.eventCh)
+
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -113,10 +115,14 @@ func (g *gameSession) Run(ctx context.Context) {
 			if err := g.state.Transition(pkg_proto.GameState_Crash); err != nil {
 				g.logger.Error(err.Error())
 			}
-			g.publishCrashEvent("server terminated")
+			g.publishCrashEvent("session terminated")
 			return
 
-		case ev := <-g.eventCh:
+		case ev, ok := <-g.eventCh:
+			if !ok {
+				g.logger.Warn("g.eventCh was closed")
+				return
+			}
 			g.logger.Debug("event", zap.String("type", ev.Type.String()))
 			startExecutionTime := time.Now()
 			trace := true
@@ -158,6 +164,11 @@ func (g *gameSession) Run(ctx context.Context) {
 				g.HandleWinConditionSatisfied(ev)
 
 			case pkg_proto.EventType_StateGameover:
+				g.logger.Sugar().Debugf("gameover reason: %s", ev.GetGameOver().Reason.String())
+				return
+
+			case pkg_proto.EventType_StateCrash:
+				g.logger.Sugar().Debugf("crash reason: %s", ev.GetCrash().Reason)
 				return
 			}
 			if trace {

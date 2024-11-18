@@ -30,7 +30,7 @@ func TestGameLogicService(t *testing.T) {
 	assert.NoError(t, service.NewGame(context.Background(), 1, players))
 
 	expectWaitingReadyEvent := make(chan bool)
-	service.Subscribe(context.Background(), 1, pkg_proto.EventType_StateWaitingReady, func(event *pkg_proto.Event) {
+	service.Subscribe(1, pkg_proto.EventType_StateWaitingReady, func(event *pkg_proto.Event) {
 		expectWaitingReadyEvent <- true
 	})
 	assert.NoError(t, service.MakeGameRun(context.Background(), 1))
@@ -64,7 +64,7 @@ func TestGameLogicService(t *testing.T) {
 
 	t.Run("PlayerPublish() & Subscribe()", func(t *testing.T) {
 		expectPlayerMoveEvent := make(chan *pkg_proto.Event)
-		service.Subscribe(context.Background(), 1, pkg_proto.EventType_PlayerMove, func(event *pkg_proto.Event) {
+		service.Subscribe(1, pkg_proto.EventType_PlayerMove, func(event *pkg_proto.Event) {
 			expectPlayerMoveEvent <- event
 		})
 

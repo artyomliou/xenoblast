@@ -36,8 +36,7 @@ func setup() {
 	cfg.MatchmakingService.Host = "localhost"
 	cfg.MatchmakingService.Port = 50052
 	cfg.GameService.Host = "localhost"
-	cfg.GameService.ListenPort = 50053
-	cfg.GracefulShutdown = false
+	cfg.GameService.Port = 50053
 
 	go fx.New(
 		fx.Supply(cfg),

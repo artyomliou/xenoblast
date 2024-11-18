@@ -34,6 +34,10 @@ terraform init
 terraform apply
 ```
 
+## Checklist
+
+- You have HTTPS certs at `var.ec2_https_certs_path` on ec2
+
 # Backend architecture
 
 ![](./xenoblast.jpg)

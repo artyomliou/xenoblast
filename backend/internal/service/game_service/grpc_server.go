@@ -13,6 +13,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+const GameEventQueueLength = 30
+
 type GameServiceServer struct {
 	game.UnimplementedGameServiceServer
 	cfg               *config.Config
@@ -33,6 +35,7 @@ func NewGameServiceServer(cfg *config.Config, logger *zap.Logger, service *GameS
 }
 
 func (server *GameServiceServer) NewGame(ctx context.Context, req *game.NewGameRequest) (*empty.Empty, error) {
+	server.logger.Sugar().Debugf("NewGame %d %q", req.GameId, req.Players)
 	server.mutex.Lock()
 	defer server.mutex.Unlock()
 
@@ -54,11 +57,13 @@ func (server *GameServiceServer) NewGame(ctx context.Context, req *game.NewGameR
 	if err := server.service.MakeGameRun(context.TODO(), req.GameId); err != nil {
 		return nil, err
 	}
+	// TODO remove game when GameOver or Crash
 
 	return nil, nil
 }
 
 func (server *GameServiceServer) GetGameInfo(ctx context.Context, req *game.GetGameInfoRequest) (*game.GetGameInfoResponse, error) {
+	server.logger.Sugar().Debugf("GetGameInfo %d", req.GameId)
 	return server.service.GetGameInfo(ctx, req.GameId)
 }
 
@@ -71,25 +76,21 @@ func (server *GameServiceServer) PlayerPublish(ctx context.Context, ev *pkg_prot
 }
 
 func (server *GameServiceServer) Subscribe(req *game.SubscribeRequest, stream grpc.ServerStreamingServer[pkg_proto.Event]) error {
-	server.logger.Debug("Subscribe()", zap.Int32("game", req.GameId))
-	defer server.logger.Debug("Subscribe() exit", zap.Int32("game", req.GameId))
+	server.logger.Sugar().Debugf("Subscribe %d", req.GameId)
+	defer server.logger.Sugar().Debugf("Subscribe %d exit", req.GameId)
 
-	eventCh := make(chan *pkg_proto.Event, 30)
+	eventCh := make(chan *pkg_proto.Event, GameEventQueueLength)
 	for _, eventType := range req.Types {
-		err := server.service.Subscribe(context.Background(), req.GameId, eventType, func(event *pkg_proto.Event) {
-			select {
-			case eventCh <- event:
-			default:
-				server.logger.Warn("eventCh is full")
-			}
+		stop, err := server.service.Subscribe(req.GameId, eventType, func(event *pkg_proto.Event) {
+			eventCh <- event
 		})
 		if err != nil {
 			server.logger.Error(err.Error())
 			return err
 		}
+		defer stop()
 	}
 
-	// TODO cancel subscription
 	for ev := range eventCh {
 		server.logger.Debug("event from GameService", zap.String("type", ev.Type.String()))
 		if err := stream.Send(ev); err != nil {

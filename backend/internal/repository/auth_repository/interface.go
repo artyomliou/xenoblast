@@ -24,8 +24,8 @@ type AuthRepository interface {
 }
 
 func NewAuthRepository(cfg *config.Config) (AuthRepository, error) {
-	if cfg.MatchmakingRepository.Driver == config.RedisRepositoryDriver {
-		redisCfg := cfg.AuthRepository.RedisConfig
+	if cfg.AuthService.Driver == config.RedisRepositoryDriver {
+		redisCfg := cfg.AuthService.Redis
 		redisOpt := &redis.Options{
 			Addr: fmt.Sprintf("%s:%d", redisCfg.Host, redisCfg.Port),
 		}

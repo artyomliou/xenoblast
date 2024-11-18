@@ -3,6 +3,7 @@ package matchmaking_service
 import (
 	"artyomliou/xenoblast-backend/internal/config"
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
+	"artyomliou/xenoblast-backend/internal/grpc_util/cloudmapdns_resolver"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	"artyomliou/xenoblast-backend/internal/repository/matchmaking_repository"
 	"context"
@@ -100,36 +101,25 @@ func (service *MatchmakingService) matchmaking() error {
 	}
 
 	// Find available game service instance
-	var gameServiceHost string
-	var gameServicePort int
+	var addr string
 	if service.cfg.GameService.ResolveSrv {
-		srvName := service.cfg.GameService.Host
-		_, records, err := net.LookupSRV("", "", srvName)
+		addrs, err := cloudmapdns_resolver.ResolveSrvToAddrs(service.cfg.GameService.Host)
 		if err != nil {
 			return err
 		}
-		if len(records) == 0 {
-			return fmt.Errorf("couldnt find any SRV record using %s", srvName)
-		}
-		gameServerIp, err := net.ResolveIPAddr("ip", records[0].Target)
-		if err != nil {
-			return err
-		}
-		gameServiceHost = gameServerIp.String()
-		gameServicePort = int(records[0].Port)
+		addr = addrs[0].Addr
 	} else {
 		hostname := service.cfg.GameService.Host
-		gameServerIp, err := net.ResolveIPAddr("ip", hostname)
+		ip, err := net.ResolveIPAddr("ip", hostname)
 		if err != nil {
 			return err
 		}
-		gameServiceHost = gameServerIp.String()
-		gameServicePort = service.cfg.GameService.ListenPort
+		addr = fmt.Sprintf("%s:%d", ip.String(), service.cfg.GameService.Port)
 	}
 
 	associateGame := &matchmaking_repository.AssociatedGame{
 		Id:         gameId,
-		ServerAddr: fmt.Sprintf("%s:%d", gameServiceHost, gameServicePort),
+		ServerAddr: addr,
 	}
 	for _, playerId := range playerIds {
 		err := service.repo.SetAssociatedGameByPlayerId(service.ctx, associateGame, playerId)
