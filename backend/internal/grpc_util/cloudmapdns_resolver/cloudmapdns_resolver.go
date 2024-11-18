@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc/resolver"
 )
 
@@ -16,9 +17,14 @@ func (*cloudmapdnsBuilder) Build(target resolver.Target, cc resolver.ClientConn,
 	if target.Endpoint() == "" && opts.Dialer == nil {
 		return nil, errors.New("cloudmapdns: received empty target in Build()")
 	}
+	logger, err := zap.NewProduction()
+	if err != nil {
+		return nil, err
+	}
 	r := &cloudmapdnsResolver{
 		target: target,
 		cc:     cc,
+		logger: logger,
 	}
 	r.start()
 	return r, nil
@@ -31,11 +37,13 @@ func (*cloudmapdnsBuilder) Scheme() string {
 type cloudmapdnsResolver struct {
 	target resolver.Target
 	cc     resolver.ClientConn
+	logger *zap.Logger
 }
 
 func (r *cloudmapdnsResolver) start() {
 	addresses, err := ResolveSrvToAddrs(r.target.Endpoint())
 	if err != nil {
+		r.logger.Error(err.Error())
 		return
 	}
 
