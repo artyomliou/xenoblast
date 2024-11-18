@@ -63,10 +63,10 @@ func (service *GameService) MakeGameRun(ctx context.Context, gameId int32) error
 		return &InvalidGameIdError{GameId: gameId}
 	}
 
-	go sess.Run(ctx)
 	sess.eventBus.Subscribe(pkg_proto.EventType_SessionRun, func(event *pkg_proto.Event) {
 		sess.TriggerPreparing()
 	})
+	go sess.Run(ctx)
 
 	return nil
 }
