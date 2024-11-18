@@ -49,7 +49,7 @@ resource "aws_security_group" "api_gateway" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [var.ssh_ip]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -67,9 +67,9 @@ resource "aws_security_group" "api_gateway" {
   }
 }
 
-resource "aws_security_group" "game_service" {
-  name        = "${var.project_name}-game_service"
-  description = "Allow inbound gRPC to game service"
+resource "aws_security_group" "grpc_services" {
+  name        = "${var.project_name}-grpc_services"
+  description = "Allow inbound gRPC inside VPC"
   vpc_id      = aws_vpc.main.id
 
   ingress {

@@ -11,7 +11,7 @@ resource "aws_eip_association" "main" {
 resource "aws_instance" "main" {
   ami                         = data.aws_ami.ecs_optimized.id
   key_name                    = data.aws_key_pair.deployer.key_name
-  vpc_security_group_ids      = [aws_security_group.api_gateway.id, aws_security_group.game_service.id]
+  vpc_security_group_ids      = [aws_security_group.api_gateway.id, aws_security_group.grpc_services.id]
   subnet_id                   = aws_subnet.public["ap-east-1a"].id
   associate_public_ip_address = true
 
