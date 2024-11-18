@@ -1,0 +1,16 @@
+---
+- name: Upload files to EC2 instance
+  hosts: all
+  become: true
+
+  roles:
+    - role: upload_files
+      vars:
+        target_directory: /etc/nginx/ssl
+        files_to_upload:
+          - src: ./files/fullchain.pem
+            dest: fullchain.pem
+            mode: "0400"
+          - src: ./files/privkey.pem
+            dest: privkey.pem
+            mode: "0400"

@@ -30,12 +30,7 @@ resource "aws_ecs_task_definition" "backend" {
 
   volume {
     name      = "https_certs"
-    host_path = var.ec2_https_certs_path
-  }
-
-  volume {
-    name      = "letsencrypt_archive"
-    host_path = "/etc/letsencrypt/archive"
+    host_path = "/etc/nginx/ssl"
   }
 
   # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#container_definitions
@@ -62,11 +57,7 @@ resource "aws_ecs_task_definition" "backend" {
       mountPoints = [
         {
           sourceVolume  = "https_certs"
-          containerPath = "/etc/nginx/ssl" # link: ../../archive (=/etc/archive) 
-        },
-        {
-          sourceVolume  = "letsencrypt_archive"
-          containerPath = "/etc/archive" # workaround: match relative link of /etc/nginx/ssl
+          containerPath = "/etc/nginx/ssl"
         }
       ]
       logConfiguration = {

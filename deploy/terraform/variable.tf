@@ -23,11 +23,6 @@ variable "route_53_zone_name" {
   default = "example.com."
 }
 
-variable "ec2_https_certs_path" {
-  type    = string
-  default = "/etc/letsencrypt/live/example.com"
-}
-
 variable "cost_saving_mode" {
   type = bool
 }
