@@ -8,7 +8,6 @@ import (
 
 type Config struct {
 	Environment        `yaml:"environment" env-required:"true"`
-	GracefulShutdown   bool `yaml:"graceful_shutdown" env-required:"true"`
 	LoggerOutput       `yaml:"logger_output" env-required:"true"`
 	HttpService        Service            `yaml:"http_service" env-required:"true"`
 	WebsocketService   Service            `yaml:"websocket_service" env-required:"true"`
@@ -20,9 +19,8 @@ type Config struct {
 
 func GetDefault() *Config {
 	return &Config{
-		Environment:      DevEnvironment,
-		GracefulShutdown: true,
-		LoggerOutput:     LoggerStdout,
+		Environment:  DevEnvironment,
+		LoggerOutput: LoggerStdout,
 		HttpService: Service{
 			Host: "http_service",
 			Port: 8080,

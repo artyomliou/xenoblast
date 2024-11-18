@@ -159,10 +159,10 @@ func appendGrpcServerLifecycle(lc fx.Lifecycle, cfg *config.Config, logger *zap.
 		},
 		OnStop: func(ctx context.Context) error {
 			logger.Sugar().Info("Shutdown signal received")
-			if cfg.GracefulShutdown {
-				grpcServer.GracefulStop()
-			} else {
+			if cfg.Environment == config.TestingEnvironment {
 				grpcServer.Stop()
+			} else {
+				grpcServer.GracefulStop()
 			}
 			return nil
 		},
