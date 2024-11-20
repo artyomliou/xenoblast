@@ -61,10 +61,6 @@ func (h *ClientHandler) Run(ctx context.Context) {
 	}()
 
 	defer h.client.Close()
-	defer func() {
-		close(h.errCh)
-		h.errCh = nil
-	}()
 
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()

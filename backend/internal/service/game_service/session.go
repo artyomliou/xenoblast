@@ -97,8 +97,6 @@ func (g *gameSession) Run(ctx context.Context) {
 	g.logger.Debug("session start")
 	defer g.logger.Debug("session end")
 
-	defer close(g.eventCh)
-
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
