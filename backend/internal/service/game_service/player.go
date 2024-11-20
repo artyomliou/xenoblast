@@ -8,6 +8,7 @@ import (
 const DefaultFirepower = int32(1)
 const DefaultBombCount = int32(1)
 
+// This symbol remains public for testing
 type Player struct {
 	playerId  int32
 	nickname  string
