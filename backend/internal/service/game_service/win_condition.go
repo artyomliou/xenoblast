@@ -6,13 +6,13 @@ type WinCondition interface {
 }
 
 type OnlyOnePlayerLeft struct {
-	AlivePlayers *map[int32]bool
+	Players map[int32]*Player
 }
 
 func (cond *OnlyOnePlayerLeft) Satisfy() bool {
 	aliveCount := 0
-	for _, playerAlive := range *cond.AlivePlayers {
-		if playerAlive {
+	for _, player := range cond.Players {
+		if player.alive {
 			aliveCount++
 		}
 	}
@@ -21,8 +21,8 @@ func (cond *OnlyOnePlayerLeft) Satisfy() bool {
 
 func (cond *OnlyOnePlayerLeft) GetWinner() int32 {
 	var winner int32
-	for playerId, playerAlive := range *cond.AlivePlayers {
-		if playerAlive {
+	for playerId, player := range cond.Players {
+		if player.alive {
 			winner = playerId
 			break
 		}

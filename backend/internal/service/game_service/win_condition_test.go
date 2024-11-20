@@ -11,54 +11,40 @@ import (
 func TestWinCondition(t *testing.T) {
 	t.Run("OnlyOneLeft", func(t *testing.T) {
 		type testCase struct {
-			players         []*gamelogic.Player
-			alivePlayers    *map[int32]bool
+			players         map[int32]*gamelogic.Player
 			expectedSatisfy bool
 		}
 		cases := []testCase{
 			{
-				players: []*gamelogic.Player{
-					gamelogic.NewPlayer().SetPlayerId(1).SetNickname("1"),
-					gamelogic.NewPlayer().SetPlayerId(2).SetNickname("2"),
-				},
-				alivePlayers: &map[int32]bool{
-					1: true,
-					2: true,
+				players: map[int32]*gamelogic.Player{
+					1: gamelogic.NewPlayer().SetPlayerId(1).SetNickname("1").SetAlive(true),
+					2: gamelogic.NewPlayer().SetPlayerId(2).SetNickname("2").SetAlive(true),
 				},
 				expectedSatisfy: false,
 			},
 			{
-				players: []*gamelogic.Player{
-					gamelogic.NewPlayer().SetPlayerId(1).SetNickname("1"),
-					gamelogic.NewPlayer().SetPlayerId(2).SetNickname("2"),
-				},
-				alivePlayers: &map[int32]bool{
-					1: true,
-					2: false,
+				players: map[int32]*gamelogic.Player{
+					1: gamelogic.NewPlayer().SetPlayerId(1).SetNickname("1").SetAlive(true),
+					2: gamelogic.NewPlayer().SetPlayerId(2).SetNickname("2").SetAlive(false),
 				},
 				expectedSatisfy: true,
 			},
 			{
-				players: []*gamelogic.Player{
-					gamelogic.NewPlayer().SetPlayerId(1).SetNickname("1"),
-					gamelogic.NewPlayer().SetPlayerId(2).SetNickname("2"),
-				},
-				alivePlayers: &map[int32]bool{
-					1: false,
-					2: false,
+				players: map[int32]*gamelogic.Player{
+					1: gamelogic.NewPlayer().SetPlayerId(1).SetNickname("1").SetAlive(false),
+					2: gamelogic.NewPlayer().SetPlayerId(2).SetNickname("2").SetAlive(false),
 				},
 				expectedSatisfy: false,
 			},
 			{
-				players:         []*gamelogic.Player{},
-				alivePlayers:    &map[int32]bool{},
+				players:         map[int32]*gamelogic.Player{},
 				expectedSatisfy: false,
 			},
 		}
 		for i, c := range cases {
 			t.Run(fmt.Sprintf("case %d", i+1), func(t *testing.T) {
 				cond := gamelogic.OnlyOnePlayerLeft{
-					AlivePlayers: c.alivePlayers,
+					Players: c.players,
 				}
 				assert.Equal(t, c.expectedSatisfy, cond.Satisfy())
 			})

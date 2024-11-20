@@ -16,12 +16,16 @@ type Player struct {
 	y         int32
 	firepower int32
 	bombCount int32
+	alive     bool
+	ready     bool
 }
 
 func NewPlayer() *Player {
 	return &Player{
 		firepower: DefaultFirepower,
 		bombCount: DefaultBombCount,
+		alive:     true,
+		ready:     false,
 	}
 }
 
@@ -34,6 +38,12 @@ func (p *Player) SetPlayerId(newValue int32) *Player {
 // for buidling or testing
 func (p *Player) SetNickname(newValue string) *Player {
 	p.nickname = newValue
+	return p
+}
+
+// for testing
+func (p *Player) SetAlive(newValue bool) *Player {
+	p.alive = newValue
 	return p
 }
 

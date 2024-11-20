@@ -35,8 +35,6 @@ type gameSession struct {
 	duration           time.Duration
 	gameMap            *maploader.GameMap
 	players            map[int32]*Player
-	alivePlayers       map[int32]bool
-	readyPlayers       map[int32]bool
 	prepareOnce        sync.Once
 
 	powerupDropRate float32
@@ -50,22 +48,20 @@ func NewGameSession(logger *zap.Logger, id int32, state *state.StateManager, eve
 		return nil, &TooMuchPlayerError{id, MaximumPlayer, len(players)}
 	}
 	game := &gameSession{
-		id:           id,
-		logger:       logger,
-		state:        state,
-		eventBus:     eventBus,
-		eventCh:      make(chan *pkg_proto.Event, EventQueueLength),
-		duration:     GameDuration,
-		gameMap:      gameMap,
-		players:      players,
-		alivePlayers: map[int32]bool{},
-		readyPlayers: map[int32]bool{},
-		prepareOnce:  sync.Once{},
+		id:                 id,
+		logger:             logger,
+		state:              state,
+		eventBus:           eventBus,
+		eventCh:            make(chan *pkg_proto.Event, EventQueueLength),
+		bombRangeDetection: &BombRangeDetection{gameMap, players},
+		winCondition:       &OnlyOnePlayerLeft{players},
+		duration:           GameDuration,
+		gameMap:            gameMap,
+		players:            players,
+		prepareOnce:        sync.Once{},
 
 		powerupDropRate: PowerupDropRate,
 	}
-	game.winCondition = &OnlyOnePlayerLeft{&game.alivePlayers}
-	game.bombRangeDetection = &BombRangeDetection{gameMap, players}
 	game.setupSerializeEventChannel()
 	return game, nil
 }
@@ -237,14 +233,14 @@ func (g *gameSession) setupPlayerCoords() {
 }
 
 func (g *gameSession) setupPlayerAliveMap() {
-	for playerId, _ := range g.players {
-		g.alivePlayers[playerId] = true
+	for _, player := range g.players {
+		player.alive = true
 	}
 }
 
 func (g *gameSession) setupPlayerReadyMap() {
-	for playerId, _ := range g.players {
-		g.readyPlayers[playerId] = false
+	for _, player := range g.players {
+		player.ready = false
 	}
 }
 
@@ -317,13 +313,13 @@ func (g *gameSession) HandlePlayerReady(ev *pkg_proto.Event) {
 }
 
 func (g *gameSession) markPlayerReady(key int32) {
-	g.readyPlayers[key] = true
+	g.players[key].ready = true
 }
 
 func (g *gameSession) allPlayersReady() bool {
 	allReady := true
-	for _, ready := range g.readyPlayers {
-		if !ready {
+	for _, player := range g.players {
+		if !player.ready {
 			allReady = false
 			break
 		}
@@ -492,10 +488,10 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 		g.logger.Sugar().Debugf("box was bombed at x=%d y=%d", boxCoord[0], boxCoord[1])
 	}
 	for _, player := range bombedObjects.Players {
-		if !g.alivePlayers[player.playerId] {
+		if !g.players[player.playerId].alive {
 			continue
 		}
-		g.alivePlayers[player.playerId] = false
+		g.players[player.playerId].alive = false
 
 		go g.eventBus.Publish(&pkg_proto.Event{
 			Type:      pkg_proto.EventType_PlayerDead,
