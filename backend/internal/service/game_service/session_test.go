@@ -19,7 +19,11 @@ import (
 const currentOnlyMap = "./map_loader/map_0.txt"
 
 func basicArgumentHelper(mapInfo *maploader.MapInfo) (*state.StateManager, *eventbus.EventBus, *maploader.GameMap, map[int32]*gamelogic.Player) {
-	state := state.NewStateManager()
+	logger, err := zap.NewDevelopment()
+	if err != nil {
+		panic(err)
+	}
+	state := state.NewStateManager(logger)
 	eventBus := eventbus.NewEventBus()
 	gameMap := maploader.NewGameMap(mapInfo)
 	players := map[int32]*gamelogic.Player{}
@@ -28,7 +32,7 @@ func basicArgumentHelper(mapInfo *maploader.MapInfo) (*state.StateManager, *even
 
 func fillPlayerHelper(players *map[int32]*gamelogic.Player, count int) {
 	for i := 1; i <= count; i++ {
-		(*players)[int32(i)] = gamelogic.NewPlayer(int32(i), strconv.Itoa(int(i)), nil)
+		(*players)[int32(i)] = gamelogic.NewPlayer().SetPlayerId(int32(i)).SetNickname(strconv.Itoa(int(i)))
 	}
 }
 
@@ -426,18 +430,18 @@ func TestGameSession(t *testing.T) {
 			{
 				PowerupType: pkg_proto.PowerupType_MoreBomb,
 				AssertFuncFactory: func(p *gamelogic.Player) func(*gamelogic.Player) {
-					expectedValue := p.BombCount + 1
+					expectedValue := p.GetBombcount() + 1
 					return func(p *gamelogic.Player) {
-						assert.Equal(t, expectedValue, p.BombCount)
+						assert.Equal(t, expectedValue, p.GetBombcount())
 					}
 				},
 			},
 			{
 				PowerupType: pkg_proto.PowerupType_MoreFire,
 				AssertFuncFactory: func(p *gamelogic.Player) func(*gamelogic.Player) {
-					expectedValue := p.Firepower + 1
+					expectedValue := p.GetFirepower() + 1
 					return func(p *gamelogic.Player) {
-						assert.Equal(t, expectedValue, p.Firepower)
+						assert.Equal(t, expectedValue, p.GetFirepower())
 					}
 				},
 			},

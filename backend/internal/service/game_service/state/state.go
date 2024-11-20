@@ -2,19 +2,22 @@ package state
 
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
-	"errors"
 	"fmt"
 	"sync"
+
+	"go.uber.org/zap"
 )
 
 type StateManager struct {
+	logger       *zap.Logger
 	currentState pkg_proto.GameState
 	playerReady  map[int32]bool
 	mutex        sync.RWMutex
 }
 
-func NewStateManager() *StateManager {
+func NewStateManager(logger *zap.Logger) *StateManager {
 	return &StateManager{
+		logger:       logger,
 		currentState: pkg_proto.GameState_Init,
 		playerReady:  map[int32]bool{},
 		mutex:        sync.RWMutex{},
@@ -66,8 +69,14 @@ func (sm *StateManager) Transition(newState pkg_proto.GameState) error {
 		} else {
 			return sm.newInvalidTransitionError(newState)
 		}
+	case pkg_proto.GameState_Gameover:
+		if newState == pkg_proto.GameState_Gameover {
+			sm.logger.Warn("duplicated state gameover")
+		} else {
+			return sm.newInvalidTransitionError(newState)
+		}
 	default:
-		return errors.New("unknown state")
+		return fmt.Errorf("unknown state %q", newState)
 	}
 	return nil
 }
@@ -81,6 +90,7 @@ func (sm *StateManager) SetStateForTesting(newState pkg_proto.GameState) {
 
 func (sm *StateManager) saveAndPrintNewState(newState pkg_proto.GameState) {
 	sm.currentState = newState
+	sm.logger.Sugar().Debugf("new state %s", newState.String())
 }
 
 func (sm *StateManager) newInvalidTransitionError(newState pkg_proto.GameState) error {

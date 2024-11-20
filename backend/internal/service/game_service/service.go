@@ -36,7 +36,8 @@ func (service *GameService) NewGame(ctx context.Context, gameId int32, idNicknam
 		return nil
 	}
 
-	state := state.NewStateManager()
+	logger := service.logger.With(zap.Int32("game_id", gameId))
+	state := state.NewStateManager(logger)
 	eventBus := eventbus.NewEventBus()
 	mapInfo, err := service.mapLoader.Load(ctx, []byte(currentOnlyMapContent))
 	if err != nil {
@@ -46,10 +47,10 @@ func (service *GameService) NewGame(ctx context.Context, gameId int32, idNicknam
 
 	players := map[int32]*Player{}
 	for playerId, nickname := range idNicknameMap {
-		players[playerId] = NewPlayer(playerId, nickname, nil)
+		players[playerId] = NewPlayer().SetPlayerId(playerId).SetNickname(nickname)
 	}
 
-	sess, err := NewGameSession(service.logger, gameId, state, eventBus, gameMap, players)
+	sess, err := NewGameSession(logger, gameId, state, eventBus, gameMap, players)
 	if err != nil {
 		return err
 	}

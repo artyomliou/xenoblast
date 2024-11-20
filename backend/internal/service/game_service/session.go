@@ -51,7 +51,7 @@ func NewGameSession(logger *zap.Logger, id int32, state *state.StateManager, eve
 	}
 	game := &gameSession{
 		id:           id,
-		logger:       logger.With(zap.Int32("game", id)),
+		logger:       logger,
 		state:        state,
 		eventBus:     eventBus,
 		eventCh:      make(chan *pkg_proto.Event, EventQueueLength),
@@ -231,9 +231,9 @@ func (g *gameSession) setupPlayerCoords() {
 		coord := g.gameMap.PredefinedPlayerCoords[i]
 		x := coord[0]
 		y := coord[1]
-		player.SetTile(g.gameMap.GetTile(x, y))
-		player.X = x
-		player.Y = y
+		player.tile = g.gameMap.GetTile(x, y)
+		player.x = x
+		player.y = y
 		g.logger.Sugar().Debugf("player %d coord x=%d y=%d", playerId, x, y)
 	}
 }
@@ -376,9 +376,9 @@ func (g *gameSession) HandlePlayerMove(ev *pkg_proto.Event) {
 	}
 
 	// TODO check x y for cheating
-	player.SetTile(g.gameMap.GetTile(data.X, data.Y))
-	player.X = data.X
-	player.Y = data.Y
+	player.tile = g.gameMap.GetTile(data.X, data.Y)
+	player.x = data.X
+	player.y = data.Y
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_PlayerMoved,
 		Timestamp: time.Now().Unix(),
@@ -407,17 +407,17 @@ func (g *gameSession) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 		return
 	}
 
-	if player.BombCount <= 0 {
+	if player.bombCount <= 0 {
 		g.logger.Sugar().Warnf("player %d BombCount less than or equal to 0", data.PlayerId)
 		return
 	}
-	player.BombCount--
+	player.bombCount--
 
 	// TODO check x y for cheating
 	g.gameMap.SetObstacleWithType(data.X, data.Y, pkg_proto.ObstacleType_Bomb)
 	now := time.Now()
 	explodedAt := now.Add(BombBeforeExplodeDuration)
-	bombFirepower := player.Firepower
+	bombFirepower := player.firepower
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_BombPlanted,
 		Timestamp: now.Unix(),
@@ -428,7 +428,7 @@ func (g *gameSession) HandlePlayerPlantBomb(ev *pkg_proto.Event) {
 				Y:             data.Y,
 				ExplodedAt:    explodedAt.Unix(),
 				PlayerId:      data.PlayerId,
-				UserBombcount: player.BombCount,
+				UserBombcount: player.bombCount,
 			},
 		},
 	})
@@ -471,7 +471,7 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 	g.gameMap.ClearObstacle(data.X, data.Y)
 	g.logger.Sugar().Debugf("bomb removed x=%d y=%d", data.X, data.Y)
 
-	player.BombCount++
+	player.bombCount++
 	go g.eventBus.Publish(&pkg_proto.Event{
 		Type:      pkg_proto.EventType_BombExploded,
 		Timestamp: time.Now().Unix(),
@@ -482,7 +482,7 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 				Y:             data.Y,
 				BombFirepower: data.BombFirepower,
 				PlayerId:      data.PlayerId,
-				UserBombcount: player.BombCount,
+				UserBombcount: player.bombCount,
 			},
 		},
 	})
@@ -509,7 +509,7 @@ func (g *gameSession) HandleBombWillExplode(ev *pkg_proto.Event) {
 				},
 			},
 		})
-		g.logger.Sugar().Debugf("player %d was bombed at x=%d y=%d", player.playerId, player.X, player.Y)
+		g.logger.Sugar().Debugf("player %d was bombed at x=%d y=%d", player.playerId, player.x, player.y)
 	}
 }
 
@@ -583,10 +583,10 @@ func (g *gameSession) HandleGetPowerup(ev *pkg_proto.Event) {
 	// TODO check player is nearby this powerup
 	switch powerup.Type {
 	case pkg_proto.PowerupType_MoreBomb:
-		player.BombCount++
+		player.bombCount++
 		g.gameMap.ClearPowerup(data.X, data.Y)
 	case pkg_proto.PowerupType_MoreFire:
-		player.Firepower++
+		player.firepower++
 		g.gameMap.ClearPowerup(data.X, data.Y)
 	default:
 		return
@@ -602,8 +602,8 @@ func (g *gameSession) HandleGetPowerup(ev *pkg_proto.Event) {
 				Y:             data.Y,
 				PlayerId:      player.playerId,
 				Type:          powerup.Type,
-				UserBombcount: player.BombCount,
-				UserFirepower: player.Firepower,
+				UserBombcount: player.bombCount,
+				UserFirepower: player.firepower,
 			},
 		},
 	})

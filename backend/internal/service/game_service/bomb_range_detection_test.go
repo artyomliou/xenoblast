@@ -116,7 +116,7 @@ func TestBombRangeDetection(t *testing.T) {
 			t.Run(c.title, func(t *testing.T) {
 				gamemap := maploader.NewGameMap(&maploader.MapInfo{})
 				players := map[int32]*game_service.Player{
-					1: {X: c.playerX, Y: c.playerY},
+					1: game_service.NewPlayer().SetX(c.playerX).SetY(c.playerY),
 				}
 
 				detect := game_service.BombRangeDetection{gamemap, players}
@@ -125,8 +125,8 @@ func TestBombRangeDetection(t *testing.T) {
 				if c.shouldBeBombed {
 					assert.Equal(t, 1, len(bombedObjects.Players))
 					for _, player := range bombedObjects.Players {
-						assert.Equal(t, c.playerX, player.X)
-						assert.Equal(t, c.playerY, player.Y)
+						assert.Equal(t, c.playerX, player.GetX())
+						assert.Equal(t, c.playerY, player.GetY())
 					}
 				} else {
 					assert.Equal(t, 0, len(bombedObjects.Players))
@@ -156,7 +156,7 @@ func TestBombRangeDetection(t *testing.T) {
 					},
 				},
 				players: map[int32]*game_service.Player{
-					1: {X: 0, Y: 3},
+					1: game_service.NewPlayer().SetX(0).SetY(3),
 				},
 				bombX:         0,
 				bombY:         0,
@@ -173,7 +173,7 @@ func TestBombRangeDetection(t *testing.T) {
 					},
 				},
 				players: map[int32]*game_service.Player{
-					1: {X: 0, Y: 3},
+					1: game_service.NewPlayer().SetX(0).SetY(3),
 				},
 				bombX:         0,
 				bombY:         0,

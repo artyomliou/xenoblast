@@ -18,8 +18,8 @@ func TestWinCondition(t *testing.T) {
 		cases := []testCase{
 			{
 				players: []*gamelogic.Player{
-					gamelogic.NewPlayer(1, "1", nil),
-					gamelogic.NewPlayer(2, "2", nil),
+					gamelogic.NewPlayer().SetPlayerId(1).SetNickname("1"),
+					gamelogic.NewPlayer().SetPlayerId(2).SetNickname("2"),
 				},
 				alivePlayers: &map[int32]bool{
 					1: true,
@@ -29,8 +29,8 @@ func TestWinCondition(t *testing.T) {
 			},
 			{
 				players: []*gamelogic.Player{
-					gamelogic.NewPlayer(1, "1", nil),
-					gamelogic.NewPlayer(2, "2", nil),
+					gamelogic.NewPlayer().SetPlayerId(1).SetNickname("1"),
+					gamelogic.NewPlayer().SetPlayerId(2).SetNickname("2"),
 				},
 				alivePlayers: &map[int32]bool{
 					1: true,
@@ -40,8 +40,8 @@ func TestWinCondition(t *testing.T) {
 			},
 			{
 				players: []*gamelogic.Player{
-					gamelogic.NewPlayer(1, "1", nil),
-					gamelogic.NewPlayer(2, "2", nil),
+					gamelogic.NewPlayer().SetPlayerId(1).SetNickname("1"),
+					gamelogic.NewPlayer().SetPlayerId(2).SetNickname("2"),
 				},
 				alivePlayers: &map[int32]bool{
 					1: false,

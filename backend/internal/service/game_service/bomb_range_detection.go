@@ -14,7 +14,7 @@ func (g *BombRangeDetection) Scan(bombX, bombY, firepower int32) *BombedObjects 
 	bombedObjects := &BombedObjects{}
 
 	for _, player := range g.Players {
-		if player.X == bombX && player.Y == bombY {
+		if player.x == bombX && player.y == bombY {
 			bombedObjects.Players = append(bombedObjects.Players, player)
 		}
 	}
@@ -39,7 +39,7 @@ func (g *BombRangeDetection) Scan(bombX, bombY, firepower int32) *BombedObjects 
 				break // fire stop at obstacle
 			}
 			for _, player := range g.Players {
-				if player.X == tileX && player.Y == tileY {
+				if player.x == tileX && player.y == tileY {
 					bombedObjects.Players = append(bombedObjects.Players, player)
 				}
 			}
