@@ -25,19 +25,19 @@ const BombBeforeExplodeDuration = 3 * time.Second
 const PowerupDropRate = 0.3
 
 type gameSession struct {
+	logger *zap.Logger
+
 	id                 int32
-	logger             *zap.Logger
 	state              *state.StateManager
 	eventBus           *eventbus.EventBus
 	eventCh            chan *pkg_proto.Event
-	bombRangeDetection *BombRangeDetection
-	winCondition       WinCondition
 	duration           time.Duration
 	gameMap            *maploader.GameMap
 	players            map[int32]*Player
 	prepareOnce        sync.Once
-
-	powerupDropRate float32
+	powerupDropRate    float32
+	bombRangeDetection *BombRangeDetection
+	winCondition       WinCondition
 }
 
 func NewGameSession(logger *zap.Logger, id int32, state *state.StateManager, eventBus *eventbus.EventBus, gameMap *maploader.GameMap, players map[int32]*Player) (*gameSession, error) {
@@ -48,19 +48,18 @@ func NewGameSession(logger *zap.Logger, id int32, state *state.StateManager, eve
 		return nil, &TooMuchPlayerError{id, MaximumPlayer, len(players)}
 	}
 	game := &gameSession{
-		id:                 id,
 		logger:             logger,
+		id:                 id,
 		state:              state,
 		eventBus:           eventBus,
 		eventCh:            make(chan *pkg_proto.Event, EventQueueLength),
-		bombRangeDetection: &BombRangeDetection{gameMap, players},
-		winCondition:       &OnlyOnePlayerLeft{players},
 		duration:           GameDuration,
 		gameMap:            gameMap,
 		players:            players,
 		prepareOnce:        sync.Once{},
-
-		powerupDropRate: PowerupDropRate,
+		powerupDropRate:    PowerupDropRate,
+		bombRangeDetection: &BombRangeDetection{gameMap, players},
+		winCondition:       &OnlyOnePlayerLeft{players},
 	}
 	game.setupSerializeEventChannel()
 	return game, nil
