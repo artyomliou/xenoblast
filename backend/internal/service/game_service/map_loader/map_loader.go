@@ -18,6 +18,8 @@ func NewTxtMapLoader() *txtMapLoader {
 
 func (loader *txtMapLoader) Load(ctx context.Context, fileContent []byte) (*MapInfo, error) {
 	txtContent := string(fileContent)
+	txtContent = strings.ReplaceAll(txtContent, "\t", "")
+	txtContent = strings.ReplaceAll(txtContent, " ", "")
 	txtContent = strings.ReplaceAll(txtContent, "\n", "")
 
 	expectedLength := MapWidth * MapHeight

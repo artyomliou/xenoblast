@@ -3,6 +3,7 @@ package maploader_test
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
 	maploader "artyomliou/xenoblast-backend/internal/service/game_service/map_loader"
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,24 +11,24 @@ import (
 
 func TestMapInfoToGameMap(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
-		mapInfo := &maploader.MapInfo{
-			Houses: [][]int32{
-				{1, 1},
-			},
-			Trees: [][]int32{
-				{2, 2},
-			},
-			Boxes: [][]int32{
-				{3, 3},
-			},
-			Bushes: [][]int32{
-				{4, 4},
-			},
-			PredefinedPlayerCoords: [][]int32{
-				{5, 5},
-			},
+		mapData := `
+			...............
+			.H.............
+			..T............
+			...B...........
+			....O..........
+			.....P.........
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............`
+		mapInfo, err := maploader.NewTxtMapLoader().Load(context.Background(), []byte(mapData))
+		if err != nil {
+			t.Error(err)
 		}
-
 		gameMap := maploader.NewGameMap(mapInfo)
 
 		assert.Equal(t, mapInfo.PredefinedPlayerCoords, gameMap.PredefinedPlayerCoords)

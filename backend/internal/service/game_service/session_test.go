@@ -192,19 +192,23 @@ func TestGameSession(t *testing.T) {
 		t.Parallel()
 
 		// customized map for explosion test
-		mapInfo := &maploader.MapInfo{
-			PredefinedPlayerCoords: [][]int32{
-				{0, 0},
-				{12, 0},
-				{13, 0},
-				{14, 0},
-			},
-			Boxes: [][]int32{
-				{0, 1},
-				{12, 1},
-				{13, 1},
-				{14, 1},
-			},
+		mapData := `
+			P...........PPP
+			B...........BBB
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............`
+		mapInfo, err := maploader.NewTxtMapLoader().Load(context.Background(), []byte(mapData))
+		if err != nil {
+			t.Error(err)
 		}
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
@@ -290,19 +294,23 @@ func TestGameSession(t *testing.T) {
 		t.Parallel()
 
 		// customized map for explosion test
-		mapInfo := &maploader.MapInfo{
-			PredefinedPlayerCoords: [][]int32{
-				{0, 0},
-				{12, 0},
-				{13, 0},
-				{14, 0},
-			},
-			Boxes: [][]int32{
-				{0, 1},
-				{12, 1},
-				{13, 1},
-				{14, 1},
-			},
+		mapData := `
+			P...........PPP
+			B...........BBB
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............`
+		mapInfo, err := maploader.NewTxtMapLoader().Load(context.Background(), []byte(mapData))
+		if err != nil {
+			t.Error(err)
 		}
 
 		type testCase struct {
@@ -509,19 +517,23 @@ func TestGameSession(t *testing.T) {
 		t.Parallel()
 
 		// customized map for explosion test
-		mapInfo := &maploader.MapInfo{
-			PredefinedPlayerCoords: [][]int32{
-				{0, 0},
-				{12, 0},
-				{13, 0},
-				{14, 0},
-			},
-			Boxes: [][]int32{
-				{0, 1},
-				{12, 1},
-				{13, 1},
-				{14, 1},
-			},
+		mapData := `
+			P...........PPP
+			B...........BBB
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............
+			...............`
+		mapInfo, err := maploader.NewTxtMapLoader().Load(context.Background(), []byte(mapData))
+		if err != nil {
+			t.Error(err)
 		}
 
 		state, eventBus, gameMap, players := basicArgumentHelper(mapInfo)
