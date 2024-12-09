@@ -546,9 +546,9 @@ func (g *gameSession) rollPowerup() *pkg_proto.PowerupType {
 		pkg_proto.PowerupType_MoreFire,
 	}
 
-	willDrop := rand.Float32() < g.powerupDropRate
+	willDrop := rand.Float32() < g.powerupDropRate // #nosec G404 -- Just a random rate
 	if willDrop {
-		index := int(rand.Uint32()) % len(availablePowerups)
+		index := int(rand.Uint32()) % len(availablePowerups) // #nosec G404 -- Just picking a random powerup
 		return &availablePowerups[index]
 	}
 	return nil
