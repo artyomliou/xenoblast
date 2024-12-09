@@ -57,7 +57,7 @@ Using [protobuf](https://github.com/golang/protobuf) & [protobuf-cli](https://ww
 Using [uber-go/fx](https://github.com/uber-go/fx)
 
 - [dependency_injection.go](./backend/internal/dependency_injection/dependency_injection.go)
-- [main.go](./backend/cmd/main/main.go)
+- [backend/cmd/](./backend/cmd/)
 - [frontend_test.go](./backend/test/frontend_test.go)
 
 ### Event bus

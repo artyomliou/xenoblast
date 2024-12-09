@@ -3,5 +3,5 @@ WORKDIR /src
 COPY ./go.mod ./go.sum /src
 RUN go mod download
 VOLUME /src
-ENTRYPOINT ["go", "run", "cmd/main/main.go"]
-CMD ["-service", "http"]
+ENTRYPOINT ["go", "run"]
+CMD ["cmd/http_service/main.go"]

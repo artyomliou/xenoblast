@@ -32,7 +32,7 @@ services:
       dockerfile: dockerfile.dev
     volumes:
       - ../../backend:/src
-    command: -service http
+    command: "cmd/http_service/main.go"
     expose:
       - 8080
     depends_on:
@@ -44,7 +44,7 @@ services:
       dockerfile: dockerfile.dev
     volumes:
       - ../../backend:/src
-    command: -service websocket
+    command: "cmd/websocket_service/main.go"
     expose:
       - 8080
     depends_on:
@@ -56,7 +56,7 @@ services:
       dockerfile: dockerfile.dev
     volumes:
       - ../../backend:/src
-    command: -service auth
+    command: "cmd/auth_service/main.go"
     expose:
       - 50051
     depends_on:
@@ -69,7 +69,7 @@ services:
       dockerfile: dockerfile.dev
     volumes:
       - ../../backend:/src
-    command: -service matchmaking
+    command: "cmd/matchmaking_service/main.go"
     expose:
       - 50051
     depends_on:
@@ -82,7 +82,7 @@ services:
       dockerfile: dockerfile.dev
     volumes:
       - ../../backend:/src
-    command: -service game
+    command: "cmd/game_service/main.go"
     expose:
       - 50051
     deploy:
