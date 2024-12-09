@@ -91,7 +91,11 @@ func (server *MatchmakingServiceServer) SubscribeMatch(req *matchmaking.Matchmak
 
 		errCh <- nil
 	})
-	defer stop()
+	defer func() {
+		if err := stop(); err != nil {
+			server.logger.Error(err.Error())
+		}
+	}()
 
 	return <-errCh
 }
@@ -113,7 +117,11 @@ func (server *MatchmakingServiceServer) sendNewGameRequest(ev *pkg_proto.Event) 
 	if err != nil {
 		return err
 	}
-	defer close()
+	defer func() {
+		if err := close(); err != nil {
+			server.logger.Error(err.Error())
+		}
+	}()
 
 	_, err = gameServiceClient.NewGame(context.Background(), &game.NewGameRequest{
 		GameId:  ev.GameId,

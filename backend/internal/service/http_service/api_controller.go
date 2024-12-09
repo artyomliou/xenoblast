@@ -163,7 +163,11 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 		ctx.String(http.StatusInternalServerError, "Internal server error")
 		return
 	}
-	defer close()
+	defer func() {
+		if err := close(); err != nil {
+			ctl.logger.Error(err.Error())
+		}
+	}()
 
 	resp2, err := gameServiceClient.GetGameInfo(ctx, &game.GetGameInfoRequest{
 		GameId: req.GameId,
@@ -182,5 +186,7 @@ func (ctl *ApiController) GetGameInfo(ctx *gin.Context) {
 		return
 	}
 	ctx.Writer.WriteHeader(http.StatusOK)
-	ctx.Writer.Write(protobufBytes)
+	if _, err := ctx.Writer.Write(protobufBytes); err != nil {
+		ctl.logger.Error(err.Error())
+	}
 }

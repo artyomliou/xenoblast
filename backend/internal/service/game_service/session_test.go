@@ -41,7 +41,11 @@ func TestGameSession(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer logger.Sync()
+	defer func() {
+		if err := logger.Sync(); err != nil {
+			t.Log(err.Error())
+		}
+	}()
 
 	mapLoader := maploader.NewTxtMapLoader()
 	fileContent, err := os.ReadFile(currentOnlyMap)

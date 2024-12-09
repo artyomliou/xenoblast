@@ -110,7 +110,11 @@ func appendHttpServerLifecycle(lc fx.Lifecycle, logger *zap.Logger, server *http
 				return err
 			}
 			logger.Sugar().Infof("Starting HTTP server at %d", server.Addr)
-			go server.Serve(listener)
+			go func() {
+				if err := server.Serve(listener); err != nil {
+					logger.Error(err.Error())
+				}
+			}()
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
@@ -122,7 +126,7 @@ func appendHttpServerLifecycle(lc fx.Lifecycle, logger *zap.Logger, server *http
 func NewAuthServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, service *auth_service.AuthService) (*auth_service.AuthServiceServer, error) {
 	addr := fmt.Sprintf(":%d", cfg.AuthService.Port)
 	grpcServer := grpc.NewServer()
-	server := auth_service.NewAuthServiceServer(cfg, logger, service)
+	server := auth_service.NewAuthServiceServer(logger, service)
 	auth.RegisterAuthServiceServer(grpcServer, server)
 	appendGrpcServerLifecycle(lc, cfg, logger, addr, grpcServer)
 	return server, nil
@@ -153,7 +157,11 @@ func appendGrpcServerLifecycle(lc fx.Lifecycle, cfg *config.Config, logger *zap.
 			if err != nil {
 				return err
 			}
-			go grpcServer.Serve(listener)
+			go func() {
+				if err := grpcServer.Serve(listener); err != nil {
+					logger.Error(err.Error())
+				}
+			}()
 			logger.Sugar().Info("Starting GRPC server at %d", addr)
 			return nil
 		},
@@ -200,8 +208,7 @@ func NewLogger(lc fx.Lifecycle, cfg *config.Config) (*zap.Logger, error) {
 
 	lc.Append(fx.Hook{
 		OnStop: func(ctx context.Context) error {
-			logger.Sync()
-			return nil
+			return logger.Sync()
 		},
 	})
 	return logger, nil

@@ -38,14 +38,18 @@ func (ctl *WebsocketController) Handle(w http.ResponseWriter, r *http.Request) {
 	apiKey := r.URL.Query().Get(http_service.ApiKeyHeader)
 	if apiKey == "" {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Unauthorized"))
+		if _, err := w.Write([]byte("Unauthorized")); err != nil {
+			ctl.logger.Error(err.Error())
+		}
 		return
 	}
 
 	player, err := ctl.authServiceClient.Validate(r.Context(), &auth.ValidateRequest{ApiKey: apiKey})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Internal server error"))
+		if _, err := w.Write([]byte("Internal server error")); err != nil {
+			ctl.logger.Error(err.Error())
+		}
 		return
 	}
 

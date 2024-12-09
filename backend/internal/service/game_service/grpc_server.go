@@ -88,7 +88,11 @@ func (server *GameServiceServer) Subscribe(req *game.SubscribeRequest, stream gr
 			server.logger.Error(err.Error())
 			return err
 		}
-		defer stop()
+		defer func() {
+			if err := stop(); err != nil {
+				server.logger.Error(err.Error())
+			}
+		}()
 	}
 
 	for ev := range eventCh {

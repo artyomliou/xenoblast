@@ -55,11 +55,15 @@ func (r *cloudmapdnsResolver) start() {
 		return
 	}
 
-	r.cc.UpdateState(
+	err = r.cc.UpdateState(
 		resolver.State{
 			Addresses: addresses,
 		},
 	)
+	if err != nil {
+		r.logger.Error(err.Error())
+		return
+	}
 }
 
 func ResolveSrvToAddrs(endpoint string) ([]resolver.Address, error) {

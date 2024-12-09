@@ -41,10 +41,7 @@ func (gm *GameMap) GetObstacle(x, y int32) *obstacle {
 }
 
 func (gm *GameMap) CheckObstacleExists(x, y int32) bool {
-	if gm.tiles[x][y].obstacle != nil {
-		return true
-	}
-	return false
+	return gm.tiles[x][y].obstacle != nil
 }
 
 func (gm *GameMap) CheckObstacleType(x, y int32, obstacleType pkg_proto.ObstacleType) bool {

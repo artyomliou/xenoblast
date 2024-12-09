@@ -17,7 +17,11 @@ func TestGameLogicService(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer logger.Sync()
+	defer func() {
+		if err := logger.Sync(); err != nil {
+			t.Log(err.Error())
+		}
+	}()
 
 	players := map[int32]string{
 		1: "1",
@@ -30,9 +34,10 @@ func TestGameLogicService(t *testing.T) {
 	assert.NoError(t, service.NewGame(context.Background(), 1, players))
 
 	expectWaitingReadyEvent := make(chan bool)
-	service.Subscribe(1, pkg_proto.EventType_StateWaitingReady, func(event *pkg_proto.Event) {
+	_, err = service.Subscribe(1, pkg_proto.EventType_StateWaitingReady, func(event *pkg_proto.Event) {
 		expectWaitingReadyEvent <- true
 	})
+	assert.NoError(t, err)
 	assert.NoError(t, service.MakeGameRun(context.Background(), 1))
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -64,11 +69,12 @@ func TestGameLogicService(t *testing.T) {
 
 	t.Run("PlayerPublish() & Subscribe()", func(t *testing.T) {
 		expectPlayerMoveEvent := make(chan *pkg_proto.Event)
-		service.Subscribe(1, pkg_proto.EventType_PlayerMove, func(event *pkg_proto.Event) {
+		_, err := service.Subscribe(1, pkg_proto.EventType_PlayerMove, func(event *pkg_proto.Event) {
 			expectPlayerMoveEvent <- event
 		})
+		assert.NoError(t, err)
 
-		err := service.PlayerPublish(context.Background(), 1, &pkg_proto.Event{
+		err = service.PlayerPublish(context.Background(), 1, &pkg_proto.Event{
 			Type:      pkg_proto.EventType_PlayerMove,
 			Timestamp: time.Now().Unix(),
 			GameId:    1,

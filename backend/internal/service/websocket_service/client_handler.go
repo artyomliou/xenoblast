@@ -419,7 +419,9 @@ func (h *ClientHandler) recvGameEvent(ctx context.Context, gameServerAddr string
 	go func() {
 		defer func() {
 			h.logger.Debug("recvGameEvent(): exit")
-			connClose()
+			if err := connClose(); err != nil {
+				h.logger.Error(err.Error())
+			}
 			close(h.gameServiceEventCh)
 			h.gameServiceEventCh = nil
 		}()

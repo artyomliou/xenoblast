@@ -1,7 +1,6 @@
 package auth_service
 
 import (
-	"artyomliou/xenoblast-backend/internal/config"
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
 	"context"
 
@@ -10,12 +9,11 @@ import (
 
 type AuthServiceServer struct {
 	auth.UnimplementedAuthServiceServer
-	cfg     *config.Config
 	service *AuthService
 	logger  *zap.Logger
 }
 
-func NewAuthServiceServer(cfg *config.Config, logger *zap.Logger, service *AuthService) *AuthServiceServer {
+func NewAuthServiceServer(logger *zap.Logger, service *AuthService) *AuthServiceServer {
 	return &AuthServiceServer{
 		service: service,
 		logger:  logger,

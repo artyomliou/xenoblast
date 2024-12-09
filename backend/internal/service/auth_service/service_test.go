@@ -16,7 +16,11 @@ func TestAuthService(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer logger.Sync()
+	defer func() {
+		if err := logger.Sync(); err != nil {
+			t.Log(err.Error())
+		}
+	}()
 
 	t.Run("register & validate & get nickname", func(t *testing.T) {
 		cfg := config.GetDefault()

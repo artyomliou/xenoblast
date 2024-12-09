@@ -70,7 +70,11 @@ func (service *GameService) MakeGameRun(ctx context.Context, gameId int32) error
 		sess.TriggerPreparing()
 		triggered <- true
 	})
-	defer stop()
+	defer func() {
+		if err := stop(); err != nil {
+			service.logger.Error(err.Error())
+		}
+	}()
 
 	go sess.Run(ctx)
 
