@@ -27,6 +27,16 @@ jobs:
       - name: Run golangci-lint
         run: golangci-lint run ./...
 
+  securitycheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: securego/gosec@master
+        with:
+          # TODO remove G115 exclusion
+          args: "-exclude=G115 ./..."
+
   test:
     runs-on: ubuntu-latest
 
