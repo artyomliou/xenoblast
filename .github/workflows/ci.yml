@@ -50,11 +50,12 @@ jobs:
         with:
           go-version: "1.22"
           cache-dependency-path: backend/go.sum
-      - run: pwd
-      - uses: securego/gosec@master
-        with:
-          # TODO remove G115 exclusion
-          args: "-exclude=G115 ./..."
+      - name: Install gosec
+        run: |
+          curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.21.4
+      - name: Run gosec
+        # TODO remove G115 exclusion
+        run: gosec -exclude=G115 ./...
 
   test:
     needs: setup
