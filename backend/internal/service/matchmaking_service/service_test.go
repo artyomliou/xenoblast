@@ -4,8 +4,8 @@ import (
 	"artyomliou/xenoblast-backend/internal/config"
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
-	"artyomliou/xenoblast-backend/internal/repository/matchmaking_repository"
 	"artyomliou/xenoblast-backend/internal/service/matchmaking_service"
+	"artyomliou/xenoblast-backend/internal/service/matchmaking_service/repository"
 	"context"
 	"fmt"
 	"testing"
@@ -33,7 +33,7 @@ func TestMatchmakingService(t *testing.T) {
 	t.Run("Enroll", func(t *testing.T) {
 		ctx := context.Background()
 		cfg := getTestConfig()
-		repo, err := matchmaking_repository.NewMatchmakingRepository(cfg)
+		repo, err := repository.NewMatchmakingRepository(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -44,7 +44,7 @@ func TestMatchmakingService(t *testing.T) {
 	t.Run("Cancel", func(t *testing.T) {
 		ctx := context.Background()
 		cfg := getTestConfig()
-		repo, err := matchmaking_repository.NewMatchmakingRepository(cfg)
+		repo, err := repository.NewMatchmakingRepository(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -82,7 +82,7 @@ func TestMatchmakingService(t *testing.T) {
 				t.Parallel()
 
 				cfg := getTestConfig()
-				repo, err := matchmaking_repository.NewMatchmakingRepository(cfg)
+				repo, err := repository.NewMatchmakingRepository(cfg)
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -121,14 +121,14 @@ func TestMatchmakingService(t *testing.T) {
 	t.Run("Save GameServerAddr", func(t *testing.T) {
 		ctx := context.Background()
 		cfg := getTestConfig()
-		repo, err := matchmaking_repository.NewMatchmakingRepository(cfg)
+		repo, err := repository.NewMatchmakingRepository(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
 		service := matchmaking_service.NewMatchmakingService(cfg, logger, repo, eventbus.NewEventBus())
 
 		playerId := 1
-		game := &matchmaking_repository.AssociatedGame{
+		game := &repository.AssociatedGame{
 			Id:         2,
 			ServerAddr: "127.0.0.1:12345",
 		}

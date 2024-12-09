@@ -2,8 +2,7 @@ package auth_service
 
 import (
 	"artyomliou/xenoblast-backend/internal/pkg_proto/auth"
-	"artyomliou/xenoblast-backend/internal/repository"
-	"artyomliou/xenoblast-backend/internal/repository/auth_repository"
+	"artyomliou/xenoblast-backend/internal/service/auth_service/repository"
 	"context"
 	"errors"
 
@@ -12,10 +11,10 @@ import (
 
 type AuthService struct {
 	logger *zap.Logger
-	repo   auth_repository.AuthRepository
+	repo   repository.AuthRepository
 }
 
-func NewAuthService(logger *zap.Logger, repo auth_repository.AuthRepository) *AuthService {
+func NewAuthService(logger *zap.Logger, repo repository.AuthRepository) *AuthService {
 	return &AuthService{
 		logger: logger,
 		repo:   repo,

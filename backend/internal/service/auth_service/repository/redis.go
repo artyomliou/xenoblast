@@ -1,7 +1,6 @@
-package auth_repository
+package repository
 
 import (
-	"artyomliou/xenoblast-backend/internal/repository"
 	"artyomliou/xenoblast-backend/pkg/utils"
 	"context"
 	"fmt"
@@ -27,7 +26,7 @@ func (repo *RedisAuthRepository) GetPlayerIdByNickname(ctx context.Context, nick
 	key := fmt.Sprintf(accessPattern1, nickname)
 	val, err := repo.client.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return 0, repository.ErrNotFound
+		return 0, ErrNotFound
 	}
 	if err != nil {
 		return 0, err
@@ -61,7 +60,7 @@ func (repo *RedisAuthRepository) GetNicknameByPlayerId(ctx context.Context, play
 	key := fmt.Sprintf(accessPattern2, playerId)
 	nickname, err := repo.client.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return "", repository.ErrNotFound
+		return "", ErrNotFound
 	}
 	if err != nil {
 		return "", err
@@ -102,7 +101,7 @@ func (repo *RedisAuthRepository) GetPlayerIdByApiKey(ctx context.Context, apiKey
 	key := fmt.Sprintf(accessPattern3, apiKey)
 	playerIdString, err := repo.client.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return 0, repository.ErrNotFound
+		return 0, ErrNotFound
 	}
 	if err != nil {
 		return 0, err

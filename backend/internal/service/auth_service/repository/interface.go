@@ -1,4 +1,4 @@
-package auth_repository
+package repository
 
 import (
 	"artyomliou/xenoblast-backend/internal/config"

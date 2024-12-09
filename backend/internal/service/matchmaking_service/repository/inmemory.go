@@ -1,4 +1,4 @@
-package matchmaking_repository
+package repository
 
 import (
 	"context"

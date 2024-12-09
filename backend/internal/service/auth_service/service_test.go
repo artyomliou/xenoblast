@@ -2,8 +2,8 @@ package auth_service_test
 
 import (
 	"artyomliou/xenoblast-backend/internal/config"
-	"artyomliou/xenoblast-backend/internal/repository/auth_repository"
 	"artyomliou/xenoblast-backend/internal/service/auth_service"
+	"artyomliou/xenoblast-backend/internal/service/auth_service/repository"
 	"context"
 	"testing"
 
@@ -20,7 +20,7 @@ func TestAuthService(t *testing.T) {
 
 	t.Run("register & validate & get nickname", func(t *testing.T) {
 		cfg := config.GetDefault()
-		repo, err := auth_repository.NewAuthRepository(cfg)
+		repo, err := repository.NewAuthRepository(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -45,7 +45,7 @@ func TestAuthService(t *testing.T) {
 
 	t.Run("validate - failed", func(t *testing.T) {
 		cfg := config.GetDefault()
-		repo, err := auth_repository.NewAuthRepository(cfg)
+		repo, err := repository.NewAuthRepository(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}

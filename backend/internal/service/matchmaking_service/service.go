@@ -5,7 +5,7 @@ import (
 	eventbus "artyomliou/xenoblast-backend/internal/event_bus"
 	"artyomliou/xenoblast-backend/internal/grpc_util/cloudmapdns_resolver"
 	"artyomliou/xenoblast-backend/internal/pkg_proto"
-	"artyomliou/xenoblast-backend/internal/repository/matchmaking_repository"
+	"artyomliou/xenoblast-backend/internal/service/matchmaking_service/repository"
 	"context"
 	"fmt"
 	"net"
@@ -21,14 +21,14 @@ const MatchmakingInterval = 3 * time.Second
 type MatchmakingService struct {
 	cfg                *config.Config
 	logger             *zap.Logger
-	repo               matchmaking_repository.MatchmakingRepository
+	repo               repository.MatchmakingRepository
 	eventBus           *eventbus.EventBus
 	waitingPlayerCount int
 	ctx                context.Context
 	cancel             context.CancelFunc
 }
 
-func NewMatchmakingService(cfg *config.Config, logger *zap.Logger, repo matchmaking_repository.MatchmakingRepository, eventBus *eventbus.EventBus) *MatchmakingService {
+func NewMatchmakingService(cfg *config.Config, logger *zap.Logger, repo repository.MatchmakingRepository, eventBus *eventbus.EventBus) *MatchmakingService {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &MatchmakingService{
 		cfg:      cfg,
@@ -117,7 +117,7 @@ func (service *MatchmakingService) matchmaking() error {
 		addr = fmt.Sprintf("%s:%d", ip.String(), service.cfg.GameService.Port)
 	}
 
-	associateGame := &matchmaking_repository.AssociatedGame{
+	associateGame := &repository.AssociatedGame{
 		Id:         gameId,
 		ServerAddr: addr,
 	}

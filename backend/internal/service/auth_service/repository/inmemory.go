@@ -1,7 +1,6 @@
-package auth_repository
+package repository
 
 import (
-	"artyomliou/xenoblast-backend/internal/repository"
 	"artyomliou/xenoblast-backend/pkg/utils"
 	"context"
 	"fmt"
@@ -31,7 +30,7 @@ func (repo *InmemoryAuthRepository) GetPlayerIdByNickname(ctx context.Context, n
 	if playerIdString, ok := repo.storage[key]; ok {
 		return strconv.Atoi(playerIdString)
 	}
-	return 0, repository.ErrNotFound
+	return 0, ErrNotFound
 }
 
 func (repo *InmemoryAuthRepository) GeneratePlayerIdByNickname(ctx context.Context, nickname string) (int, error) {
@@ -64,7 +63,7 @@ func (repo *InmemoryAuthRepository) GetNicknameByPlayerId(ctx context.Context, p
 	if nickname, ok := repo.storage[key]; ok {
 		return nickname, nil
 	}
-	return "", repository.ErrNotFound
+	return "", ErrNotFound
 }
 
 func (repo *InmemoryAuthRepository) GenerateApiKeyByPlayerId(ctx context.Context, playerId int) (string, error) {
@@ -100,5 +99,5 @@ func (repo *InmemoryAuthRepository) GetPlayerIdByApiKey(ctx context.Context, api
 	if playerIdString, ok := repo.storage[key]; ok {
 		return strconv.Atoi(playerIdString)
 	}
-	return 0, repository.ErrNotFound
+	return 0, ErrNotFound
 }
