@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"time"
 
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
@@ -85,8 +86,9 @@ var Module = fx.Options(
 func NewHttpServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, handler http.Handler) (*http.Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.HttpService.Port)
 	server := &http.Server{
-		Addr:    addr,
-		Handler: handler,
+		Addr:              addr,
+		Handler:           handler,
+		ReadHeaderTimeout: 2 * time.Second,
 	}
 	appendHttpServerLifecycle(lc, logger, server)
 	return server, nil
@@ -95,8 +97,9 @@ func NewHttpServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, hand
 func NewWebsocketServer(lc fx.Lifecycle, cfg *config.Config, logger *zap.Logger, handler http.Handler) (*http.Server, error) {
 	addr := fmt.Sprintf(":%d", cfg.WebsocketService.Port)
 	server := &http.Server{
-		Addr:    addr,
-		Handler: handler,
+		Addr:              addr,
+		Handler:           handler,
+		ReadHeaderTimeout: 2 * time.Second,
 	}
 	appendHttpServerLifecycle(lc, logger, server)
 	return server, nil
