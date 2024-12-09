@@ -73,7 +73,11 @@ func (repo *RedisAuthRepository) GenerateApiKeyByPlayerId(ctx context.Context, p
 	var apiKey string
 	var selected bool
 	for i := 0; i < maxRetries; i++ {
-		apiKey = utils.RandStringRunes(40)
+		if newApiKey, err := utils.RandStringRunes(40); err != nil {
+			return "", err
+		} else {
+			apiKey = newApiKey
+		}
 		key = fmt.Sprintf(accessPattern3, apiKey)
 		_, err := repo.client.Get(ctx, key).Result()
 		if err == redis.Nil {

@@ -83,7 +83,8 @@ func TestApiController(t *testing.T) {
 		gameServiceClientFactory := new(mocks.GameServiceClientFactory)
 		ctl := http_service.NewApiController(cfg, logger, authServiceClient, matchmakingServiceClient, gameServiceClientFactory)
 
-		apiKey := utils.RandStringRunes(40)
+		apiKey, err := utils.RandStringRunes(40)
+		assert.NoError(t, err)
 		ctx, w := newTestContext(http.MethodGet, "/auth/validate", "", apiKey)
 
 		// Setup mock expectations
@@ -116,7 +117,8 @@ func TestApiController(t *testing.T) {
 		gameServiceClientFactory := new(mocks.GameServiceClientFactory)
 		ctl := http_service.NewApiController(cfg, logger, authServiceClient, matchmakingServiceClient, gameServiceClientFactory)
 
-		apiKey := utils.RandStringRunes(40)
+		apiKey, err := utils.RandStringRunes(40)
+		assert.NoError(t, err)
 		ctx, w := newTestContext(http.MethodGet, "/matchmaking/get_waiting_player_count", "", apiKey)
 
 		// Setup mock expectations
@@ -152,7 +154,8 @@ func TestApiController(t *testing.T) {
 		gameServiceClientFactory := new(mocks.GameServiceClientFactory)
 		ctl := http_service.NewApiController(cfg, logger, authServiceClient, matchmakingServiceClient, gameServiceClientFactory)
 
-		apiKey := utils.RandStringRunes(40)
+		apiKey, err := utils.RandStringRunes(40)
+		assert.NoError(t, err)
 		gameId := 1
 		ctx, w := newTestContext(http.MethodGet, fmt.Sprintf("/matchmaking/get_game_info?GameId=%d", gameId), "", apiKey)
 

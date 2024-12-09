@@ -74,7 +74,11 @@ func (repo *InmemoryAuthRepository) GenerateApiKeyByPlayerId(ctx context.Context
 	var apiKey string
 	var selected bool
 	for i := 0; i < maxRetries; i++ {
-		apiKey = utils.RandStringRunes(40)
+		if newApiKey, err := utils.RandStringRunes(40); err != nil {
+			return "", err
+		} else {
+			apiKey = newApiKey
+		}
 		key = fmt.Sprintf(accessPattern3, apiKey)
 		if _, exists := repo.storage[key]; !exists {
 			selected = true
