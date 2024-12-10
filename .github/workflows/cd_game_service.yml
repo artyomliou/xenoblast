@@ -28,15 +28,16 @@ env:
   ECS_GAME_SERVICE_NAME: xenoblast-game_service
 
 jobs:
-  test-build-deploy:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: ./.github/actions/test
 
-      - id: test
-        uses: ./.github/actions/test
-
-      - id: build-tag-push
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - id: build
         uses: ./.github/actions/build_tag_push
         with:
           aws-region: ${{ env.AWS_REGION }}
@@ -44,15 +45,20 @@ jobs:
           repo-name: ${{ env.ECR_GAME_REPO_NAME }}
           before-build-script: |
             cd backend/
-          build-args: --build-arg ENTRY_PKG=./cmd/websocket_service
+          build-args: --build-arg ENTRY_PKG=./cmd/game_service
+    outputs:
+      image: ${{ steps.build.outputs.image }}
 
-      - id: deploy
-        uses: ./.github/actions/deploy
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
           taskdef-arn: ${{ secrets.ECS_GAME_TASKDEF_ARN }}
           container-name: ${{ env.ECS_GAME_CONTAINER_NAME }}
-          image: ${{ steps.build-tag-push.outputs.image }}
+          image: ${{ needs.build.outputs.image }}
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
           service-name: ${{ env.ECS_GAME_SERVICE_NAME }}
