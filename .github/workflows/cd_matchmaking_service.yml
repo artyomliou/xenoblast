@@ -26,6 +26,9 @@ env:
   ECS_MATCHMAKING_SERVICE_NAME: xenoblast-matchmaking_service
 
 jobs:
+  checkout:
+    uses: actions/checkout@v4
+
   test-build-deploy:
     runs-on: ubuntu-latest
     steps:
