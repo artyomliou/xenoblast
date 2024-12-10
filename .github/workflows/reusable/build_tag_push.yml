@@ -1,0 +1,62 @@
+name: Build and Push to ECR
+
+permissions:
+  id-token: write
+
+on:
+  workflow_call:
+    inputs:
+      aws-region:
+        required: true
+        type: string
+      aws-role-arn:
+        required: true
+        type: string
+      before-build-script:
+        required: false
+        type: string
+      build-args:
+        required: false
+        type: string
+      image-name:
+        required: true
+        type: string
+
+    outputs:
+      image-tag:
+        value: ${{ jobs.build.outputs.image-tag }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.aws-role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+
+      # https://github.com/aws-actions/amazon-ecr-login?tab=readme-ov-file#login-to-amazon-ecr-private-then-build-and-push-a-docker-image
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build docker image
+        id: build-tag-push
+        run: |
+          ${{ inputs.before-build-script }}
+          docker build ${{ inputs.build-args }} -t ${{ inputs.image-name }} .
+
+      - name: Tag and push Docker image to ECR
+        id: tag-push
+        env:
+          IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.image-name }}:${{ github.sha }}
+        run: |
+          docker tag ${{ inputs.image-name }} $IMAGE_TAG
+          docker push $IMAGE_TAG
+          echo "image-tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+
+    outputs:
+      image-tag: ${{ steps.tag-push.outputs.image-tag }}

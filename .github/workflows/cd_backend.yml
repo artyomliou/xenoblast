@@ -1,0 +1,103 @@
+name: Build and Push API Gateway Related Services to ECR
+
+permissions:
+  id-token: write
+
+on:
+  push:
+    branches:
+      - refactor/microservices
+    # branches:
+    #   - testing
+    #   - production
+    # paths:
+    #   - api-gateway/**
+    #   - backend/cmd/http_service/**
+    #   - backend/internal/service/http_service/**
+    #   - backend/cmd/websocket_service/**
+    #   - backend/internal/service/websocket_service/**
+  workflow_call:
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+      TASKDEF_ARN:
+        required: true
+
+env:
+  AWS_REGION: ap-east-1
+  ECS_CLUSTER_NAME: xenoblast
+  ECS_BACKEND_SERVICE_NAME: xenoblast-backend
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - id: test
+        uses: ./.github/workflows/reusable/test.yml
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - id: build-api-gateway
+        uses: ./.github/workflows/reusable/build_tag_push.yml
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+          image-name: auth_service
+          before-build-script: |
+            cd frontend
+            docker build -t frontend:latest .
+            cd -
+            cd api-gateway
+          build-args: --build-arg ASSET_IMAGE=frontend:latest --build-arg ASSET_PATH=/etc/nginx/html
+
+      - id: build-http
+        uses: ./.github/workflows/reusable/build_tag_push.yml
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+          image-name: http_service
+          before-build-script: |
+            cd backend/
+          build-args: --build-arg ENTRY_PKG=./cmd/http_service
+
+      - id: build-websocket
+        uses: ./.github/workflows/reusable/build_tag_push.yml
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+          image-name: websocket_service
+          before-build-script: |
+            cd backend/
+          build-args: --build-arg ENTRY_PKG=./cmd/websocket_service
+
+    outputs:
+      api_gateway_image_tag: ${{ steps.build-api-gateway.outputs.image-tag }}
+      http_image_tag: ${{ steps.build-http.outputs.image-tag }}
+      websocket_image_tag: ${{ steps.build-websocket.outputs.image-tag }}
+
+  deploy:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/reusable/deploy.yml
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          cluster-name: ${{ env.ECS_CLUSTER_NAME }}
+          service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
+          image-tag: ${{ needs.build.outputs.api_gateway_image_tag }}
+
+      - uses: ./.github/workflows/reusable/deploy.yml
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          cluster-name: ${{ env.ECS_CLUSTER_NAME }}
+          service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
+          image-tag: ${{ needs.build.outputs.http_image_tag }}
+
+      - uses: ./.github/workflows/reusable/deploy.yml
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          cluster-name: ${{ env.ECS_CLUSTER_NAME }}
+          service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
+          image-tag: ${{ needs.build.outputs.websocket_image_tag }}

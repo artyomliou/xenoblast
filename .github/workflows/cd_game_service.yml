@@ -1,0 +1,51 @@
+name: Build and Push API Gateway to ECR
+
+permissions:
+  id-token: write
+
+on:
+  push:
+    branches:
+      - refactor/microservices
+    # branches:
+    #   - testing
+    #   - production
+    # paths:
+    #   - backend/cmd/game_service/**
+    #   - backend/internal/service/game_service/**
+  workflow_call:
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+      TASKDEF_ARN:
+        required: true
+
+env:
+  AWS_REGION: ap-east-1
+  ECS_CLUSTER_NAME: xenoblast
+  ECS_GAME_SERVICE_NAME: xenoblast-game_service
+
+jobs:
+  test-build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - id: test
+        uses: ./.github/workflows/reusable/test.yml
+
+      - id: build-tag-push
+        uses: ./.github/workflows/reusable/build_tag_push.yml
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+          image-name: game_service
+          before-build-script: |
+            cd backend/
+          build-args: --build-arg ENTRY_PKG=./cmd/websocket_service
+
+      - id: deploy
+        uses: ./.github/workflows/reusable/deploy.yml
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          cluster-name: ${{ env.ECS_CLUSTER_NAME }}
+          service-name: ${{ env.ECS_GAME_SERVICE_NAME }}
+          image-tag: ${{ steps.build-tag-push.outputs.image-tag }}

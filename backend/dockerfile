@@ -4,7 +4,8 @@ WORKDIR /src
 COPY ./go.mod ./go.sum /src
 RUN go mod download
 COPY ./ /src
-RUN go build -o /bin/server ./cmd/main
+ARG ENTRY_PKG=./cmd/http_service
+RUN go build -o /bin/server ${ENTRY_PKG}
 
 FROM ubuntu:22.04
 COPY --from=build /bin/server /app/server
