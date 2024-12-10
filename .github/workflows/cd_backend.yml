@@ -28,9 +28,6 @@ env:
   ECS_CLUSTER_NAME: xenoblast
   ECS_BACKEND_SERVICE_NAME: xenoblast-backend
 jobs:
-  checkout:
-    uses: actions/checkout@v4
-
   test:
     runs-on: ubuntu-latest
     steps:

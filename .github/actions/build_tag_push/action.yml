@@ -34,7 +34,7 @@ runs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: ${{ secrets.aws-role-arn }}
+        role-to-assume: ${{ inputs.aws-role-arn }}
         aws-region: ${{ inputs.aws-region }}
 
     # https://github.com/aws-actions/amazon-ecr-login?tab=readme-ov-file#login-to-amazon-ecr-private-then-build-and-push-a-docker-image
