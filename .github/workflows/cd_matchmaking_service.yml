@@ -1,4 +1,4 @@
-name: Build and Push API Gateway to ECR
+name: Build and Push Matchmaking Service to ECR
 
 permissions:
   id-token: write
