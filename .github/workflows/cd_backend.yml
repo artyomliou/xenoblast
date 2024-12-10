@@ -4,18 +4,18 @@ permissions:
   id-token: write
 
 on:
-  push:
-    branches:
-      - refactor/microservice
-    # branches:
-    #   - testing
-    #   - production
-    # paths:
-    #   - api-gateway/**
-    #   - backend/cmd/http_service/**
-    #   - backend/internal/service/http_service/**
-    #   - backend/cmd/websocket_service/**
-    #   - backend/internal/service/websocket_service/**
+  # push:
+  #   branches:
+  #     - refactor/microservice
+  # branches:
+  #   - testing
+  #   - production
+  # paths:
+  #   - api-gateway/**
+  #   - backend/cmd/http_service/**
+  #   - backend/internal/service/http_service/**
+  #   - backend/cmd/websocket_service/**
+  #   - backend/internal/service/websocket_service/**
   workflow_call:
     secrets:
       AWS_ROLE_ARN:

@@ -5,8 +5,8 @@ permissions:
 
 on:
   push:
-    branches:
-      - refactor/microservice
+    # branches:
+    #   - refactor/microservice
     # branches:
     #   - testing
     #   - production

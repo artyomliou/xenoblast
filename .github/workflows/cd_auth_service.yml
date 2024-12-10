@@ -31,6 +31,7 @@ jobs:
   checkout:
     runs-on: ubuntu-latest
     steps:
+      - run: ls -al /home/runner/work/xenoblast/xenoblast/
       - uses: actions/checkout@v4
 
   test:
