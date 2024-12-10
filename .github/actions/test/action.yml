@@ -4,8 +4,6 @@ description: Test go application
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
-
     - name: Setup Go 1.22
       uses: actions/setup-go@v5
       with:

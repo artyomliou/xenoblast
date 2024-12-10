@@ -28,21 +28,17 @@ env:
   ECS_MATCHMAKING_SERVICE_NAME: xenoblast-matchmaking_service
 
 jobs:
-  checkout:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-  test:
-    needs: checkout
-    runs-on: ubuntu-latest
-    steps:
       - uses: ./.github/actions/test
 
   build:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - id: build
         uses: ./.github/actions/build_tag_push
         with:
@@ -59,6 +55,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
