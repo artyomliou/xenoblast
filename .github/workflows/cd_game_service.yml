@@ -17,14 +17,15 @@ on:
     secrets:
       AWS_ROLE_ARN:
         required: true
-      TASKDEF_ARN:
+      ECS_GAME_TASKDEF_ARN:
         required: true
 
 env:
   AWS_REGION: ap-east-1
+  ECR_GAME_REPO_NAME: xenoblast-game-service
+  ECS_GAME_CONTAINER_NAME: GAME
   ECS_CLUSTER_NAME: xenoblast
   ECS_GAME_SERVICE_NAME: xenoblast-game_service
-  ECR_GAME_REPO_NAME: xenoblast-game-service
 
 jobs:
   test-build-deploy:
@@ -49,6 +50,9 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
+          aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+          taskdef-arn: ${{ secrets.ECS_GAME_TASKDEF_ARN }}
+          container-name: ${{ env.ECS_GAME_CONTAINER_NAME }}
+          image: ${{ steps.build-tag-push.outputs.image }}
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
           service-name: ${{ env.ECS_GAME_SERVICE_NAME }}
-          image: ${{ steps.build-tag-push.outputs.image }}

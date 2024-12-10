@@ -20,16 +20,19 @@ on:
     secrets:
       AWS_ROLE_ARN:
         required: true
-      TASKDEF_ARN:
+      ECS_BACKEND_TASKDEF_ARN:
         required: true
 
 env:
   AWS_REGION: ap-east-1
-  ECS_CLUSTER_NAME: xenoblast
-  ECS_BACKEND_SERVICE_NAME: xenoblast-backend
   ECR_API_GATEWAY_REPO_NAME: xenoblast-api-gateway
   ECR_HTTP_SERVICE_REPO_NAME: xenoblast-http-service
   ECR_WEBSOCKET_SERVICE_REPO_NAME: xenoblast-websocket-service
+  ECS_API_GATEWAY_CONTAINER_NAME: api_gateway
+  ECS_HTTP_CONTAINER_NAME: http_service
+  ECS_WEBSOCKET_CONTAINER_NAME: websocket_service
+  ECS_CLUSTER_NAME: xenoblast
+  ECS_BACKEND_SERVICE_NAME: xenoblast-backend
 
 jobs:
   test:
@@ -76,9 +79,9 @@ jobs:
           build-args: --build-arg ENTRY_PKG=./cmd/websocket_service
 
     outputs:
-      api_gateway_image_tag: ${{ steps.build-api-gateway.outputs.image }}
-      http_image_tag: ${{ steps.build-http.outputs.image }}
-      websocket_image_tag: ${{ steps.build-websocket.outputs.image }}
+      api_gateway_image: ${{ steps.build-api-gateway.outputs.image }}
+      http_image: ${{ steps.build-http.outputs.image }}
+      websocket_image: ${{ steps.build-websocket.outputs.image }}
 
   deploy:
     needs:
@@ -88,20 +91,29 @@ jobs:
       - uses: ./.github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
+          aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+          taskdef-arn: ${{ secrets.ECS_BACKEND_TASKDEF_ARN }}
+          container-name: ${{ env.ECS_API_GATEWAY_CONTAINER_NAME }}
+          image: ${{ needs.build.outputs.api_gateway_image }}
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
           service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
-          image: ${{ needs.build.outputs.api_gateway_image_tag }}
 
       - uses: ./.github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
+          aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+          taskdef-arn: ${{ secrets.ECS_BACKEND_TASKDEF_ARN }}
+          container-name: ${{ env.ECS_HTTP_CONTAINER_NAME }}
+          image: ${{ needs.build.outputs.http_image }}
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
           service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
-          image: ${{ needs.build.outputs.http_image_tag }}
 
       - uses: ./.github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
+          aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+          taskdef-arn: ${{ secrets.ECS_BACKEND_TASKDEF_ARN }}
+          container-name: ${{ env.ECS_WEBSOCKET_CONTAINER_NAME }}
+          image: ${{ needs.build.outputs.websocket_image }}
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
           service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
-          image: ${{ needs.build.outputs.websocket_image_tag }}
