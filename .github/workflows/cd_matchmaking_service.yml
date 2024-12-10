@@ -26,17 +26,14 @@ env:
   ECS_MATCHMAKING_SERVICE_NAME: xenoblast-matchmaking_service
 
 jobs:
-  checkout:
-    uses: actions/checkout@v4
-
   test-build-deploy:
     runs-on: ubuntu-latest
     steps:
       - id: test
-        uses: ./.github/workflows/reusable/test.yml
+        uses: ./.github/workflows/actions/test
 
       - id: build-tag-push
-        uses: ./.github/workflows/reusable/build_tag_push.yml
+        uses: ./.github/workflows/actions/build_tag_push
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -46,7 +43,7 @@ jobs:
           build-args: --build-arg ENTRY_PKG=./cmd/matchmaking_service
 
       - id: deploy
-        uses: ./.github/workflows/reusable/deploy.yml
+        uses: ./.github/workflows/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}

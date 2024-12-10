@@ -28,21 +28,18 @@ env:
   ECS_CLUSTER_NAME: xenoblast
   ECS_BACKEND_SERVICE_NAME: xenoblast-backend
 jobs:
-  checkout:
-    uses: actions/checkout@v4
-
   test:
     runs-on: ubuntu-latest
     steps:
       - id: test
-        uses: ./.github/workflows/reusable/test.yml
+        uses: ./.github/workflows/actions/test
 
   build:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - id: build-api-gateway
-        uses: ./.github/workflows/reusable/build_tag_push.yml
+        uses: ./.github/workflows/actions/build_tag_push
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -55,7 +52,7 @@ jobs:
           build-args: --build-arg ASSET_IMAGE=frontend:latest --build-arg ASSET_PATH=/etc/nginx/html
 
       - id: build-http
-        uses: ./.github/workflows/reusable/build_tag_push.yml
+        uses: ./.github/workflows/actions/build_tag_push
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -65,7 +62,7 @@ jobs:
           build-args: --build-arg ENTRY_PKG=./cmd/http_service
 
       - id: build-websocket
-        uses: ./.github/workflows/reusable/build_tag_push.yml
+        uses: ./.github/workflows/actions/build_tag_push
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -84,21 +81,21 @@ jobs:
       - build
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/reusable/deploy.yml
+      - uses: ./.github/workflows/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
           service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
           image-tag: ${{ needs.build.outputs.api_gateway_image_tag }}
 
-      - uses: ./.github/workflows/reusable/deploy.yml
+      - uses: ./.github/workflows/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
           service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
           image-tag: ${{ needs.build.outputs.http_image_tag }}
 
-      - uses: ./.github/workflows/reusable/deploy.yml
+      - uses: ./.github/workflows/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
