@@ -6,13 +6,13 @@ permissions:
 on:
   push:
     branches:
-      - refactor/microservice
-    # branches:
-    #   - testing
-    #   - production
-    # paths:
-    #   - backend/cmd/auth_service/**
-    #   - backend/internal/service/auth_service/**
+      - testing
+      - production
+    paths:
+      - backend/dockerfile
+      - backend/go.sum
+      - backend/cmd/auth_service/**
+      - backend/internal/service/auth_service/**
   workflow_call:
     secrets:
       AWS_ROLE_ARN:

@@ -6,16 +6,16 @@ permissions:
 on:
   push:
     branches:
-      - refactor/microservice
-  # branches:
-  #   - testing
-  #   - production
-  # paths:
-  #   - api-gateway/**
-  #   - backend/cmd/http_service/**
-  #   - backend/internal/service/http_service/**
-  #   - backend/cmd/websocket_service/**
-  #   - backend/internal/service/websocket_service/**
+      - testing
+      - production
+    paths:
+      - api-gateway/**
+      - backend/dockerfile
+      - backend/go.sum
+      - backend/cmd/http_service/**
+      - backend/internal/service/http_service/**
+      - backend/cmd/websocket_service/**
+      - backend/internal/service/websocket_service/**
   workflow_call:
     secrets:
       AWS_ROLE_ARN:
