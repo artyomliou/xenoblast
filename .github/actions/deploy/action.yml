@@ -1,0 +1,53 @@
+name: Deploy to ECS
+description: "Replace image tag of task definition. Requires id-token write permission"
+branding:
+  icon: upload-cloud
+  color: orange
+
+inputs:
+  aws-region:
+    required: true
+    description: AWS region
+  aws-role-arn:
+    required: true
+    description: Github actions will assume this role
+  taskdef-arn:
+    required: true
+    description: "The full Amazon Resource Name (ARN) of the task definition to be used"
+  container-name:
+    required: true
+    description: "The name of the container defined in the containerDefinitions section of the ECS task definition"
+  cluster-name:
+    required: true
+    description: "The name of the ECS service's cluster.  Will default to the 'default' cluster."
+  service-name:
+    required: true
+    description: "The name of the ECS service to deploy to. If no service is given, the action will not deploy the task, but only register the task definition."
+  image:
+    required: true
+    description: "The URI of the container image to insert into the ECS task definition"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: ${{ inputs.aws-role-arn }}
+
+    # https://github.com/aws-actions/amazon-ecs-render-task-definition
+    - id: fill-image
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition-arn: ${{ inputs.taskdef-arn }}
+        container-name: ${{ inputs.container-name }}
+        image: ${{ inputs.image }}
+
+    # https://github.com/aws-actions/amazon-ecs-deploy-task-definition
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+      with:
+        task-definition: ${{ steps.fill-image.outputs.task-definition }}
+        cluster: ${{ inputs.cluster-name }}
+        service: ${{ inputs.service-name }}

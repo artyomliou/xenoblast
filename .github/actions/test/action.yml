@@ -1,0 +1,28 @@
+name: Test
+description: Test go application
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Go 1.22
+      uses: actions/setup-go@v5
+      with:
+        go-version: "1.22"
+        cache-dependency-path: backend/go.sum
+
+    - name: Display Go version
+      shell: bash
+      working-directory: backend
+      run: go version
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: backend
+      run: go mod download
+
+    - name: Test with the Go CLI
+      shell: bash
+      working-directory: backend
+      run: go test ./...
