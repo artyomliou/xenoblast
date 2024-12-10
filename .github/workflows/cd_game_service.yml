@@ -4,15 +4,15 @@ permissions:
   id-token: write
 
 on:
-  push:
-    # branches:
-    #   - refactor/microservice
-    # branches:
-    #   - testing
-    #   - production
-    # paths:
-    #   - backend/cmd/game_service/**
-    #   - backend/internal/service/game_service/**
+  # push:
+  # branches:
+  #   - refactor/microservice
+  # branches:
+  #   - testing
+  #   - production
+  # paths:
+  #   - backend/cmd/game_service/**
+  #   - backend/internal/service/game_service/**
   workflow_call:
     secrets:
       AWS_ROLE_ARN:
