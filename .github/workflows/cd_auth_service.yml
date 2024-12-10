@@ -31,14 +31,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/test
+      - uses: .github/actions/test
 
   build:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - id: build
-        uses: ./.github/actions/build_tag_push
+        uses: .github/actions/build_tag_push
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -53,7 +53,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/deploy
+      - uses: .github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
