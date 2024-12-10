@@ -29,6 +29,8 @@ jobs:
   test-build-deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - id: test
         uses: ./.github/workflows/actions/test
 
