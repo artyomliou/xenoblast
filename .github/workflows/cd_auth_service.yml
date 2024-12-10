@@ -24,6 +24,7 @@ env:
   AWS_REGION: ap-east-1
   ECS_CLUSTER_NAME: xenoblast
   ECS_AUTH_SERVICE_NAME: xenoblast-auth_service
+  ECR_AUTH_REPO_NAME: xenoblast-auth-service
 
 jobs:
   test-build-deploy:
@@ -39,7 +40,7 @@ jobs:
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
-          image-name: auth_service
+          repo-name: ${{ env.ECR_AUTH_REPO_NAME }}
           before-build-script: |
             cd backend/
           build-args: --build-arg ENTRY_PKG=./cmd/auth_service

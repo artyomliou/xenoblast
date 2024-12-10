@@ -24,6 +24,7 @@ env:
   AWS_REGION: ap-east-1
   ECS_CLUSTER_NAME: xenoblast
   ECS_MATCHMAKING_SERVICE_NAME: xenoblast-matchmaking_service
+  ECR_MATCHMAKING_REPO_NAME: xenoblast-matchmaking-service
 
 jobs:
   test-build-deploy:
@@ -39,7 +40,7 @@ jobs:
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
-          image-name: matchmaking_service
+          repo-name: ${{ env.ECR_MATCHMAKING_REPO_NAME }}
           before-build-script: |
             cd backend/
           build-args: --build-arg ENTRY_PKG=./cmd/matchmaking_service

@@ -24,6 +24,7 @@ env:
   AWS_REGION: ap-east-1
   ECS_CLUSTER_NAME: xenoblast
   ECS_GAME_SERVICE_NAME: xenoblast-game_service
+  ECR_GAME_REPO_NAME: xenoblast-game-service
 
 jobs:
   test-build-deploy:
@@ -39,7 +40,7 @@ jobs:
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
-          image-name: game_service
+          repo-name: ${{ env.ECR_GAME_REPO_NAME }}
           before-build-script: |
             cd backend/
           build-args: --build-arg ENTRY_PKG=./cmd/websocket_service

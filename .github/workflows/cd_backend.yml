@@ -27,6 +27,10 @@ env:
   AWS_REGION: ap-east-1
   ECS_CLUSTER_NAME: xenoblast
   ECS_BACKEND_SERVICE_NAME: xenoblast-backend
+  ECR_API_GATEWAY_REPO_NAME: xenoblast-api-gateway
+  ECR_HTTP_SERVICE_REPO_NAME: xenoblast-http-service
+  ECR_WEBSOCKET_SERVICE_REPO_NAME: xenoblast-websocket-service
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -43,7 +47,7 @@ jobs:
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
-          image-name: auth_service
+          repo-name: ${{ env.ECR_API_GATEWAY_REPO_NAME }}
           before-build-script: |
             cd frontend
             docker build -t frontend:latest .
@@ -56,7 +60,7 @@ jobs:
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
-          image-name: http_service
+          repo-name: ${{ env.ECR_HTTP_SERVICE_REPO_NAME }}
           before-build-script: |
             cd backend/
           build-args: --build-arg ENTRY_PKG=./cmd/http_service
@@ -66,7 +70,7 @@ jobs:
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
-          image-name: websocket_service
+          repo-name: ${{ env.ECR_WEBSOCKET_SERVICE_REPO_NAME }}
           before-build-script: |
             cd backend/
           build-args: --build-arg ENTRY_PKG=./cmd/websocket_service

@@ -17,9 +17,9 @@ inputs:
   build-args:
     required: false
     description: "Additional arguments passed to `docker build`"
-  image-name:
+  repo-name:
     required: true
-    description: The image name that will be used in image URI
+    description: The ECR repository name that will be used in image URI
 
 outputs:
   image:
@@ -47,14 +47,14 @@ runs:
       shell: bash
       run: |
         ${{ inputs.before-build-script }}
-        docker build ${{ inputs.build-args }} -t ${{ inputs.image-name }} .
+        docker build ${{ inputs.build-args }} -t ${{ inputs.repo-name }} .
 
     - name: Tag and push Docker image to ECR
       id: tag-push
       shell: bash
       env:
-        IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.image-name }}:${{ github.sha }}
+        IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repo-name }}:${{ github.sha }}
       run: |
-        docker tag ${{ inputs.image-name }} $IMAGE_TAG
+        docker tag ${{ inputs.repo-name }} $IMAGE_TAG
         docker push $IMAGE_TAG
         echo "image=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
