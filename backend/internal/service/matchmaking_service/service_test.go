@@ -28,11 +28,7 @@ func TestMatchmakingService(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer func() {
-		if err := logger.Sync(); err != nil {
-			t.Log(err.Error())
-		}
-	}()
+	defer logger.Sync() //nolint:errcheck
 
 	t.Run("Enroll", func(t *testing.T) {
 		ctx := context.Background()

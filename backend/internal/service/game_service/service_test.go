@@ -17,11 +17,7 @@ func TestGameLogicService(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer func() {
-		if err := logger.Sync(); err != nil {
-			t.Log(err.Error())
-		}
-	}()
+	defer logger.Sync() //nolint:errcheck
 
 	players := map[int32]string{
 		1: "1",
