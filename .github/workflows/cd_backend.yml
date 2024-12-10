@@ -35,7 +35,13 @@ env:
   ECS_BACKEND_SERVICE_NAME: xenoblast-backend
 
 jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
   test:
+    needs: checkout
     runs-on: ubuntu-latest
     steps:
       - uses: ./.github/actions/test

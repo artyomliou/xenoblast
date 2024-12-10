@@ -28,7 +28,13 @@ env:
   ECS_GAME_SERVICE_NAME: xenoblast-game_service
 
 jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
   test:
+    needs: checkout
     runs-on: ubuntu-latest
     steps:
       - uses: ./.github/actions/test
