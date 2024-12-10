@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "matchmaking_service" {
   container_definitions = jsonencode([
     {
       name              = "matchmaking_service"
-      image             = "${local.backend_image}"
+      image             = "${local.matchmaking_service_image}"
       memoryReservation = 64
       entryPoint        = ["/app/server", "-service"]
       command           = ["matchmaking"]

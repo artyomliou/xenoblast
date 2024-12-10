@@ -86,7 +86,7 @@ resource "aws_ecs_task_definition" "backend" {
     },
     {
       name              = "http_service"
-      image             = "${local.backend_image}"
+      image             = "${local.http_service_image}"
       memoryReservation = 64
       entryPoint        = ["/app/server", "-service"]
       command           = ["http"]
@@ -119,7 +119,7 @@ resource "aws_ecs_task_definition" "backend" {
     },
     {
       name              = "websocket_service"
-      image             = "${local.backend_image}"
+      image             = "${local.websocket_service_image}"
       memoryReservation = 64
       entryPoint        = ["/app/server", "-service"]
       command           = ["websocket"]

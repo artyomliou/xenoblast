@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "game_service" {
   container_definitions = jsonencode([
     {
       name              = "game_service"
-      image             = "${local.backend_image}"
+      image             = "${local.game_service_image}"
       memoryReservation = 128
       entryPoint        = ["/app/server", "-service"]
       command           = ["game"]

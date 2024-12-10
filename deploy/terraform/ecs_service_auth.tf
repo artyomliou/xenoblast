@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "auth_service" {
   container_definitions = jsonencode([
     {
       name              = "auth_service"
-      image             = "${local.backend_image}"
+      image             = "${local.auth_service_image}"
       memoryReservation = 64
       entryPoint        = ["/app/server", "-service"]
       command           = ["auth"]
