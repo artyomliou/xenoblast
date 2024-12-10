@@ -1,4 +1,4 @@
-name: Build and Push Auth Service to ECR
+name: Deploy Auth Service
 
 permissions:
   id-token: write
