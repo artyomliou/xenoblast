@@ -38,14 +38,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: .github/actions/test
+      - uses: ./.github/actions/test
 
   build:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - id: build-api-gateway
-        uses: .github/actions/build_tag_push
+        uses: ./.github/actions/build_tag_push
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -58,7 +58,7 @@ jobs:
           build-args: --build-arg ASSET_IMAGE=frontend:latest --build-arg ASSET_PATH=/etc/nginx/html
 
       - id: build-http
-        uses: .github/actions/build_tag_push
+        uses: ./.github/actions/build_tag_push
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -68,7 +68,7 @@ jobs:
           build-args: --build-arg ENTRY_PKG=./cmd/http_service
 
       - id: build-websocket
-        uses: .github/actions/build_tag_push
+        uses: ./.github/actions/build_tag_push
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -87,7 +87,7 @@ jobs:
       - build
     runs-on: ubuntu-latest
     steps:
-      - uses: .github/actions/deploy
+      - uses: ./.github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -97,7 +97,7 @@ jobs:
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
           service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
 
-      - uses: .github/actions/deploy
+      - uses: ./.github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
@@ -107,7 +107,7 @@ jobs:
           cluster-name: ${{ env.ECS_CLUSTER_NAME }}
           service-name: ${{ env.ECS_BACKEND_SERVICE_NAME }}
 
-      - uses: .github/actions/deploy
+      - uses: ./.github/actions/deploy
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
