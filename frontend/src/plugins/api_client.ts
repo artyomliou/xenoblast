@@ -4,8 +4,7 @@ import { game, http_api } from "../pkg_proto/compiled.js";
 const ApiKeyHeader = "X-API-KEY"
 
 export class ApiClient extends Plugins.BasePlugin {
-  https = import.meta.env.PROD;
-  base = window.location.host;
+  apiBase = window.location.origin;
 
   async authRegister(nickname: string) {
     const req = http_api.RegisterRequest.create({
@@ -38,8 +37,7 @@ export class ApiClient extends Plugins.BasePlugin {
   }
 
   async sendRequest(method: string, path: string, query: Record<string, string>, body: any, apiKey: string) {
-    const protocol = this.https ? "https" : "http";
-    const url = new URL(`${protocol}://${this.base}/${path}`);
+    const url = new URL(`${this.apiBase}/${path}`);
     for (const [k, v] of Object.entries(query)) {
       url.searchParams.append(k, v)
     }
