@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ingress-allow-matchmaking-service
+spec:
+  podSelector:
+    matchLabels:
+      app: xenoblast
+      service: matchmaking-service
+      component: redis
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: xenoblast
+              service: matchmaking-service
+      ports:
+        - protocol: TCP
+          port: 6379

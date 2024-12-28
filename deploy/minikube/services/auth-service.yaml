@@ -1,0 +1,158 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: xenoblast
+    service: auth-service
+    component: api
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 50051
+      targetPort: 50051
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  labels:
+    app: xenoblast
+    service: auth-service
+    component: api
+spec:
+  selector:
+    matchLabels:
+      app: xenoblast
+      service: auth-service
+      component: api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: xenoblast
+        service: auth-service
+        component: api
+    spec:
+      containers:
+        - name: service
+          image: docker.io/library/xenoblast-auth-service:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/app/server"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: 80
+          #   initialDelaySeconds: 5
+          #   timeoutSeconds: 5
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          #   periodSeconds: 10
+          # readinessProbe:
+          #   httpGet:
+          #     path: /_status/healthz
+          #     port: 80
+          #   initialDelaySeconds: 5
+          #   timeoutSeconds: 2
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          #   periodSeconds: 10
+          ports:
+            - containerPort: 50051
+              name: grpc
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+      volumes:
+        - name: config
+          configMap:
+            name: backend-service-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service-redis
+spec:
+  selector:
+    app: xenoblast
+    service: auth-service
+    component: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service-redis
+  labels:
+    app: xenoblast
+    service: auth-service
+    component: redis
+spec:
+  selector:
+    matchLabels:
+      app: xenoblast
+      service: auth-service
+      component: redis
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: xenoblast
+        service: auth-service
+        component: redis
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: redis-config
+        - name: data
+          emptyDir: {}
+      containers:
+        - name: redis
+          image: "docker.io/redis:7.4"
+          imagePullPolicy: IfNotPresent
+          command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+          volumeMounts:
+            - name: config
+              mountPath: /usr/local/etc/redis/redis.conf
+              subPath: redis.conf
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          ports:
+            - containerPort: 6379
+      restartPolicy: Always
+---
+

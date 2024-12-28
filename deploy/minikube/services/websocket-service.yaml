@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: websocket-service
+spec:
+  selector:
+    app: xenoblast
+    service: websocket-service
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websocket-service
+  labels:
+    app: xenoblast
+    service: websocket-service
+spec:
+  selector:
+    matchLabels:
+      app: xenoblast
+      service: websocket-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: xenoblast
+        service: websocket-service
+        group: ingress-target
+    spec:
+      containers:
+        - name: service
+          image: docker.io/library/xenoblast-websocket-service:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/app/server"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+      volumes:
+        - name: config
+          configMap:
+            name: backend-service-config
+---
+

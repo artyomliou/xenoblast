@@ -1,0 +1,50 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: backend-service-config
+data:
+  config.yaml: |
+    environment: prod
+    logger_output: stdout
+
+    http_service:
+      host: http-service
+      port: 8080
+
+    websocket_service:
+      host: websocket-service
+      port: 8080
+
+    auth_service:
+      service:
+        resolve_srv: false
+        host: auth-service
+        port: 50051
+
+      repository:
+        driver: redis
+        redis:
+          host: auth-service-redis
+          port: 6379
+
+    matchmaking_service:
+      service:
+        resolve_srv: false
+        host: matchmaking-service
+        port: 50051
+
+      repository:
+        driver: redis
+        redis:
+          host: matchmaking-service-redis
+          port: 6379
+
+    game_service:
+      resolve_srv: false
+      host: game-service
+      port: 50051
+
+    collector:
+      enable_metric_provider: true
+      host: collector
+      port: 4317

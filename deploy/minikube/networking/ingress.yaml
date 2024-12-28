@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: routes
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: http-service
+                port:
+                  number: 8080
+            path: /api
+            pathType: Prefix
+          - backend:
+              service:
+                name: websocket-service
+                port:
+                  number: 8080
+            path: /ws
+            pathType: Prefix
+          - backend:
+              service:
+                name: frontend-assets
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix

@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: game-service
+spec:
+  selector:
+    app: xenoblast
+    service: game-service
+    component: api
+  type: ClusterIP
+  clusterIP: "None" # headless
+  ports:
+    - protocol: TCP
+      port: 50051
+      targetPort: 50051
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-service
+  labels:
+    app: xenoblast
+    service: game-service
+    component: api
+spec:
+  selector:
+    matchLabels:
+      app: xenoblast
+      service: game-service
+      component: api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: xenoblast
+        service: game-service
+        component: api
+    spec:
+      containers:
+        - name: service
+          image: docker.io/library/xenoblast-game-service:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/app/server"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          livenessProbe:
+            tcpSocket:
+              port: 50051
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 50051
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          ports:
+            - containerPort: 50051
+              name: grpc
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+      volumes:
+        - name: config
+          configMap:
+            name: backend-service-config
+---
+
