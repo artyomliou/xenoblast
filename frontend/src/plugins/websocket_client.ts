@@ -3,13 +3,12 @@ import logger from "../helper/logger";
 
 export class WebsocketClient extends Plugins.BasePlugin {
 
-  https: boolean = import.meta.env.PROD;
-  base: string = window.location.host;
+  apiBase = window.location.origin;
   ws: WebSocket | null = null;
 
   url(path: string, apiKey: string) {
-    const protocol = this.https ? "https" : "http";
-    return `${protocol}://${this.base}/${path}?X-API-KEY=${apiKey}`;
+    const protocol = window.location.protocol == "https:" ? "wss" : "ws";
+    return `${protocol}://${window.location.host}/${path}?X-API-KEY=${apiKey}`;
   }
 
   open(apiKey: string, onMessageCallback: (ev: MessageEvent) => any) {
